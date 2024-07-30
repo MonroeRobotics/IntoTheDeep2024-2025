@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,6 +18,9 @@ public class drive extends OpMode{
     DcMotor fRight;
     DcMotor bLeft;
     DcMotor bRight;
+    MecanumDrive drive;
+    Vector2d position = new Vector2d(0,0);
+    Pose2d pose = new Pose2d(position, 90);
 
     double drivePower =.8;
     double xPower;
@@ -24,6 +29,8 @@ public class drive extends OpMode{
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+        drive = new MecanumDrive(hardwareMap,pose);
     }
 
     @Override
@@ -31,14 +38,6 @@ public class drive extends OpMode{
         xPower = -gamepad1.left_stick_y;
         yPower = -gamepad1.left_stick_x;
         headingPower = -gamepad1.right_stick_x;
-
-        double scaledPower = 1 - currentGamepad1.right_trigger;
-
-        if (currentGamepad1.right_trigger >= 0.1 && !(previousGamepad1.right_trigger >= 0.1) && drivePower <= 0.8) {
-            drivePower += 0.2;
-        } else if (currentGamepad1.left_trigger >= 0.1 && !(previousGamepad1.left_trigger >= 0.1) && drivePower >= 0.8) {
-            drivePower -= 0.2;
-        }
 
         xPower *= drivePower;
         yPower *= drivePower;
@@ -63,12 +62,6 @@ public class drive extends OpMode{
             headingPower = 0;
 
         }
-
-        if (currentGamepad1.right_bumper) {
-            xPower *= scaledPower;
-            yPower *= scaledPower;
-            headingPower *= scaledPower;
         }
 
     }
-}
