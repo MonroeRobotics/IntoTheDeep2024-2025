@@ -22,7 +22,8 @@ public class drive extends OpMode{
     MecanumDrive drive;
     Vector2d position = new Vector2d(0,0);
     Pose2d pose = new Pose2d(position, 90);
-    PoseVelocity2d poseVelocity2d = new PoseVelocity2d(xPower, yPower, headingPower);
+    Vector2d currentPosition = new Vector2d();
+    PoseVelocity2d poseVelocity2d = new PoseVelocity2d();
 
     double drivePower =.8;
     double xPower;
