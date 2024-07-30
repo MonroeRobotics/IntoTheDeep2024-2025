@@ -40,7 +40,7 @@ public class singleSwerveTest extends OpMode {
         else{driveMotor.setPower(0);}
         if ((currentGamepad.right_stick_x >.1) || (currentGamepad.right_stick_y >.1) || (currentGamepad.right_stick_x <-.1) || (currentGamepad.right_stick_y <-.1)){
             driveAngle = (Math.atan2(currentGamepad.right_stick_y, currentGamepad.right_stick_x));
-            driveAngle = (driveAngle/Math.PI);
+            driveAngle = (Math.abs(driveAngle/Math.PI));
             heading.setPosition(driveAngle);
 
             //CR

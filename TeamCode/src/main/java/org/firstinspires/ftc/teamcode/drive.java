@@ -22,8 +22,8 @@ public class drive extends OpMode{
     MecanumDrive drive;
     Vector2d position = new Vector2d(0,0);
     Pose2d pose = new Pose2d(position, 90);
-    Vector2d currentPosition = new Vector2d();
-    PoseVelocity2d poseVelocity2d = new PoseVelocity2d();
+    Vector2d gamepadInput = new Vector2d(gamepad1.left_stick_x, gamepad1.left_stick_y);
+    PoseVelocity2d poseVelocity2d = new PoseVelocity2d(gamepadInput, gamepad1.right_stick_x);
 
     double drivePower =.8;
     double xPower;
@@ -65,6 +65,7 @@ public class drive extends OpMode{
             headingPower = 0;
 
         }
-        drive.setDrivePowers(poseVelocity2d, headingPower);
+
+        drive.setDrivePowers(poseVelocity2d);
         }
     }
