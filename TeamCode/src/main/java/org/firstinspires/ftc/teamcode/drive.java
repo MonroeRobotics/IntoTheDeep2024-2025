@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -21,6 +22,7 @@ public class drive extends OpMode{
     MecanumDrive drive;
     Vector2d position = new Vector2d(0,0);
     Pose2d pose = new Pose2d(position, 90);
+    PoseVelocity2d poseVelocity2d = new PoseVelocity2d(xPower, yPower, headingPower);
 
     double drivePower =.8;
     double xPower;
@@ -62,6 +64,6 @@ public class drive extends OpMode{
             headingPower = 0;
 
         }
+        drive.setDrivePowers(poseVelocity2d, headingPower);
         }
-
     }
