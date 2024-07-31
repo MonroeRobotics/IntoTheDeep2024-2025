@@ -32,8 +32,10 @@ public class drive extends OpMode{
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
         drive = new MecanumDrive(hardwareMap,pose);
+
+        currentGamepad1 = gamepad1;
+        previousGamepad1 = gamepad1;
     }
 
     @Override
@@ -63,9 +65,11 @@ public class drive extends OpMode{
             xPower = 0;
             yPower = drivePower;
             headingPower = 0;
-
         }
 
         drive.setDrivePowers(poseVelocity2d);
+        telemetry.addData("xPower", xPower);
+        telemetry.addData("yPower", yPower);
+        telemetry.addData("headingPower", headingPower);
         }
     }
