@@ -13,8 +13,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 @TeleOp(name="drive", group="main")
 public class drive extends OpMode{
 
-    Gamepad currentGamepad1;
-    Gamepad previousGamepad1;
+    Gamepad currentGamepad1 = new Gamepad();
+    Gamepad previousGamepad1 = new Gamepad();
     DcMotor fLeft;
     DcMotor fRight;
     DcMotor bLeft;
