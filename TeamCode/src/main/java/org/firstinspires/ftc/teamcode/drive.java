@@ -67,6 +67,14 @@ public class drive extends OpMode{
             headingPower = 0;
         }
 
+        if (currentGamepad1.right_bumper){
+            drivePower = 1;
+        } else if(currentGamepad1.left_bumper){
+            drivePower = .4;
+        } else{
+            drivePower = .8;
+        }
+
         drive.setDrivePowers(poseVelocity2d);
         telemetry.addData("xPower", xPower);
         telemetry.addData("yPower", yPower);
