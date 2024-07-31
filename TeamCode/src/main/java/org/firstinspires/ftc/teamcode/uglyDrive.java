@@ -10,8 +10,13 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-@TeleOp(name="drive", group="main")
-public class drive extends OpMode{
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
+
+@TeleOp
+public class uglyDrive extends OpMode {
 
 
 
@@ -30,6 +35,9 @@ public class drive extends OpMode{
     double xPower;
     double yPower;
     double headingPower;
+    int cameraMonitorViewId;
+    WebcamName webcamName;
+    OpenCvCamera camera;
     cameraThing cameraThing;
     @Override
     public void init() {
@@ -39,8 +47,26 @@ public class drive extends OpMode{
         currentGamepad1 = gamepad1;
         previousGamepad1 = gamepad1;
 
-        cameraThing = new cameraThing(hardwareMap);
-        cameraThing.initCam();
+        cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcamName = hardwareMap.get(WebcamName.class, "webcam");
+        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                // Usually this is where you'll want to start streaming from the camera (see section 4)
+                camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                FtcDashboard.getInstance().startCameraStream(camera, 24);
+            }
+            @Override
+            public void onError(int errorCode)
+            {
+                /*
+                 * This will be called if the camera could not be opened
+                 */
+            }
+        });
     }
 
     @Override
@@ -90,5 +116,5 @@ public class drive extends OpMode{
         telemetry.addData("leftStick x", currentGamepad1.left_stick_x);
         telemetry.addData("lefStick y", currentGamepad1.left_stick_y);
         telemetry.addData("rightStick x", currentGamepad1.right_stick_x);
-        }
     }
+}

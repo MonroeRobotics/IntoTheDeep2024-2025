@@ -1,22 +1,26 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvInternalCamera;
 
-@TeleOp(name="camera", group = "main")
-public class camera extends OpMode {
-int cameraMonitorViewId;
-WebcamName webcamName;
-OpenCvCamera camera;
+@Config
+public class cameraThing{
+    HardwareMap hardwareMap;
+    int cameraMonitorViewId;
+    WebcamName webcamName;
+    OpenCvCamera camera;
 
-    @Override
-    public void init() {
+    public cameraThing (HardwareMap hardwareMap){
+        this.hardwareMap = hardwareMap;
+    }
+
+    public void initCam() {
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcamName = hardwareMap.get(WebcamName.class, "webcam");
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
@@ -26,7 +30,8 @@ OpenCvCamera camera;
             public void onOpened()
             {
                 // Usually this is where you'll want to start streaming from the camera (see section 4)
-                camera.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                FtcDashboard.getInstance().startCameraStream(camera, 24);
             }
             @Override
             public void onError(int errorCode)
@@ -36,11 +41,6 @@ OpenCvCamera camera;
                  */
             }
         });
-
-    }
-
-    @Override
-    public void loop() {
 
     }
 }
