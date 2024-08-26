@@ -10,13 +10,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-
 @TeleOp
-public class newDrive extends OpMode {
+public class driftDrive extends OpMode {
     Gamepad gamepad = new Gamepad();
     DcMotor frontLeft;
     DcMotor frontRight;
