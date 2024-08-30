@@ -40,16 +40,21 @@ public class singleSwerveTest extends OpMode {
             driveMotor.setPower(-drivePower);
         }
         else{driveMotor.setPower(0);}*/
-        if ((currentGamepad.right_stick_x >.1) || (currentGamepad.right_stick_y >.1) || (currentGamepad.right_stick_x <-.1) || (currentGamepad.right_stick_y <-.1) && !currentGamepad.x){
+        if ((currentGamepad.right_stick_x >.1) || (currentGamepad.right_stick_y >.1) || (currentGamepad.right_stick_x <-.1) || (currentGamepad.right_stick_y <-.1) && !currentGamepad.x) {
             driveAngle = (Math.atan2(-currentGamepad.right_stick_y, currentGamepad.right_stick_x));
             actualDriveRadian = driveAngle;
-            driveAngle /= (Math.PI*2.0);
+            driveAngle /= (Math.PI * 2.0);
             getActualDriveDegree = driveAngle;
-            if (driveAngle <0){
-                driveAngle+=1;
+            if (driveAngle < 0) {
+                driveAngle += 1;
             }
-            driveAngle *= 360.0/multiplier;
-            driveAngle -=(.25*(360/multiplier));
+            driveAngle *= 360.0 / multiplier;
+            if (driveAngle < (.25*(360/multiplier))){
+            driveAngle += (.25 * (360 / multiplier));
+            }
+            else {
+                driveAngle -= (.25 * (360 / multiplier));
+            }
             heading.setPosition(driveAngle);
         }
         if (currentGamepad.dpad_left){
