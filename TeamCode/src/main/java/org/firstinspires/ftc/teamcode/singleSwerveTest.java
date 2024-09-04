@@ -14,13 +14,13 @@ public class singleSwerveTest extends OpMode {
     Gamepad gamepad;
     DcMotor driveMotor;
     Servo heading;
-    //Double drivePower = .8;
+    double drivePower = .8;
     Gamepad currentGamepad;
     Gamepad previousGamepad;
     double driveAngle;
     double actualDriveRadian;
     double getActualDriveDegree;
-    double multiplier =324;
+    double multiplier =324.0;
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         heading = hardwareMap.get(Servo.class, "driveAngle");
@@ -82,10 +82,10 @@ public class singleSwerveTest extends OpMode {
         }
 
         if (currentGamepad.cross && !previousGamepad.cross){
-            multiplier-=1.0;
+            driveMotor.setPower(drivePower);
         }
         else if (currentGamepad.circle && !previousGamepad.circle){
-            multiplier+=1.0;
+            driveMotor.setPower((drivePower));
         }
         //telemetry.addData("Motor Power", driveMotor.getPower());
         telemetry.addData("Status", "Running");

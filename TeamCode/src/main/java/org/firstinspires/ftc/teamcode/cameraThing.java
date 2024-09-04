@@ -5,9 +5,12 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+import org.openftc.easyopencv.OpenCvPipeline;
 
 @Config
 public class cameraThing{
@@ -20,7 +23,7 @@ public class cameraThing{
         this.hardwareMap = hardwareMap;
     }
 
-    public void initCam() {
+    public Mat initCam() {
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcamName = hardwareMap.get(WebcamName.class, "webcam");
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
@@ -41,6 +44,17 @@ public class cameraThing{
                  */
             }
         });
-
+        class convertToGreyPipeLine extends OpenCvPipeline
+        {
+            final Mat grey = new Mat();
+            @Override
+            public Mat processFrame(Mat input)
+            {
+                Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGB2GRAY);
+                return grey;
+            }
+        }
+        // dont' trust this v
+        return null;
     }
 }
