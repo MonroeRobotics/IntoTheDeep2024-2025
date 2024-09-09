@@ -18,10 +18,6 @@ public class drive extends OpMode{
 
     Gamepad currentGamepad1 = new Gamepad();
     Gamepad previousGamepad1 = new Gamepad();
-    DcMotor fLeft;
-    DcMotor fRight;
-    DcMotor bLeft;
-    DcMotor bRight;
     MecanumDrive drive;
     Vector2d position = new Vector2d(0,0);
     Pose2d pose = new Pose2d(position, 90);
