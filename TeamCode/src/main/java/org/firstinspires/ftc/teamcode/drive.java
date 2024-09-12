@@ -7,8 +7,10 @@ import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+
+import org.firstinspires.ftc.teamcode.driveClasses.MecanumDrive;
+import org.firstinspires.ftc.teamcode.vision.cameraThing;
 
 @TeleOp(name="drive", group="main")
 public class drive extends OpMode{
@@ -26,7 +28,7 @@ public class drive extends OpMode{
     double xPower;
     double yPower;
     double headingPower;
-    cameraThing cameraThing;
+    org.firstinspires.ftc.teamcode.vision.cameraThing cameraThing;
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

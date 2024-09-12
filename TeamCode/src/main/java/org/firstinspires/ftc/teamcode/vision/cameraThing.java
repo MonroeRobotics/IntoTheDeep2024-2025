@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.vision;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -47,12 +47,11 @@ public class cameraThing{
         // dont' trust this v
         return null;
     }
-    public void pipeline extends OpenCvPipeline{
+    /*public void pipeline extends Object OpenCvPipeline{
             final Mat grey = new Mat();
-            @Override
-            public Mat processFrame(Mat input)
-            {
+            public Mat processFrame(Mat input){
                 Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGB2GRAY);
-                return grey; }
-            }
+                return grey;
+                }
+            }*/
 }

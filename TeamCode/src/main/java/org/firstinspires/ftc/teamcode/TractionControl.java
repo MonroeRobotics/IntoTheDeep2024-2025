@@ -8,8 +8,9 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
+
+import org.firstinspires.ftc.teamcode.driveClasses.MecanumDrive;
 
 @TeleOp(name="TractionControl", group="main")
 public class TractionControl extends OpMode{
@@ -31,7 +32,7 @@ public class TractionControl extends OpMode{
     double xPower;
     double yPower;
     double headingPower;
-    cameraThing cameraThing;
+    org.firstinspires.ftc.teamcode.vision.cameraThing cameraThing;
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
