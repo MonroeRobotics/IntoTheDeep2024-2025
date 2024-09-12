@@ -44,17 +44,15 @@ public class cameraThing{
                  */
             }
         });
-        class convertToGreyPipeLine extends OpenCvPipeline
-        {
+        // dont' trust this v
+        return null;
+    }
+    public void pipeline extends OpenCvPipeline{
             final Mat grey = new Mat();
             @Override
             public Mat processFrame(Mat input)
             {
                 Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGB2GRAY);
-                return grey;
+                return grey; }
             }
-        }
-        // dont' trust this v
-        return null;
-    }
 }
