@@ -21,7 +21,7 @@ public class uglyDrive extends OpMode {
 
 
 
-
+//region init
     Gamepad currentGamepad1 = new Gamepad();
     Gamepad previousGamepad1 = new Gamepad();
     DcMotor fLeft;
@@ -39,6 +39,7 @@ public class uglyDrive extends OpMode {
     int cameraMonitorViewId;
     WebcamName webcamName;
     OpenCvCamera camera;
+//endregion
     org.firstinspires.ftc.teamcode.vision.cameraThing cameraThing;
     @Override
     public void init() {

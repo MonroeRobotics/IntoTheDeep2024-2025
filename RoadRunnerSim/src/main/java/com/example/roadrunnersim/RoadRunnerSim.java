@@ -14,22 +14,55 @@ import javax.imageio.ImageIO;
 public class RoadRunnerSim {
     public static void main(String[] args) {
         MeepMeep roadRunnerSim = new MeepMeep(800);
+        DefaultBotBuilder defaultBotBuilder = new DefaultBotBuilder(roadRunnerSim);
+//region first block
+        defaultBotBuilder.setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15);// Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
+        RoadRunnerBotEntity myBot = defaultBotBuilder
+                    .followTrajectorySequence(drive ->
+                            drive.trajectorySequenceBuilder(new Pose2d(70, 0, Math.PI))
+                                    .forward(46)
+                                    .forward(-16)
+                                    .turn(Math.toRadians(-90))
+                                    .forward(45)
+                                    .turn(Math.toRadians(90))
+                                    .forward(15)
+                                    .forward(-32.5)
+                                    .turn(Math.toRadians(180))
+                                    .turn(Math.toRadians(-90))
+                                    .forward(45)
+                                    .turn(Math.toRadians(-90))
+                                    .forward(34)
+                                    
+                                    .forward(-16)
+                                    .turn(Math.toRadians(-90))
+                                    .forward(55)
+                                    .turn(Math.toRadians(90))
+                                    .forward(15)
+                                    .forward(-32.5)
+                                    .turn(Math.toRadians(180))
+                                    .turn(Math.toRadians(-90))
+                                    .forward(55)
+                                    .turn(Math.toRadians(-90))
+                                    .forward(34)
 
-        RoadRunnerBotEntity myBot = new DefaultBotBuilder(roadRunnerSim)
-                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
-                .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(0, 0, 0))
-                                .forward(30)
-                                .turn(Math.toRadians(90))
-                                .forward(30)
-                                .turn(Math.toRadians(90))
-                                .forward(30)
-                                .turn(Math.toRadians(90))
-                                .forward(30)
-                                .turn(Math.toRadians(90))
-                                .build()
-                );
+                                    .forward(-16)
+                                    .turn(Math.toRadians(-90))
+                                    .forward(65)
+                                    .turn(Math.toRadians(90))
+                                    .forward(15)
+                                    .forward(-32.5)
+                                    .turn(Math.toRadians(180))
+                                    .turn(Math.toRadians(-90))
+                                    .forward(65)
+                                    .turn(Math.toRadians(-90))
+                                    .forward(34)
+
+
+
+
+                                    .build()
+                    );
+//endregion
         Image img = null;
         try { img = ImageIO.read(new File("/Users/monroerobotics/Documents/Into The Deep.png")); }
         catch (IOException e) {}
