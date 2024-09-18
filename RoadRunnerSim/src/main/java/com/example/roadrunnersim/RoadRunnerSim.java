@@ -63,7 +63,11 @@ public class RoadRunnerSim {
                                     .build()
                     );
 //endregion
-        roadRunnerSim.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK).setDarkMode(true).setBackgroundAlpha(0.95f).addEntity(myBot).start();
+        Image img = null;
+        try { img = ImageIO.read(new File("/Users/monroerobotics/Documents/Into The Deep.png")); }
+        catch (IOException e) {}
+
+        roadRunnerSim.setBackground(img).setDarkMode(true).addEntity(myBot).start();
 //  <following code you were using previously>
         /*roadRunnerSim.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
                 .setDarkMode(true)
