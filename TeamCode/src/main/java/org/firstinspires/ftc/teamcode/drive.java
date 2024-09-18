@@ -18,8 +18,12 @@ public class drive extends OpMode{
 
 
 
-    Gamepad currentGamepad1 = new Gamepad();
-    Gamepad previousGamepad1 = new Gamepad();
+    Gamepad currentGamepad1;
+    Gamepad previousGamepad1;
+
+    Gamepad currentGamepad2;
+    Gamepad previousGamepad2;
+
     MecanumDrive drive;
     Vector2d position = new Vector2d(0,0);
     Pose2d pose = new Pose2d(position, 90);
@@ -34,8 +38,15 @@ public class drive extends OpMode{
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         drive = new MecanumDrive(hardwareMap,pose);
 
+        currentGamepad1 = new Gamepad();
+        previousGamepad1 = new Gamepad();
+        currentGamepad2 = new Gamepad();
+        previousGamepad2 = new Gamepad();
+
         currentGamepad1 = gamepad1;
         previousGamepad1 = gamepad1;
+        currentGamepad2 = gamepad2;
+        previousGamepad2 = gamepad2;
 
         cameraThing = new cameraThing(hardwareMap);
         cameraThing.initCam();
