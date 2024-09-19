@@ -41,7 +41,6 @@ public class cameraThing{
                  */
             }
         });
-        // dont' trust this v
     }
     /*public void pipeline extends Object OpenCvPipeline{
             final Mat grey = new Mat();

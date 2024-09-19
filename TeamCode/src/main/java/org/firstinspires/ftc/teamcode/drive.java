@@ -32,7 +32,7 @@ public class drive extends OpMode{
     double xPower;
     double yPower;
     double headingPower;
-    org.firstinspires.ftc.teamcode.vision.cameraThing cameraThing;
+    cameraThing cameraThing;
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
