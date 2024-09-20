@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.vision.cameraThing;
 
-@TeleOp
+@TeleOp (name = "cameraTest", group = "Main")
 public class cameraTest extends OpMode {
 
     cameraThing camera;
