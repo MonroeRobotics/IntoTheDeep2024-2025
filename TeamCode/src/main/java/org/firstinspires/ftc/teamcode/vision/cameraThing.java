@@ -1,16 +1,21 @@
 package org.firstinspires.ftc.teamcode.vision;
 
+import android.graphics.Canvas;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.vision.VisionProcessor;
+import org.opencv.core.Mat;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Config
-public class cameraThing{
+public class cameraThing implements VisionProcessor {
     HardwareMap hardwareMap;
     int cameraMonitorViewId;
     WebcamName webcamName;
@@ -41,7 +46,21 @@ public class cameraThing{
                  */
             }
         });
-        // dont' trust this v
+    }
+
+    @Override
+    public void init(int width, int height, CameraCalibration calibration) {
+
+    }
+
+    @Override
+    public Object processFrame(Mat frame, long captureTimeNanos) {
+        return null;
+    }
+
+    @Override
+    public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
+
     }
     /*public void pipeline extends Object OpenCvPipeline{
             final Mat grey = new Mat();
