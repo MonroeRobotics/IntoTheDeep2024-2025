@@ -12,6 +12,7 @@ public class blueAuto extends LinearOpMode {
 
     //region Auto Timer variables
     public  static double SPECIMEN_PLACEMENT_TIME;
+    public static double BUCKET_DROP_TIME;
     public static double INTAKE_TIME;
     public static double HUMAN_PLAYER_WAIT_TIME;
     public static double ERROR_THRESHOLD = 10;
