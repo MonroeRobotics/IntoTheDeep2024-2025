@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name = "CR Servo Rotate", group = "Main")
+@TeleOp(name = "Intake Test", group = "Main")
 public class intakeTest extends OpMode {
 
     Gamepad gamepad;
