@@ -43,10 +43,17 @@ public class intakeTest extends OpMode {
             crServo.setPower(servoOutake);
         }
         if (gamepad.a){
-            clawServo.setPosition(.4);
+            clawServo.setPosition(.38);
+        }
+        if (gamepad.right_trigger > .1){
+            clawServo.setPosition(.3);
         }
         if (gamepad.b){
             clawServo.setPosition(.7);
+        }
+        if (gamepad.ps){
+            motor.setPower(0.0);
+            crServo.setPower(0.0);
         }
 
     }
