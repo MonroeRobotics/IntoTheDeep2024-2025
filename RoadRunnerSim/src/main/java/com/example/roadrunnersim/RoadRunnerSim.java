@@ -18,18 +18,19 @@ public class RoadRunnerSim {
         Pose2d redSampleCollect = new Pose2d(30,0, Math.toRadians(180));
         Pose2d redStart = new Pose2d(60,0,Math.toRadians(180));
         Pose2d redSample = new Pose2d(28,46,Math.toRadians(180));
-        Pose2d redObservationDeck = new Pose2d(49,52,Math.toRadians(360));
+        Pose2d redHumanPlayer = new Pose2d(49,52,Math.toRadians(180));
         Pose2d redBasket = new Pose2d(52,-54,Math.toRadians(130));
         Pose2d redBasketReturn = new Pose2d(55,0,Math.toRadians(130));
         Pose2d redCollectBackUp = new Pose2d(35,0, Math.toRadians(180));
         Pose2d redHang = new Pose2d(0,-27,Math.toRadians(270));
-        Pose2d blueSampleCollect = new Pose2d(-30,0, Math.toRadians(0));
+
+        Pose2d blueSubmersible = new Pose2d(-30,0, Math.toRadians(0));
         Pose2d blueStart = new Pose2d(-60,0,Math.toRadians(180));
-        Pose2d blueSample = new Pose2d(-28,-46,Math.toRadians(180));
-        Pose2d blueObservationDeck = new Pose2d(-49,-52,Math.toRadians(360));
-        Pose2d blueBasket = new Pose2d(-52,54,Math.toRadians(130));
+        Pose2d blueSample = new Pose2d(-28,-46,Math.toRadians(0));
+        Pose2d blueHumanPlayer = new Pose2d(-49,-52,Math.toRadians(360));
+        Pose2d blueBasket = new Pose2d(-52,54,Math.toRadians(-45));
         Pose2d blueBasketReturn = new Pose2d(-55,0,Math.toRadians(130));
-        Pose2d blueCollectBackUp = new Pose2d(-35,0, Math.toRadians(180));
+        Pose2d blueCollectBackUp = new Pose2d(-35,0, Math.toRadians(0));
         Pose2d blueHang = new Pose2d(0,27,Math.toRadians(270));
 
 
@@ -52,7 +53,7 @@ public class RoadRunnerSim {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(60, 0, Math.PI))
                                 .lineToLinearHeading(redSample)
-                                .lineToLinearHeading(redObservationDeck)
+                                .lineToLinearHeading(redHumanPlayer)
                                 .lineToLinearHeading(redSampleCollect)
                                 .build()
                 );
@@ -60,10 +61,10 @@ public class RoadRunnerSim {
         RoadRunnerBotEntity blueBot1 = defaultBotBuilder
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(-60, 0, Math.toRadians(0)))
-                                .lineToLinearHeading(blueSampleCollect)
+                                .lineToLinearHeading(blueSubmersible)
                                 .lineToLinearHeading(blueCollectBackUp)
                                 .lineToLinearHeading(blueBasket)
-                                .lineToLinearHeading(blueSampleCollect)
+                                .lineToLinearHeading(blueSubmersible)
                                 .build()
                 );
         defaultBotBuilder.setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15);// Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
@@ -71,8 +72,8 @@ public class RoadRunnerSim {
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(-60, 0, Math.toRadians(0)))
                                 .lineToLinearHeading(blueSample)
-                                .lineToLinearHeading(blueObservationDeck)
-                                .lineToLinearHeading(blueSampleCollect)
+                                .lineToLinearHeading(blueHumanPlayer)
+                                .lineToLinearHeading(blueSubmersible)
                                 .build()
                 );
 //endregion
