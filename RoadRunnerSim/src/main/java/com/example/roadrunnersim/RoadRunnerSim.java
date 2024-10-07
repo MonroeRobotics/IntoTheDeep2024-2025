@@ -26,7 +26,9 @@ public class RoadRunnerSim {
 
         Pose2d blueSubmersible = new Pose2d(-30,0, Math.toRadians(0));
         Pose2d blueStart = new Pose2d(-60,0,Math.toRadians(180));
-        Pose2d blueSample = new Pose2d(-28,-46,Math.toRadians(0));
+        Pose2d blueSample1 = new Pose2d(-28,-46,Math.toRadians(0));
+        Pose2d blueSample2 = new Pose2d(-28, -58,Math.toRadians(0));
+        Pose2d blueSample3 = new Pose2d(-28, -68,Math.toRadians(0));
         Pose2d blueHumanPlayer = new Pose2d(-49,-52,Math.toRadians(360));
         Pose2d blueBasket = new Pose2d(-52,54,Math.toRadians(-45));
         Pose2d blueBasketReturn = new Pose2d(-55,0,Math.toRadians(130));
@@ -71,9 +73,30 @@ public class RoadRunnerSim {
         RoadRunnerBotEntity blueBot2 = defaultBotBuilder
                 .followTrajectorySequence(drive ->
                         drive.trajectorySequenceBuilder(new Pose2d(-60, 0, Math.toRadians(0)))
-                                .lineToLinearHeading(blueSample)
+                                .lineToLinearHeading(blueSample1)
                                 .lineToLinearHeading(blueHumanPlayer)
                                 .lineToLinearHeading(blueSubmersible)
+                                .build()
+                );
+        defaultBotBuilder.setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15);// Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
+        RoadRunnerBotEntity autoPath = defaultBotBuilder
+                .followTrajectorySequence(drive ->
+                        drive.trajectorySequenceBuilder(new Pose2d(-60, 0, Math.toRadians(0)))
+                                .lineToLinearHeading(blueBasket)
+                                .lineToLinearHeading(blueSample1)
+                                .lineToLinearHeading(blueHumanPlayer)
+                                .lineToLinearHeading(blueSample2)
+                                .lineToLinearHeading(blueHumanPlayer)
+                                .lineToLinearHeading(blueSample3)
+                                .lineToLinearHeading(blueHumanPlayer)
+                                .lineToLinearHeading(blueSubmersible)
+                                .lineToLinearHeading(blueBasket)
+                                .lineToLinearHeading(blueSubmersible)
+                                .lineToLinearHeading(blueBasket)
+                                .lineToLinearHeading(blueSubmersible)
+                                .lineToLinearHeading(blueBasket)
+                                .lineToLinearHeading(blueSubmersible)
+                                .lineToLinearHeading(blueBasket)
                                 .build()
                 );
 //endregion
@@ -81,7 +104,7 @@ public class RoadRunnerSim {
         try { img = ImageIO.read(new File("/Users/monroerobotics/Documents/Into The Deep.png")); }
         catch (IOException e) {}
 
-        roadRunnerSim.setBackground(img).setDarkMode(true).addEntity(redBot1).addEntity(redBot2).addEntity(blueBot1).addEntity(blueBot2).start();
+        roadRunnerSim.setBackground(img).setDarkMode(true).addEntity(autoPath).start();
 
 //  <following code you were using previously>
         /*roadRunnerSim.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
