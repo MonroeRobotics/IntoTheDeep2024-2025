@@ -14,8 +14,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.vision.cameraThing;
-
 @TeleOp(name="drive", group="main")
 public class drive extends OpMode{
 
@@ -47,7 +45,7 @@ public class drive extends OpMode{
     double yPower;
     double headingPower;
 
-    double intakeTarget;
+    double intakeExtensionTarget;
     int leftSlideTarget;
     int rightSlideTarget;
 
@@ -70,9 +68,16 @@ public class drive extends OpMode{
 
         //cameraThing = new cameraThing(hardwareMap);
         //cameraThing.initCam();
+        intakeExtension = hardwareMap.get(Servo.class, "intakeExtension");
+        intake0 = hardwareMap.get(CRServo.class, "intake0");
+        intake1 = hardwareMap.get(CRServo.class, "intake1");
+
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
-        intakeExtension = hardwareMap.get(Servo.class, "intakeExtension");
+
+        armAngleL = hardwareMap.get(Servo.class, "armAngleL");
+        armAngleR = hardwareMap.get(Servo.class, "armAngleR");
+        claw = hardwareMap.get(Servo.class, "claw");
 
         leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -82,7 +87,7 @@ public class drive extends OpMode{
         leftSlide.setPower(drivePower);
         rightSlide.setPower(drivePower);
 
-        intakeTarget = intakeExtension.getPosition();
+        intakeExtension.setPosition(.0);
         leftSlideTarget = leftSlide.getCurrentPosition();
         rightSlideTarget = rightSlide.getCurrentPosition();
     }
@@ -124,11 +129,15 @@ public class drive extends OpMode{
             drivePower = .8;
         }
 
-        if (currentGamepad2.dpad_left && !previousGamepad2.dpad_left){
-            intakeTarget +=.05;
+
+        intakeExtensionTarget = intakeExtension.getPosition();
+        if (currentGamepad2.a && !previousGamepad2.a){
+            intakeExtensionTarget +=.05;
+            intakeExtension.setPosition(intakeExtensionTarget);
         }
-        if (currentGamepad2.dpad_right && !previousGamepad2.dpad_right){
-            intakeTarget -=.05;
+        if (currentGamepad2.b && !previousGamepad2.b){
+            intakeExtensionTarget -=.05;
+            intakeExtension.setPosition(intakeExtensionTarget);
         }
 
         if (currentGamepad2.dpad_up){
@@ -147,8 +156,6 @@ public class drive extends OpMode{
         rightSlide.setTargetPosition(rightSlideTarget);
         leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        intakeExtension.setPosition(intakeTarget);
 
         //drive.setDrivePowers(poseVelocity2d);
         /*telemetry.addData("xPower", xPower);
