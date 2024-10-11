@@ -130,7 +130,6 @@ public class drive extends OpMode{
         }
 
 
-        intakeExtensionTarget = intakeExtension.getPosition();
         if (currentGamepad2.a && !previousGamepad2.a){
             intakeExtensionTarget +=.05;
             intakeExtension.setPosition(intakeExtensionTarget);
@@ -145,6 +144,14 @@ public class drive extends OpMode{
             rightSlideTarget +=10;
         }
         if (currentGamepad2.dpad_down){
+            leftSlideTarget -=10;
+            rightSlideTarget -=10;
+        }
+        if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
+            leftSlideTarget +=10;
+            rightSlideTarget +=10;
+        }
+        if(currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
             leftSlideTarget -=10;
             rightSlideTarget -=10;
         }
