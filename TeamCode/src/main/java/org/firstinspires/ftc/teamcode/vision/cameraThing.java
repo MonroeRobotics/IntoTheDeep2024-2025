@@ -76,18 +76,18 @@ public class cameraThing implements VisionProcessor {
         height =480;
     }
 
-    @Override
+    //@Override
     public Object processFrame(Mat frame, long captureTimeNanos){
         //changes Mat input from RGB to HSV and saves to Mat HSV
-        Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2HSV);
+        //Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2HSV);
 
         //creates center sqaure
-        Rect centerScreen = new Rect(width/2 - width/8, height - height/4, width/4, height/4);
+        //Rect centerScreen = new Rect(width/2 - width/8, height - height/4, width/4, height/4);
 
 
-        cropC = input.submat(centerScreen);
+        //cropC = input.submat(centerScreen);
 
-        Imgproc.rectangle(input, centerScreen, new Scalar(50,180,180));
+        //Imgproc.rectangle(input, centerScreen, new Scalar(50,180,180));
 
         return null; // No context object
     }
