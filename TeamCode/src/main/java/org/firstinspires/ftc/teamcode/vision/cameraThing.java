@@ -6,10 +6,13 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -20,6 +23,25 @@ public class cameraThing implements VisionProcessor {
     int cameraMonitorViewId;
     WebcamName webcamName;
     OpenCvCamera camera;
+
+    Scalar lowHSV;
+    Scalar highHSV;
+
+    Telemetry telemetry;
+    Mat cropC = new Mat();
+    int width = 640;
+    int height = 480;
+
+    public Scalar getLowHSV() {
+        return lowHSV;
+    }
+
+    public Scalar getHighHSV() {
+        return highHSV;
+    }
+
+    double[] currentValues;
+    Scalar currentScalar;
 
     public cameraThing (HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
@@ -50,12 +72,24 @@ public class cameraThing implements VisionProcessor {
 
     @Override
     public void init(int width, int height, CameraCalibration calibration) {
-
+        width = 640;
+        height =480;
     }
 
     @Override
-    public Object processFrame(Mat frame, long captureTimeNanos) {
-        return null;
+    public Object processFrame(Mat frame, long captureTimeNanos){
+        //changes Mat input from RGB to HSV and saves to Mat HSV
+        Imgproc.cvtColor(input, input, Imgproc.COLOR_RGB2HSV);
+
+        //creates center sqaure
+        Rect centerScreen = new Rect(width/2 - width/8, height - height/4, width/4, height/4);
+
+
+        cropC = input.submat(centerScreen);
+
+        Imgproc.rectangle(input, centerScreen, new Scalar(50,180,180));
+
+        return null; // No context object
     }
 
     @Override
