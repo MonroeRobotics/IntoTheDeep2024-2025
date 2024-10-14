@@ -64,6 +64,8 @@ public class drive extends OpMode{
 
     double intakeExtensionTarget;
     int slideTarget;
+    double intakeLTarget;
+    double intakeRTarget;
 
     double highBucketHeight;
     //cameraThing cameraThing;
@@ -80,15 +82,15 @@ public class drive extends OpMode{
         //cameraThing = new cameraThing(hardwareMap);
         //cameraThing.initCam();
         extendoL = hardwareMap.get(Servo.class, "intakeExtension");
-        //intake0 = hardwareMap.get(CRServo.class, "intake0");
-        //intake1 = hardwareMap.get(CRServo.class, "intake1");
+        intakeL = hardwareMap.get(CRServo.class, "intake0");
+        intakeR = hardwareMap.get(CRServo.class, "intake1");
 
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
 
-        /*armAngleL = hardwareMap.get(Servo.class, "armAngleL");
+        armAngleL = hardwareMap.get(Servo.class, "armAngleL");
         armAngleR = hardwareMap.get(Servo.class, "armAngleR");
-        claw = hardwareMap.get(Servo.class, "claw");*/
+        claw = hardwareMap.get(Servo.class, "claw");
 
         leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -98,7 +100,7 @@ public class drive extends OpMode{
         leftSlide.setPower(drivePower);
         rightSlide.setPower(drivePower);
 
-        extendoL.setPosition(1.0);
+        //extendoL.setPosition(1.0);
         slideTarget = leftSlide.getCurrentPosition();
     }
 
@@ -169,6 +171,11 @@ public class drive extends OpMode{
             if (slideTarget <0){
                 slideTarget = 0;
             }
+        }
+
+        if(currentGamepad2.dpad_left && currentGamepad2.dpad_left){
+            intakeL.setPosition(intakeLTarget);
+            intakeR.setPosition(intakeRTarget);
         }
 
         Vector2d gamepadInput = new Vector2d(xPower, yPower);
