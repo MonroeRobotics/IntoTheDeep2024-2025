@@ -19,21 +19,38 @@ public class drive extends OpMode{
 
 
 
-
+    //region Gamepads
     Gamepad currentGamepad1;
     Gamepad previousGamepad1;
 
     Gamepad currentGamepad2;
     Gamepad previousGamepad2;
+    //endregion
 
-    CRServo intake0;
-    CRServo intake1;
-    Servo intakeExtension;
+    //region Extendo
+    Servo extendoL;
+    Servo extendoR;
+    //endregion
+
+    //region Intake
+    CRServo intakeL;
+    CRServo intakeR;
+    //endregion
+
+    //region Arm
     Servo armAngleL;
     Servo armAngleR;
+    //endregion
+
+    //region Claw
     Servo claw;
+    Servo clawAngle;
+    //endregion
+
+    //region Arm Slides
     DcMotor leftSlide;
     DcMotor rightSlide;
+    //endregion
 
 
     //MecanumDrive drive;
@@ -62,7 +79,7 @@ public class drive extends OpMode{
 
         //cameraThing = new cameraThing(hardwareMap);
         //cameraThing.initCam();
-        intakeExtension = hardwareMap.get(Servo.class, "intakeExtension");
+        extendoL = hardwareMap.get(Servo.class, "intakeExtension");
         //intake0 = hardwareMap.get(CRServo.class, "intake0");
         //intake1 = hardwareMap.get(CRServo.class, "intake1");
 
@@ -81,7 +98,7 @@ public class drive extends OpMode{
         leftSlide.setPower(drivePower);
         rightSlide.setPower(drivePower);
 
-        intakeExtension.setPosition(1.0);
+        extendoL.setPosition(1.0);
         slideTarget = leftSlide.getCurrentPosition();
     }
 
@@ -128,14 +145,14 @@ public class drive extends OpMode{
             if(intakeExtensionTarget>1.0){
                 intakeExtensionTarget=1.0;
             }
-            intakeExtension.setPosition(intakeExtensionTarget);
+            extendoL.setPosition(intakeExtensionTarget);
         }
         if (currentGamepad2.b && !previousGamepad2.b){
             intakeExtensionTarget -=.05;
             if (intakeExtensionTarget <0){
                 intakeExtensionTarget =0.0;
             }
-            intakeExtension.setPosition(intakeExtensionTarget);
+            extendoL.setPosition(intakeExtensionTarget);
         }
 
         if (currentGamepad2.dpad_up){
@@ -169,7 +186,7 @@ public class drive extends OpMode{
         telemetry.addData("leftStick x", currentGamepad1.left_stick_x);
         telemetry.addData("lefStick y", currentGamepad1.left_stick_y);
         telemetry.addData("rightStick x", currentGamepad1.right_stick_x);*/
-        telemetry.addData("intake servo pos", intakeExtension.getPosition());
+        telemetry.addData("intake servo pos", extendoL.getPosition());
         telemetry.addData("intake target", intakeExtensionTarget);
         telemetry.addData("leftSlide Target", leftSlide.getTargetPosition());
         telemetry.addData("leftSlide", leftSlide.getCurrentPosition());
