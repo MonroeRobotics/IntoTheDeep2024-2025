@@ -88,8 +88,8 @@ public class drive extends OpMode{
         //cameraThing.initCam();
         extendoL = hardwareMap.get(Servo.class, "extendoL");
         //extendoR = hardwareMap.get(Servo.class, "extendoR");
-        //intakeL = hardwareMap.get(CRServo.class, "intakeL");
-        //intakeR = hardwareMap.get(CRServo.class, "intakeR");
+        intakeL = hardwareMap.get(CRServo.class, "intakeL");
+        intakeR = hardwareMap.get(CRServo.class, "intakeR");
         //intakeAngleL = hardwareMap.get(Servo.class, "intakeAngleL");
         //intakeAngleR = hardwareMap.get(Servo.class, "intakeAngleR");
 
@@ -115,6 +115,7 @@ public class drive extends OpMode{
 
         //extendoR.setDirection(Servo.Direction.REVERSE);
         //intakeAngleR.setDirection(Servo.Direction.REVERSE);
+        intakeR.setDirection(DcMotorSimple.Direction.REVERSE);
         //armAngleR.setDirection(Servo.Direction.REVERSE);
     }
 
@@ -160,7 +161,7 @@ public class drive extends OpMode{
 
         //region slides
         if (currentGamepad2.dpad_up){
-            slideTarget = 1950;
+            slideTarget = 1900;
         }
         if (currentGamepad2.dpad_down){
             slideTarget = 10;
@@ -180,8 +181,9 @@ public class drive extends OpMode{
         }*/
         //endregion
 
-        //region extendo
-        if(currentGamepad2.dpad_left && !previousGamepad2.dpad_left) {
+        //region extendo for testing
+        /*
+        if(currentGamepad2.dpad_left && currentGamepad2.ps && !previousGamepad2.dpad_left) {
             extendoTarget += .05;
             extendoL.setPosition(extendoTarget);
             //extendoR.setPosition(extendoTarget);
@@ -189,7 +191,7 @@ public class drive extends OpMode{
                 extendoTarget = 1.0;
             }
         }
-        if(currentGamepad2.dpad_right && !previousGamepad2.dpad_right){
+        if(currentGamepad2.dpad_right && currentGamepad2.ps && !previousGamepad2.dpad_right){
             extendoTarget -=.05;
             extendoL.setPosition(extendoTarget);
             //extendoR.setPosition(extendoTarget);
@@ -197,10 +199,20 @@ public class drive extends OpMode{
                 extendoTarget=0;
             }
         }
+        if(currentGamepad2.dpad_left){
+            extendoTarget = 1.0;
+            extendoL.setPosition(extendoTarget);
+        }
+        if(currentGamepad2.dpad_right){
+            extendoTarget = .8;
+            extendoL.setPosition(extendoTarget);
+        }
+
+         */
         //endregion
 
-        //region intakeAngle
-        /*
+        //region intakeAngle for testing
+
         if(currentGamepad2.a && !previousGamepad2.a){
             intakeAngleTarget -=.05;
             if(intakeAngleTarget<0.0){
@@ -218,12 +230,30 @@ public class drive extends OpMode{
             intakeAngleR.setPosition(intakeAngleTarget);
         }
 
+
+        //endregion fo
+
+        //region CRServos for testing
+        /*
+        if(currentGamepad2.right_bumper){
+            intakeL.setPower(-1.0);
+            intakeR.setPower(-1.0);
+        }
+        if(currentGamepad2.left_bumper){
+            intakeL.setPower(1.0);
+            intakeR.setPower(1.0);
+        }
+        if(currentGamepad2.ps){
+            intakeL.setPower(0.0);
+            intakeR.setPower(0.0);
+        }
+
          */
         //endregion
 
         //region armAngle
-        /*
-        if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
+
+        if(currentGamepad2.y && !previousGamepad2.y){
             armAngleTarget += .05;
             if(armAngleTarget>1.0){
                 armAngleTarget=1.0;
@@ -231,7 +261,7 @@ public class drive extends OpMode{
             armAngleL.setPosition(armAngleTarget);
             armAngleR.setPosition(armAngleTarget);
         }
-        if(currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
+        if(currentGamepad2.x && !previousGamepad2.x){
             armAngleTarget -= .05;
             if(armAngleTarget<0.0){
                 armAngleTarget =0.0;
@@ -240,7 +270,29 @@ public class drive extends OpMode{
             armAngleR.setPosition(armAngleTarget);
         }
 
-         */
+        //endregion
+
+        //region Full intake motion
+        if(currentGamepad2.right_bumper){
+            extendoTarget=.8;
+            extendoL.setPosition(extendoTarget);
+            //extendoR.setPosition(extendoTarget);
+            //intakeAngleTarget = number;
+            //intakeAngleL.setPosition(intakeAngleTarget);
+            //intakeAngleR.setPosition(intakeAngleTarget);
+            intakeL.setPower(-1.0);
+            intakeR.setPower(-1.0);
+        }
+        if(currentGamepad2.left_bumper){
+            extendoTarget=1.0;
+            extendoL.setPosition(extendoTarget);
+            //extendoR.setPosition(extendoTarget);
+            //intakeAngleTarget = number;
+            //intakeAngleL.setPosition(intakeAngleTarget);
+            //intakeAngleR.setPosition(intakeAngleTarget);
+            intakeL.setPower(0.0);
+            intakeR.setPower(0.0);
+        }
         //endregion
 
         Vector2d gamepadInput = new Vector2d(xPower, yPower);
@@ -257,10 +309,18 @@ public class drive extends OpMode{
         telemetry.addData("extendo target", extendoTarget);
         telemetry.addData("extendoL servo pos", extendoL.getPosition());
         //telemetry.addData("extendoR servo pos", extendoR.getPosition());
+        /*telemetry.addData("intakeAngleTarget", intakeAngleTarget);
+        telemetry.addData("intakeAngleL", intakeAngleL.getPosition());
+        telemetry.addData("intakeAngleR", intakeAngleR.getPosition());
+        */
         telemetry.addData("leftSlide Target", leftSlide.getTargetPosition());
         telemetry.addData("leftSlide", leftSlide.getCurrentPosition());
         telemetry.addData("rightSLide Target", rightSlide.getTargetPosition());
         telemetry.addData("rightSlide", rightSlide.getCurrentPosition());
+        /*telemetry.addData("armAngelTarget", armAngleTarget);
+        telemetry.addData("armAngleL", armAngleL.getPosition());
+        telemetry.addData("armAngleR", armAngleR.getPosition());
+        */
 
         previousGamepad1.copy(currentGamepad1);
         previousGamepad2.copy(currentGamepad2);
