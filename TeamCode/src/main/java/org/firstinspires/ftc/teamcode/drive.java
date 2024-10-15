@@ -32,9 +32,14 @@ public class drive extends OpMode{
     Servo extendoR;
     //endregion
 
-    //region Intake
+    //region Intake CRServos
     CRServo intakeL;
     CRServo intakeR;
+    //endregion
+
+    //region Intake angle
+    Servo intakeAngleL;
+    Servo intakeAngleR;
     //endregion
 
     //region Arm
@@ -62,10 +67,8 @@ public class drive extends OpMode{
     double yPower;
     double headingPower;
 
-    double intakeExtensionTarget;
     int slideTarget;
-    double intakeLTarget;
-    double intakeRTarget;
+    double extendoTarget;
 
     double highBucketHeight;
     //cameraThing cameraThing;
@@ -81,9 +84,12 @@ public class drive extends OpMode{
 
         //cameraThing = new cameraThing(hardwareMap);
         //cameraThing.initCam();
-        extendoL = hardwareMap.get(Servo.class, "intakeExtension");
-        intakeL = hardwareMap.get(CRServo.class, "intake0");
-        intakeR = hardwareMap.get(CRServo.class, "intake1");
+        extendoL = hardwareMap.get(Servo.class, "extendoL");
+        extendoR = hardwareMap.get(Servo.class, "extendoR");
+        intakeL = hardwareMap.get(CRServo.class, "intakeL");
+        intakeR = hardwareMap.get(CRServo.class, "intakeR");
+        intakeAngleL = hardwareMap.get(Servo.class, "intakeAngleL");
+        intakeAngleR = hardwareMap.get(Servo.class, "intakeAngleR");
 
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
@@ -91,6 +97,7 @@ public class drive extends OpMode{
         armAngleL = hardwareMap.get(Servo.class, "armAngleL");
         armAngleR = hardwareMap.get(Servo.class, "armAngleR");
         claw = hardwareMap.get(Servo.class, "claw");
+        clawAngle = hardwareMap.get(Servo.class, "servoAngle");
 
         leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -102,10 +109,13 @@ public class drive extends OpMode{
 
         //extendoL.setPosition(1.0);
         slideTarget = leftSlide.getCurrentPosition();
+
+        extendoR.setDirection(Servo.Direction.REVERSE);
     }
 
     @Override
     public void loop() {
+        //region drive
         xPower = -currentGamepad1.left_stick_y;
         yPower = -currentGamepad1.left_stick_x;
         headingPower = -currentGamepad1.right_stick_x;
@@ -140,30 +150,21 @@ public class drive extends OpMode{
         } else{
             drivePower = .8;
         }
+        //endregion
 
 
-        if (currentGamepad2.a && !previousGamepad2.a){
-            intakeExtensionTarget +=.05;
-            if(intakeExtensionTarget>1.0){
-                intakeExtensionTarget=1.0;
-            }
-            extendoL.setPosition(intakeExtensionTarget);
-        }
-        if (currentGamepad2.b && !previousGamepad2.b){
-            intakeExtensionTarget -=.05;
-            if (intakeExtensionTarget <0){
-                intakeExtensionTarget =0.0;
-            }
-            extendoL.setPosition(intakeExtensionTarget);
-        }
-
+        //region slides
         if (currentGamepad2.dpad_up){
             slideTarget = 1950;
         }
         if (currentGamepad2.dpad_down){
             slideTarget = 10;
         }
-        if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
+        leftSlide.setTargetPosition(slideTarget);
+        rightSlide.setTargetPosition(slideTarget);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        /*if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
             slideTarget +=10;
         }
         if(currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
@@ -171,20 +172,31 @@ public class drive extends OpMode{
             if (slideTarget <0){
                 slideTarget = 0;
             }
-        }
+        }*/
+        //endregion
 
-        if(currentGamepad2.dpad_left && currentGamepad2.dpad_left){
-            intakeL.setPosition(intakeLTarget);
-            intakeR.setPosition(intakeRTarget);
+        //region extendo
+        if(currentGamepad2.dpad_left && !previousGamepad2.dpad_left) {
+            extendoTarget += .05;
+            extendoL.setPosition(extendoTarget);
+            extendoR.setPosition(extendoTarget);
+            if (extendoTarget > 1.0) {
+                extendoTarget = 1.0;
+            }
         }
+        if(currentGamepad2.dpad_right && !previousGamepad2.dpad_right){
+            extendoTarget -=.05;
+            extendoL.setPosition(extendoTarget);
+            extendoR.setPosition(extendoTarget);
+            if(extendoTarget<0.0){
+                extendoTarget=0;
+            }
+        }
+        //endregion
 
         Vector2d gamepadInput = new Vector2d(xPower, yPower);
         PoseVelocity2d poseVelocity2d = new PoseVelocity2d(gamepadInput, headingPower);
 
-        leftSlide.setTargetPosition(slideTarget);
-        rightSlide.setTargetPosition(slideTarget);
-        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         //drive.setDrivePowers(poseVelocity2d);
         /*telemetry.addData("xPower", xPower);
@@ -193,8 +205,9 @@ public class drive extends OpMode{
         telemetry.addData("leftStick x", currentGamepad1.left_stick_x);
         telemetry.addData("lefStick y", currentGamepad1.left_stick_y);
         telemetry.addData("rightStick x", currentGamepad1.right_stick_x);*/
-        telemetry.addData("intake servo pos", extendoL.getPosition());
-        telemetry.addData("intake target", intakeExtensionTarget);
+        telemetry.addData("extendo target", extendoTarget);
+        telemetry.addData("extendoL servo pos", extendoL.getPosition());
+        telemetry.addData("extendoR servo pos", extendoR.getPosition());
         telemetry.addData("leftSlide Target", leftSlide.getTargetPosition());
         telemetry.addData("leftSlide", leftSlide.getCurrentPosition());
         telemetry.addData("rightSLide Target", rightSlide.getTargetPosition());
