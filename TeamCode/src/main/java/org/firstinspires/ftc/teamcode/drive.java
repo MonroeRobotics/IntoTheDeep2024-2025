@@ -33,8 +33,8 @@ public class drive extends OpMode{
     //endregion
 
     //region Intake CRServos
-    CRServo intakeL;
-    CRServo intakeR;
+    //CRServo intakeL;
+    //CRServo intakeR;
     //endregion
 
     //region Intake angle
@@ -88,10 +88,10 @@ public class drive extends OpMode{
         //cameraThing.initCam();
         extendoL = hardwareMap.get(Servo.class, "extendoL");
         //extendoR = hardwareMap.get(Servo.class, "extendoR");
-        intakeL = hardwareMap.get(CRServo.class, "intakeL");
-        intakeR = hardwareMap.get(CRServo.class, "intakeR");
-        //intakeAngleL = hardwareMap.get(Servo.class, "intakeAngleL");
-        //intakeAngleR = hardwareMap.get(Servo.class, "intakeAngleR");
+        //intakeL = hardwareMap.get(CRServo.class, "intakeL");
+        //intakeR = hardwareMap.get(CRServo.class, "intakeR");
+        intakeAngleL = hardwareMap.get(Servo.class, "intakeAngleL");
+        intakeAngleR = hardwareMap.get(Servo.class, "intakeAngleR");
 
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
@@ -111,12 +111,17 @@ public class drive extends OpMode{
 
         extendoTarget=1.0;
         extendoL.setPosition(extendoTarget);
+
         slideTarget = leftSlide.getCurrentPosition();
 
         //extendoR.setDirection(Servo.Direction.REVERSE);
-        //intakeAngleR.setDirection(Servo.Direction.REVERSE);
-        intakeR.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeAngleR.setDirection(Servo.Direction.REVERSE);
+        //intakeR.setDirection(DcMotorSimple.Direction.REVERSE);
         //armAngleR.setDirection(Servo.Direction.REVERSE);
+
+        intakeAngleTarget = 0.3;
+        intakeAngleL.setPosition(intakeAngleTarget);
+        intakeAngleR.setPosition(intakeAngleTarget);
     }
 
     @Override
@@ -216,7 +221,7 @@ public class drive extends OpMode{
         if(currentGamepad2.a && !previousGamepad2.a){
             intakeAngleTarget -=.05;
             if(intakeAngleTarget<0.0){
-                intakeAngleTarget=0;
+                intakeAngleTarget=0.0;
             }
             intakeAngleL.setPosition(intakeAngleTarget);
             intakeAngleR.setPosition(intakeAngleTarget);
@@ -231,7 +236,7 @@ public class drive extends OpMode{
         }
 
 
-        //endregion fo
+        //endregion
 
         //region CRServos for testing
         /*
@@ -277,21 +282,21 @@ public class drive extends OpMode{
             extendoTarget=.8;
             extendoL.setPosition(extendoTarget);
             //extendoR.setPosition(extendoTarget);
-            //intakeAngleTarget = number;
-            //intakeAngleL.setPosition(intakeAngleTarget);
-            //intakeAngleR.setPosition(intakeAngleTarget);
-            intakeL.setPower(-1.0);
-            intakeR.setPower(-1.0);
+            intakeAngleTarget = 0.45;
+            intakeAngleL.setPosition(intakeAngleTarget);
+            intakeAngleR.setPosition(intakeAngleTarget);
+            //intakeL.setPower(-1.0);
+            //intakeR.setPower(-1.0);
         }
         if(currentGamepad2.left_bumper){
             extendoTarget=1.0;
             extendoL.setPosition(extendoTarget);
             //extendoR.setPosition(extendoTarget);
-            //intakeAngleTarget = number;
-            //intakeAngleL.setPosition(intakeAngleTarget);
-            //intakeAngleR.setPosition(intakeAngleTarget);
-            intakeL.setPower(0.0);
-            intakeR.setPower(0.0);
+            intakeAngleTarget = 0.3;
+            intakeAngleL.setPosition(intakeAngleTarget);
+            intakeAngleR.setPosition(intakeAngleTarget);
+            //intakeL.setPower(0.0);
+            //intakeR.setPower(0.0);
         }
         //endregion
 
@@ -309,10 +314,11 @@ public class drive extends OpMode{
         telemetry.addData("extendo target", extendoTarget);
         telemetry.addData("extendoL servo pos", extendoL.getPosition());
         //telemetry.addData("extendoR servo pos", extendoR.getPosition());
-        /*telemetry.addData("intakeAngleTarget", intakeAngleTarget);
+
+        telemetry.addData("intakeAngleTarget", intakeAngleTarget);
         telemetry.addData("intakeAngleL", intakeAngleL.getPosition());
         telemetry.addData("intakeAngleR", intakeAngleR.getPosition());
-        */
+
         telemetry.addData("leftSlide Target", leftSlide.getTargetPosition());
         telemetry.addData("leftSlide", leftSlide.getCurrentPosition());
         telemetry.addData("rightSLide Target", rightSlide.getTargetPosition());
