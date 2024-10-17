@@ -273,6 +273,7 @@ public class drive extends OpMode{
             extendoTarget=.8;
             extendoL.setPosition(extendoTarget);
             //extendoR.setPosition(extendoTarget);
+            //this doesn't work yet
             if (extendoL.getPosition() <.9){
                 intakeAngleTarget = 0.45;
                 intakeAngleL.setPosition(intakeAngleTarget);
