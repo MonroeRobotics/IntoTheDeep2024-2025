@@ -75,6 +75,10 @@ public class drive extends OpMode{
 
     double highBucketHeight;
     //cameraThing cameraThing;
+
+    double intakeAngleTimer = 500;
+    double timer;
+
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -274,7 +278,10 @@ public class drive extends OpMode{
             extendoL.setPosition(extendoTarget);
             //extendoR.setPosition(extendoTarget);
             //this doesn't work yet
-            if (extendoL.getPosition() <.9){
+            if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper) {
+                timer = intakeAngleTimer + System.currentTimeMillis();
+            }
+            if (timer < System.currentTimeMillis()){
                 intakeAngleTarget = 0.45;
                 intakeAngleL.setPosition(intakeAngleTarget);
                 intakeAngleR.setPosition(intakeAngleTarget);
