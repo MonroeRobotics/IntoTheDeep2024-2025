@@ -76,7 +76,7 @@ public class drive extends OpMode{
     double highBucketHeight;
     //cameraThing cameraThing;
 
-    double intakeAngleTimer = 500;
+    double intakeAngleTimer = 300;
     double timer;
 
     @Override

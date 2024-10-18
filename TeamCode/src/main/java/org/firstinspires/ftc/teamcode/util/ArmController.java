@@ -46,12 +46,14 @@ public class ArmController {
     //endregion
 
     //region Arm Objects
-    Servo armServoRight;
-    Servo armServoLeft;
-    Servo clawServo;
-    CRServo intakeServo;
-    DcMotorEx rightLinear;
-    DcMotorEx leftLinear;
+    Servo extendoL;
+    Servo extendoR;
+    CRServo intakeL;
+    CRServo intakeR;
+    Servo intakeAngleL;
+    Servo intakeAngleR;
+    DcMotorEx rightSlide;
+    DcMotorEx leftSlide;
     //endregion
 
     public ArmController (HardwareMap hardwareMap){
@@ -62,43 +64,46 @@ public class ArmController {
         //region Arm Init
         //region Arm Hardware Map
 
-        armServoLeft = hardwareMap.get(Servo.class, "armServoLeft");
-        armServoRight = hardwareMap.get(Servo.class, "armServoRight");
-        clawServo = hardwareMap.get(Servo.class, "clawServo");
-        intakeServo = hardwareMap.get(CRServo.class,"outtakeServo");
-        leftLinear = hardwareMap.get(DcMotorEx.class ,"leftLinear");
-        rightLinear = hardwareMap.get(DcMotorEx.class, "rightLinear");
+        extendoL = hardwareMap.get(Servo.class, "extendoL");
+        //extendoR = hardwareMap.get(Servo.class, "extendoR");
+        intakeL = hardwareMap.get(CRServo.class, "intakeL");
+        intakeR = hardwareMap.get(CRServo.class, "intakeR");
+        intakeAngleL = hardwareMap.get(Servo.class, "intakeAngleL");
+        intakeAngleR = hardwareMap.get(Servo.class, "intakeAngleR");
+
+        leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
+        rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
 
         //endregion
 
         //region Arm Lift Motor Settings
         if(!AutoConfiguration.hasInitAuto) {
-            leftLinear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rightLinear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
 
-        leftLinear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightLinear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        rightLinear.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        leftLinear.setTargetPosition(SLIDE_HEIGHT);
-        rightLinear.setTargetPosition(SLIDE_HEIGHT);
+        leftSlide.setTargetPosition(SLIDE_HEIGHT);
+        rightSlide.setTargetPosition(SLIDE_HEIGHT);
 
-        leftLinear.setPower(SLIDE_POWER);
-        rightLinear.setPower(SLIDE_POWER);
+        leftSlide.setPower(SLIDE_POWER);
+        rightSlide.setPower(SLIDE_POWER);
 
-        leftLinear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightLinear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        leftLinear.setVelocity(SLIDE_MAX_VELO);
-        rightLinear.setVelocity(SLIDE_MAX_VELO);
+        leftSlide.setVelocity(SLIDE_MAX_VELO);
+        rightSlide.setVelocity(SLIDE_MAX_VELO);
         //endregion
 
         //region Initial Servo Pos
-        armServoLeft.setPosition(ARM_POSITION);
-        armServoRight.setPosition(1 - ARM_POSITION);
-        clawServo.setPosition(CLAW_SERVO_POSITION);
+        /*armServoLeft.setPosition(ARM_POSITION);
+        armServoRight.setPosition(ARM_POSITION);
+        clawServo.setPosition(CLAW_SERVO_POSITION);*/
         //endregion
 
         //endregion
@@ -117,7 +122,7 @@ public class ArmController {
     }
 
     public void setOuttakePower(double power){
-        intakeServo.setPower(power);
+        //intakeServo.setPower(power);
     }
 
 
@@ -126,13 +131,13 @@ public class ArmController {
             case INTAKE:
                 CLAW_SERVO_POSITION = CLAW_SERVO_FORWARD;
                 ARM_POSITION = ARM_SERVO_FORWARD;
-                intakeServo.setPower(0);
+                //intakeServo.setPower(0);
                 SLIDE_HEIGHT = 20;
                 break;
             case OUTTAKE_READY:
                 CLAW_SERVO_POSITION = CLAW_SERVO_BACKWARD;
                 ARM_POSITION = ARM_SERVO_BACKWARD;
-                intakeServo.setPower(0);
+               // intakeServo.setPower(0);
                 if (SLIDE_STAGE == 0) {
                     SLIDE_HEIGHT = 400;
                 }
@@ -183,59 +188,59 @@ public class ArmController {
     public void startOuttake(){
         if (outtakeTimer <= System.currentTimeMillis()) {
             outtakeTimer = System.currentTimeMillis() + OUTTAKE_TIME;
-            intakeServo.setPower(1);
+            //intakeServo.setPower(1);
         }
         else if (outtakeTimer >= System.currentTimeMillis() && outtakeTimer <= (System.currentTimeMillis() + (OUTTAKE_TIME * 2))){
             outtakeTimer += OUTTAKE_TIME;
-            intakeServo.setPower(1);
+            //intakeServo.setPower(1);
         }
     }
 
     public void checkOuttakeTimer(){
         if(outtakeTimer <= System.currentTimeMillis() && currentArmState == ArmState.OUTTAKE_READY){
-            intakeServo.setPower(0);
+            //intakeServo.setPower(0);
         }
     }
 
 
     public void updateArm(){
         //Sets Slides Arm and claw to respective positions as determined by the previous logic
-        leftLinear.setTargetPosition(SLIDE_HEIGHT);
-        rightLinear.setTargetPosition(SLIDE_HEIGHT);
+        leftSlide.setTargetPosition(SLIDE_HEIGHT);
+        rightSlide.setTargetPosition(SLIDE_HEIGHT);
 
-        armServoLeft.setPosition(ARM_POSITION);
-        armServoRight.setPosition(1 - ARM_POSITION);
+        //armServoLeft.setPosition(ARM_POSITION);
+        //armServoRight.setPosition(1 - ARM_POSITION);
 
-        if (currentArmState == ArmState.INTAKE && leftLinear.getCurrentPosition() <= SLIDE_HEIGHT_SERVO_TRANSITION){
-            clawServo.setPosition(CLAW_SERVO_POSITION);
+        if (currentArmState == ArmState.INTAKE && leftSlide.getCurrentPosition() <= SLIDE_HEIGHT_SERVO_TRANSITION){
+            //clawServo.setPosition(CLAW_SERVO_POSITION);
         }
         else if(currentArmState == ArmState.INTAKE) {
-            clawServo.setPosition(CLAW_SERVO_TRANSITION);
+            //clawServo.setPosition(CLAW_SERVO_TRANSITION);
         }
         else if(currentArmState != ArmState.INTAKE) {
-            clawServo.setPosition(CLAW_SERVO_POSITION);
+            //clawServo.setPosition(CLAW_SERVO_POSITION);
         }
         checkOuttakeTimer();
     }
 
     public void updateArmABS(){
         //Sets Slides Arm and claw to respective positions as determined by the previous logic
-        leftLinear.setTargetPosition(SLIDE_HEIGHT);
-        rightLinear.setTargetPosition(SLIDE_HEIGHT);
+        leftSlide.setTargetPosition(SLIDE_HEIGHT);
+        rightSlide.setTargetPosition(SLIDE_HEIGHT);
 
-        armServoLeft.setPosition(ARM_POSITION);
-        armServoRight.setPosition(1 - ARM_POSITION);
+        //armServoLeft.setPosition(ARM_POSITION);
+        //armServoRight.setPosition(1 - ARM_POSITION);
 
-        clawServo.setPosition(CLAW_SERVO_POSITION);
+        //clawServo.setPosition(CLAW_SERVO_POSITION);
     }
 
     public void resetSlideZero(){
 
-        leftLinear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightLinear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        leftLinear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        rightLinear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         setSlideHeight(0);
     }
