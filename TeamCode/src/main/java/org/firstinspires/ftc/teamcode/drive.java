@@ -101,10 +101,10 @@ public class drive extends OpMode{
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
 
-        //armAngleL = hardwareMap.get(Servo.class, "armAngleL");
-        //armAngleR = hardwareMap.get(Servo.class, "armAngleR");
-        //claw = hardwareMap.get(Servo.class, "claw");
-        //clawAngle = hardwareMap.get(Servo.class, "servoAngle");
+        armAngleL = hardwareMap.get(Servo.class, "armAngleL");
+        armAngleR = hardwareMap.get(Servo.class, "armAngleR");
+        claw = hardwareMap.get(Servo.class, "claw");
+        clawAngle = hardwareMap.get(Servo.class, "clawAngle");
 
         leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -122,11 +122,15 @@ public class drive extends OpMode{
         //extendoR.setDirection(Servo.Direction.REVERSE);
         intakeAngleR.setDirection(Servo.Direction.REVERSE);
         intakeR.setDirection(DcMotorSimple.Direction.REVERSE);
-        //armAngleR.setDirection(Servo.Direction.REVERSE);
+        armAngleR.setDirection(Servo.Direction.REVERSE);
 
         intakeAngleTarget = 0.3;
         intakeAngleL.setPosition(intakeAngleTarget);
         intakeAngleR.setPosition(intakeAngleTarget);
+
+        armAngleTarget = 0.75;
+        armAngleL.setPosition(armAngleTarget);
+        armAngleR.setPosition(armAngleTarget);
     }
 
     @Override
@@ -212,7 +216,7 @@ public class drive extends OpMode{
         //endregion
 
         //region intakeAngle for testing
-
+        /*
         if(currentGamepad2.a && !previousGamepad2.a){
             intakeAngleTarget -=.05;
             if(intakeAngleTarget<0.0){
@@ -229,7 +233,7 @@ public class drive extends OpMode{
             intakeAngleL.setPosition(intakeAngleTarget);
             intakeAngleR.setPosition(intakeAngleTarget);
         }
-
+        */
 
         //endregion
 
@@ -251,10 +255,10 @@ public class drive extends OpMode{
          */
         //endregion
 
-        //region armAngle
-
+        //region armAngle for testing
+        /*
         if(currentGamepad2.y && !previousGamepad2.y){
-            armAngleTarget += .05;
+            armAngleTarget = .05;
             if(armAngleTarget>1.0){
                 armAngleTarget=1.0;
             }
@@ -269,7 +273,7 @@ public class drive extends OpMode{
             armAngleL.setPosition(armAngleTarget);
             armAngleR.setPosition(armAngleTarget);
         }
-
+        */
         //endregion
 
         //region Full intake motion
@@ -298,6 +302,10 @@ public class drive extends OpMode{
             intakeAngleR.setPosition(intakeAngleTarget);
             intakeL.setPower(0.0);
             intakeR.setPower(0.0);
+
+            armAngleTarget = .9;
+            armAngleL.setPosition(armAngleTarget);
+            armAngleR.setPosition(armAngleTarget);
         }
         //endregion
 
@@ -324,10 +332,11 @@ public class drive extends OpMode{
         telemetry.addData("leftSlide", leftSlide.getCurrentPosition());
         telemetry.addData("rightSLide Target", rightSlide.getTargetPosition());
         telemetry.addData("rightSlide", rightSlide.getCurrentPosition());
-        /*telemetry.addData("armAngelTarget", armAngleTarget);
+
+        telemetry.addData("armAngelTarget", armAngleTarget);
         telemetry.addData("armAngleL", armAngleL.getPosition());
         telemetry.addData("armAngleR", armAngleR.getPosition());
-        */
+
 
         previousGamepad1.copy(currentGamepad1);
         previousGamepad2.copy(currentGamepad2);
