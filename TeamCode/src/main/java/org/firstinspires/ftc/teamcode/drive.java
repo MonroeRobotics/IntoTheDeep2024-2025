@@ -72,6 +72,7 @@ public class drive extends OpMode{
     double closeExtenoPos = 0.95;
     double intakeAngleTarget;
     double armAngleTarget;
+    double clawAngleTarget;
 
     double highBucketHeight;
     //cameraThing cameraThing;
@@ -128,9 +129,11 @@ public class drive extends OpMode{
         intakeAngleL.setPosition(intakeAngleTarget);
         intakeAngleR.setPosition(intakeAngleTarget);
 
-        armAngleTarget = 0.75;
+        armAngleTarget = 0.3;
         armAngleL.setPosition(armAngleTarget);
         armAngleR.setPosition(armAngleTarget);
+
+        claw.setPosition(.7);
     }
 
     @Override
@@ -176,9 +179,11 @@ public class drive extends OpMode{
         //region slides
         if (currentGamepad2.dpad_up){
             slideTarget = 1900;
+            armAngleTarget=.9;
         }
         if (currentGamepad2.dpad_down){
             slideTarget = 10;
+            armAngleTarget=.3;
         }
         leftSlide.setTargetPosition(slideTarget);
         rightSlide.setTargetPosition(slideTarget);
@@ -196,7 +201,7 @@ public class drive extends OpMode{
         //endregion
 
         //region extendo for testing
-
+        /*
         if(currentGamepad2.dpad_left && !previousGamepad2.dpad_left) {
             extendoTarget += .05;
             extendoL.setPosition(extendoTarget);
@@ -213,6 +218,7 @@ public class drive extends OpMode{
                 extendoTarget=0;
             }
         }
+        */
         //endregion
 
         //region intakeAngle for testing
@@ -281,7 +287,7 @@ public class drive extends OpMode{
             extendoTarget=.8;
             extendoL.setPosition(extendoTarget);
             //extendoR.setPosition(extendoTarget);
-            //this doesn't work yet
+            //this kinda works
             if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper) {
                 timer = intakeAngleTimer + System.currentTimeMillis();
             }
@@ -302,10 +308,20 @@ public class drive extends OpMode{
             intakeAngleR.setPosition(intakeAngleTarget);
             intakeL.setPower(0.0);
             intakeR.setPower(0.0);
+        }
+        //endregion
 
-            armAngleTarget = .9;
-            armAngleL.setPosition(armAngleTarget);
-            armAngleR.setPosition(armAngleTarget);
+        //region claw for testing
+        if(currentGamepad2.x){
+            claw.setPosition(.4);
+        }
+        if(currentGamepad2.y){
+            claw.setPosition(.7);
+        }
+
+        if(currentGamepad2.dpad_left && !previousGamepad2.dpad_left){
+            clawAngleTarget +=.05;
+            clawAngle.setPosition(clawAngleTarget);
         }
         //endregion
 

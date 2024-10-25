@@ -19,7 +19,7 @@ public class ArmController {
 
     int SLIDE_HEIGHT = 1; //Live Updating Slide height
     int SLIDE_STAGE = 0; //Used for incremental Slide Height
-    public static double SLIDE_POWER = 0.5; //Max Linear Slide Power
+    public static double SLIDE_POWER = 0.8; //Max Linear Slide Power
     public static double SLIDE_MAX_VELO = 2000; //Max Linear Slide Velocity
 
 
@@ -35,7 +35,7 @@ public class ArmController {
     public static double ARM_SERVO_FORWARD = 0;//Stores Value of Arm intake Position
     public static double ARM_SERVO_BACKWARD = 1;//Stores Value of Arm outtake Position
 
-    double CLAW_SERVO_POSITION = .1; //Live Updating Claw Position (.15 is intake position)
+    double ARM_SERVO_POSITION = .7; //Live Updating Arm Position (.7 is open)
     public static double CLAW_SERVO_FORWARD = .1; //Stores Value of Claw intake Position
     public static double CLAW_SERVO_TRANSITION = 0.6; //Stores value of Claw Outtake position
     public static double CLAW_SERVO_BACKWARD = 0.7; //Stores value of Claw Outtake position
@@ -48,10 +48,19 @@ public class ArmController {
     //region Arm Objects
     Servo extendoL;
     Servo extendoR;
+
     CRServo intakeL;
     CRServo intakeR;
+
     Servo intakeAngleL;
     Servo intakeAngleR;
+
+    Servo armAngleL;
+    Servo armAngleR;
+
+    Servo claw;
+    Servo clawAngle;
+
     DcMotorEx rightSlide;
     DcMotorEx leftSlide;
     //endregion
@@ -100,7 +109,10 @@ public class ArmController {
         rightSlide.setVelocity(SLIDE_MAX_VELO);
         //endregion
 
-        //region Initial Servo Pos
+        //region Servos
+        intakeR.setDirection(CRServo.Direction.REVERSE);
+        intakeAngleR.setDirection(Servo.Direction.REVERSE);
+        armAngleR.setDirection(Servo.Direction.REVERSE);
         /*armServoLeft.setPosition(ARM_POSITION);
         armServoRight.setPosition(ARM_POSITION);
         clawServo.setPosition(CLAW_SERVO_POSITION);*/
@@ -129,13 +141,13 @@ public class ArmController {
     public void updateArmState(){
         switch (currentArmState){
             case INTAKE:
-                CLAW_SERVO_POSITION = CLAW_SERVO_FORWARD;
+                ARM_SERVO_POSITION = CLAW_SERVO_FORWARD;
                 ARM_POSITION = ARM_SERVO_FORWARD;
                 //intakeServo.setPower(0);
                 SLIDE_HEIGHT = 20;
                 break;
             case OUTTAKE_READY:
-                CLAW_SERVO_POSITION = CLAW_SERVO_BACKWARD;
+                ARM_SERVO_POSITION = CLAW_SERVO_BACKWARD;
                 ARM_POSITION = ARM_SERVO_BACKWARD;
                // intakeServo.setPower(0);
                 if (SLIDE_STAGE == 0) {
@@ -181,7 +193,7 @@ public class ArmController {
     }
 
     public void setClawPos(double clawPos){
-        CLAW_SERVO_POSITION = clawPos;
+        ARM_SERVO_POSITION = clawPos;
 
     }
 
