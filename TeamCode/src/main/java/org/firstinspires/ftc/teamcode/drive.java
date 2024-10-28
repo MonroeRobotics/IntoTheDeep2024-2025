@@ -80,7 +80,12 @@ public class drive extends OpMode{
     //cameraThing cameraThing;
 
     double intakeAngleTimer = 300;
+    public static double intakeAngle = .45;
+    public static double intakeRaisedAngle = .25;
     double timer;
+
+    public static double openClaw = .7;
+    public static double closeClaw = .4;
 
     @Override
     public void init() {
@@ -126,7 +131,7 @@ public class drive extends OpMode{
         intakeR.setDirection(CRServo.Direction.REVERSE);
         armAngleR.setDirection(Servo.Direction.REVERSE);
 
-        intakeAngleTarget = 0.3;
+        intakeAngleTarget = 0.25;
         intakeAngleL.setPosition(intakeAngleTarget);
         intakeAngleR.setPosition(intakeAngleTarget);
 
@@ -285,7 +290,7 @@ public class drive extends OpMode{
             armAngleR.setPosition(armAngleTarget);
         }
         */
-        //endregion
+        //endregiontat
 
         //region Full intake motion
         if(currentGamepad2.right_bumper){
@@ -297,7 +302,7 @@ public class drive extends OpMode{
                 timer = intakeAngleTimer + System.currentTimeMillis();
             }
             if (timer < System.currentTimeMillis()){
-                intakeAngleTarget = 0.45;
+                intakeAngleTarget = intakeAngle;
                 intakeAngleL.setPosition(intakeAngleTarget);
                 intakeAngleR.setPosition(intakeAngleTarget);
             }
@@ -308,7 +313,7 @@ public class drive extends OpMode{
             extendoTarget=1.0;
             extendoL.setPosition(extendoTarget);
             //extendoR.setPosition(extendoTarget);
-            intakeAngleTarget = 0.25;
+            intakeAngleTarget = intakeRaisedAngle;
             intakeAngleL.setPosition(intakeAngleTarget);
             intakeAngleR.setPosition(intakeAngleTarget);
             intakeL.setPower(0.0);
@@ -323,10 +328,10 @@ public class drive extends OpMode{
         //region claw for testing
 
         if(currentGamepad2.x){
-            claw.setPosition(.4);
+            claw.setPosition(closeClaw);
         }
         if(currentGamepad2.y){
-            claw.setPosition(.7);
+            claw.setPosition(openClaw);
         }
 
         if(currentGamepad2.dpad_left && !previousGamepad2.dpad_left){
