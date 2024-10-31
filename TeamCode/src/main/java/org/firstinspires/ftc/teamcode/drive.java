@@ -80,7 +80,7 @@ public class drive extends OpMode{
     //cameraThing cameraThing;
 
     double intakeAngleTimer = 300;
-    public static double intakeAngle = .47;
+    public static double intakeAngle = .46;
     public static double intakeRaisedAngle = .25;
     double timer;
 
@@ -297,7 +297,7 @@ public class drive extends OpMode{
 
         //region Full intake motion
         if(currentGamepad2.right_bumper){
-            extendoTarget=.8;
+            extendoTarget=.7;
             extendoL.setPosition(extendoTarget);
             //extendoR.setPosition(extendoTarget);
             //this kinda works
