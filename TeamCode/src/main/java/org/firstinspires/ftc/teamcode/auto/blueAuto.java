@@ -20,6 +20,7 @@ public class blueAuto extends LinearOpMode {
 
     //endregion
 
+
     int autoCycleCount = 0;
     @Override
     public void runOpMode() throws InterruptedException {
