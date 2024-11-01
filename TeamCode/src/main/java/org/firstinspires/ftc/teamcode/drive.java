@@ -111,6 +111,7 @@ public class drive extends OpMode{
 
         armAngleL = hardwareMap.get(Servo.class, "armAngleL");
         armAngleR = hardwareMap.get(Servo.class, "armAngleR");
+
         claw = hardwareMap.get(Servo.class, "claw");
         clawAngle = hardwareMap.get(Servo.class, "clawAngle");
 
@@ -200,8 +201,8 @@ public class drive extends OpMode{
         }
         leftSlide.setTargetPosition(slideTarget);
         rightSlide.setTargetPosition(slideTarget);
-        //leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        //rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         /*if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
             slideTarget +=10;
         }
@@ -358,7 +359,7 @@ public class drive extends OpMode{
         PoseVelocity2d poseVelocity2d = new PoseVelocity2d(gamepadInput, headingPower);
 
 
-        drive.setDrivePowers(poseVelocity2d);
+        //drive.setDrivePowers(poseVelocity2d); //disable me for table testing
         /*telemetry.addData("xPower", xPower);
         telemetry.addData("yPower", yPower);
         telemetry.addData("headingPower", headingPower);

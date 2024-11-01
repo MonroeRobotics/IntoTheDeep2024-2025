@@ -31,14 +31,21 @@ public class ArmController {
 
     ArmState currentArmState = ArmState.INTAKE; //Creates a variables to store current Arm State
 
-    double ARM_POSITION = 0; //Live Updating Arm Servo Position (0 is intake position)
-    public static double ARM_SERVO_FORWARD = 0;//Stores Value of Arm intake Position
-    public static double ARM_SERVO_BACKWARD = 1;//Stores Value of Arm outtake Position
+    double ARM_ANGLE_POSITION = 0; //Live Updating Arm Angle Position (0 is intake position)
+    public static double ARM_ANGLE_INTAKE = 0;//Stores Value of Arm intake Position
+    public static double ARM_ANGLE_BUCKET_OUTTAKE = 1;//Stores Value of Arm outtake Position
+    public static double ARM_ANGLE_SPECIMEN_DROP = 1;//Stores value of arm outtake position for specimen
 
-    double ARM_SERVO_POSITION = .7; //Live Updating Arm Position (.7 is open)
-    public static double CLAW_SERVO_FORWARD = .1; //Stores Value of Claw intake Position
-    public static double CLAW_SERVO_TRANSITION = 0.6; //Stores value of Claw Outtake position
-    public static double CLAW_SERVO_BACKWARD = 0.7; //Stores value of Claw Outtake position
+    double CLAW_SERVO_POSITION = .5; //Live Updating Arm Position (.5 is open)
+    public static double CLAW_SERVO_CLOSED = .3; //Stores Value of Claw closed Position
+    //public static double CLAW_SERVO_TRANSITION = 0.6; //Stores value of Claw Outtake position
+    public static double CLAW_SERVO_OPEN = 0.5; //Stores value of Claw open position
+    public static double INTAKE_SERVO_POWER = 0.0; //Stores value of intake servos
+    public static double INTAKE_SERVO_INTAKE = -1; //stores value of intake CR servos intaking
+    public static double INTAKE_SERVO_EDJECT = 1; //stores value of intake cr servos edjecting something
+    public static double INTAKE_ANGLE = .35; //stores value of intake angle
+    public static double INTAKE_ANGLE_INTAKE = .46; //stores value of intakeAngle intake position
+    public static double INTAKE_ANGLE_RETRACT = .35; //stores value of intakeAngle when retracted
     public static int SLIDE_HEIGHT_SERVO_TRANSITION = 100;
 
     double outtakeTimer = 0; //Timer to control outtake
@@ -75,10 +82,18 @@ public class ArmController {
 
         extendoL = hardwareMap.get(Servo.class, "extendoL");
         //extendoR = hardwareMap.get(Servo.class, "extendoR");
+
         intakeL = hardwareMap.get(CRServo.class, "intakeL");
         intakeR = hardwareMap.get(CRServo.class, "intakeR");
+
         intakeAngleL = hardwareMap.get(Servo.class, "intakeAngleL");
         intakeAngleR = hardwareMap.get(Servo.class, "intakeAngleR");
+
+        armAngleL = hardwareMap.get(Servo.class, "armAngleL");
+        armAngleR = hardwareMap.get(Servo.class, "armAngleR");
+
+        claw = hardwareMap.get(Servo.class, "claw");
+        clawAngle = hardwareMap.get(Servo.class, "clawAngle");
 
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
@@ -133,22 +148,18 @@ public class ArmController {
         }
     }
 
-    public void setOuttakePower(double power){
-        //intakeServo.setPower(power);
-    }
-
 
     public void updateArmState(){
         switch (currentArmState){
             case INTAKE:
-                ARM_SERVO_POSITION = CLAW_SERVO_FORWARD;
-                ARM_POSITION = ARM_SERVO_FORWARD;
-                //intakeServo.setPower(0);
-                SLIDE_HEIGHT = 20;
+                CLAW_SERVO_POSITION = CLAW_SERVO_OPEN;
+                ARM_ANGLE_POSITION = ARM_ANGLE_INTAKE;
+                INTAKE_SERVO_POWER = INTAKE_SERVO_INTAKE;
+                SLIDE_HEIGHT = 5;
                 break;
             case OUTTAKE_READY:
-                ARM_SERVO_POSITION = CLAW_SERVO_BACKWARD;
-                ARM_POSITION = ARM_SERVO_BACKWARD;
+                CLAW_SERVO_POSITION = CLAW_SERVO_OPEN;
+                ARM_ANGLE_POSITION = ARM_ANGLE_BUCKET_OUTTAKE;
                // intakeServo.setPower(0);
                 if (SLIDE_STAGE == 0) {
                     SLIDE_HEIGHT = 400;
@@ -189,11 +200,11 @@ public class ArmController {
 
 
     public void setArmPos(double armPos){
-        ARM_POSITION = armPos;
+        ARM_ANGLE_POSITION = armPos;
     }
 
     public void setClawPos(double clawPos){
-        ARM_SERVO_POSITION = clawPos;
+        CLAW_SERVO_POSITION = clawPos;
 
     }
 
