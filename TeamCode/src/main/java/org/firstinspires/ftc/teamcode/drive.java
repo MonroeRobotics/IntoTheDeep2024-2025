@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.driveClasses.MecanumDrive;
+import org.firstinspires.ftc.teamcode.util.ArmController;
 
 @TeleOp(name="drive", group="main")
 public class drive extends OpMode{
@@ -84,6 +85,8 @@ public class drive extends OpMode{
     public static double intakeRaisedAngle = .25;
     double timer;
 
+    //ArmController armController;
+
     //double openClaw = .7;
     //double closeClaw = .4;
 
@@ -100,7 +103,7 @@ public class drive extends OpMode{
         //cameraThing = new cameraThing(hardwareMap);
         //cameraThing.initCam();
         extendoL = hardwareMap.get(Servo.class, "extendoL");
-        //extendoR = hardwareMap.get(Servo.class, "extendoR");
+        extendoR = hardwareMap.get(Servo.class, "extendoR");
         intakeL = hardwareMap.get(CRServo.class, "intakeL");
         intakeR = hardwareMap.get(CRServo.class, "intakeR");
         intakeAngleL = hardwareMap.get(Servo.class, "intakeAngleL");
@@ -125,14 +128,12 @@ public class drive extends OpMode{
         extendoTarget=1.0;
         extendoL.setPosition(extendoTarget);
 
-        slideTarget = leftSlide.getCurrentPosition();
-
-        //extendoR.setDirection(Servo.Direction.REVERSE);
+        extendoR.setDirection(Servo.Direction.REVERSE);
         intakeAngleR.setDirection(Servo.Direction.REVERSE);
         intakeR.setDirection(CRServo.Direction.REVERSE);
         armAngleR.setDirection(Servo.Direction.REVERSE);
 
-        intakeAngleTarget = 0.25;
+        intakeAngleTarget = .3;
         intakeAngleL.setPosition(intakeAngleTarget);
         intakeAngleR.setPosition(intakeAngleTarget);
 
@@ -186,8 +187,8 @@ public class drive extends OpMode{
 
         //region slides
         if (currentGamepad2.dpad_up){
-            slideTarget = 1900;
-            armAngleTarget=.7;
+            slideTarget = 1860;
+            armAngleTarget=.55;
             armAngleL.setPosition(armAngleTarget);
             armAngleR.setPosition(armAngleTarget);
             clawAngle.setPosition(0.0);
@@ -215,11 +216,11 @@ public class drive extends OpMode{
         //endregion
 
         //region extendo for testing
-
+        /*
         if(currentGamepad2.a && !previousGamepad2.a) {
             extendoTarget += .05;
             extendoL.setPosition(extendoTarget);
-            //extendoR.setPosition(extendoTarget);
+            extendoR.setPosition(extendoTarget);
             if (extendoTarget > 1.0) {
                 extendoTarget = 1.0;
             }
@@ -227,26 +228,26 @@ public class drive extends OpMode{
         if(currentGamepad2.b && !previousGamepad2.b){
             extendoTarget -=.05;
             extendoL.setPosition(extendoTarget);
-            //extendoR.setPosition(extendoTarget);
+            extendoR.setPosition(extendoTarget);
             if(extendoTarget<0.0){
                 extendoTarget=0;
             }
         }
-
+        */
         //endregion
 
         //region intakeAngle for testing
         /*
-        if(currentGamepad2.a && !previousGamepad2.a){
-            intakeAngleTarget -=.05;
+        if(currentGamepad2.b && !previousGamepad2.b){
+            intakeAngleTarget -=.01;
             if(intakeAngleTarget<0.0){
                 intakeAngleTarget=0.0;
             }
             intakeAngleL.setPosition(intakeAngleTarget);
             intakeAngleR.setPosition(intakeAngleTarget);
         }
-        if(currentGamepad2.b &&!previousGamepad2.b){
-            intakeAngleTarget += .05;
+        if(currentGamepad2.a &&!previousGamepad2.a){
+            intakeAngleTarget += .01;
             if(intakeAngleTarget>1.0){
                 intakeAngleTarget=1;
             }
@@ -276,8 +277,8 @@ public class drive extends OpMode{
         //endregion
 
         //region armAngle for testing
-        /*
-        if(currentGamepad2.y && !previousGamepad2.y){
+
+        if(currentGamepad2.a && !previousGamepad2.a){
             armAngleTarget += .05;
             if(armAngleTarget>1.0){
                 armAngleTarget=1.0;
@@ -285,7 +286,7 @@ public class drive extends OpMode{
             armAngleL.setPosition(armAngleTarget);
             armAngleR.setPosition(armAngleTarget);
         }
-        if(currentGamepad2.x && !previousGamepad2.x){
+        if(currentGamepad2.b && !previousGamepad2.b){
             armAngleTarget -= .05;
             if(armAngleTarget<0.0){
                 armAngleTarget =0.0;
@@ -293,14 +294,14 @@ public class drive extends OpMode{
             armAngleL.setPosition(armAngleTarget);
             armAngleR.setPosition(armAngleTarget);
         }
-        */
+
         //endregiontat
 
         //region Full intake motion
         if(currentGamepad2.right_bumper){
-            extendoTarget=.7;
+            extendoTarget=.75;
             extendoL.setPosition(extendoTarget);
-            //extendoR.setPosition(extendoTarget);
+            extendoR.setPosition(extendoTarget);
             //this kinda works
             if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper) {
                 timer = intakeAngleTimer + System.currentTimeMillis();
@@ -316,7 +317,7 @@ public class drive extends OpMode{
         if(currentGamepad2.left_bumper){
             extendoTarget=1.0;
             extendoL.setPosition(extendoTarget);
-            //extendoR.setPosition(extendoTarget);
+            extendoR.setPosition(extendoTarget);
             intakeAngleTarget = intakeRaisedAngle;
             intakeAngleL.setPosition(intakeAngleTarget);
             intakeAngleR.setPosition(intakeAngleTarget);
@@ -359,7 +360,7 @@ public class drive extends OpMode{
         PoseVelocity2d poseVelocity2d = new PoseVelocity2d(gamepadInput, headingPower);
 
 
-        //drive.setDrivePowers(poseVelocity2d); //disable me for table testing
+        drive.setDrivePowers(poseVelocity2d); //disable me for table testing
         /*telemetry.addData("xPower", xPower);
         telemetry.addData("yPower", yPower);
         telemetry.addData("headingPower", headingPower);
@@ -368,7 +369,7 @@ public class drive extends OpMode{
         telemetry.addData("rightStick x", currentGamepad1.right_stick_x);*/
         telemetry.addData("extendo target", extendoTarget);
         telemetry.addData("extendoL servo pos", extendoL.getPosition());
-        //telemetry.addData("extendoR servo pos", extendoR.getPosition());
+        telemetry.addData("extendoR servo pos", extendoR.getPosition());
 
         telemetry.addData("intakeAngleTarget", intakeAngleTarget);
         telemetry.addData("intakeAngleL", intakeAngleL.getPosition());
