@@ -10,12 +10,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.driveClasses.MecanumDrive;
-import org.firstinspires.ftc.teamcode.util.ArmController;
 
 @TeleOp(name="drive", group="main")
 public class drive extends OpMode{
@@ -80,9 +78,9 @@ public class drive extends OpMode{
     double highBucketHeight;
     //cameraThing cameraThing;
 
-    double intakeAngleTimer = 300;
-    public static double intakeAngle = .46;
-    public static double intakeRaisedAngle = .25;
+    double intakeAngleTimer = 100;
+    public static double intakeLoweredAngle = .44;
+    public static double intakeRaisedAngle = .20;
     double timer;
 
     //ArmController armController;
@@ -125,15 +123,16 @@ public class drive extends OpMode{
         leftSlide.setPower(drivePower);
         rightSlide.setPower(drivePower);
 
-        extendoTarget=1.0;
-        extendoL.setPosition(extendoTarget);
-
         extendoR.setDirection(Servo.Direction.REVERSE);
         intakeAngleR.setDirection(Servo.Direction.REVERSE);
         intakeR.setDirection(CRServo.Direction.REVERSE);
         armAngleR.setDirection(Servo.Direction.REVERSE);
 
-        intakeAngleTarget = .3;
+        extendoTarget=1.0;
+        extendoL.setPosition(extendoTarget);
+        extendoR.setPosition(extendoTarget);
+
+        intakeAngleTarget = intakeRaisedAngle;
         intakeAngleL.setPosition(intakeAngleTarget);
         intakeAngleR.setPosition(intakeAngleTarget);
 
@@ -142,7 +141,7 @@ public class drive extends OpMode{
         armAngleR.setPosition(armAngleTarget);
 
         claw.setPosition(.5);
-        clawAngle.setPosition(.35);
+        clawAngle.setPosition(.25);
     }
 
     @Override
@@ -198,7 +197,7 @@ public class drive extends OpMode{
             armAngleTarget=.11;
             armAngleL.setPosition(armAngleTarget);
             armAngleR.setPosition(armAngleTarget);
-            clawAngle.setPosition(.35);
+            clawAngle.setPosition(.25);
         }
         leftSlide.setTargetPosition(slideTarget);
         rightSlide.setTargetPosition(slideTarget);
@@ -216,7 +215,7 @@ public class drive extends OpMode{
         //endregion
 
         //region extendo for testing
-        /*
+
         if(currentGamepad2.a && !previousGamepad2.a) {
             extendoTarget += .05;
             extendoL.setPosition(extendoTarget);
@@ -233,7 +232,7 @@ public class drive extends OpMode{
                 extendoTarget=0;
             }
         }
-        */
+
         //endregion
 
         //region intakeAngle for testing
@@ -255,7 +254,6 @@ public class drive extends OpMode{
             intakeAngleR.setPosition(intakeAngleTarget);
         }
         */
-
         //endregion
 
         //region CRServos for testing
@@ -277,7 +275,7 @@ public class drive extends OpMode{
         //endregion
 
         //region armAngle for testing
-
+        /*
         if(currentGamepad2.a && !previousGamepad2.a){
             armAngleTarget += .05;
             if(armAngleTarget>1.0){
@@ -294,7 +292,7 @@ public class drive extends OpMode{
             armAngleL.setPosition(armAngleTarget);
             armAngleR.setPosition(armAngleTarget);
         }
-
+        */
         //endregiontat
 
         //region Full intake motion
@@ -307,7 +305,7 @@ public class drive extends OpMode{
                 timer = intakeAngleTimer + System.currentTimeMillis();
             }
             if (timer < System.currentTimeMillis()){
-                intakeAngleTarget = intakeAngle;
+                intakeAngleTarget = intakeLoweredAngle;
                 intakeAngleL.setPosition(intakeAngleTarget);
                 intakeAngleR.setPosition(intakeAngleTarget);
             }
