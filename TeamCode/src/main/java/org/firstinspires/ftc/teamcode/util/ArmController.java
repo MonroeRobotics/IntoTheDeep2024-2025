@@ -38,7 +38,7 @@ public class ArmController {
 
     double ARM_ANGLE_POSITION = 0; //Live Updating Arm Angle Position (0 is intake position)
     public static double ARM_ANGLE_INTAKE = 0;//Stores Value of Arm intake Position
-    public static double AMR_ANGLE_SPECIMEN_PICK_UP; //get value
+    public static double ARM_ANGLE_SPECIMEN_PICK_UP; //get value
     public static double ARM_ANGLE_SPECIMEN_DROP = 1;//Stores value of arm outtake position for specimen
     public static double ARM_ANGLE_BUCKET_OUTTAKE = 1;//Stores Value of Arm outtake Position
 
@@ -49,6 +49,7 @@ public class ArmController {
 
     public static double CLAW_ANGLE_POSITION; //stores value of claw angle
     public static double CLAW_ANGLE_INTAKE = 0.35; //stores value of claw angle for intake
+    public static double CLAW_ANGLE_SPECIMEN_PICK_UP; // get value
     public static double CLAW_ANGLE_OUTTAKE = 0.0; //stores value of the claw angle when dropping stuff
 
     public static double INTAKE_SERVO_POWER = 0.0; //Stores value of intake servos
@@ -211,10 +212,13 @@ public class ArmController {
                 INTAKE_SERVO_POWER = INTAKE_SERVO_POWER_OFF;
                 break;
             case SPECIMEN_PICK_UP:
-                //stuff
+                SLIDE_HEIGHT=SLIDE_HEIGHT_SPECIMEN_PICK_UP;
+                ARM_ANGLE_POSITION=ARM_ANGLE_SPECIMEN_PICK_UP;
+                CLAW_ANGLE_POSITION=CLAW_ANGLE_SPECIMEN_PICK_UP;
                 break;
             case SPECIMEN_PLACE:
-                //stuff
+                SLIDE_HEIGHT=SLIDE_HEIGHT_SPECIMEN_PLACE;
+                ARM_ANGLE_POSITION = ARM_ANGLE_SPECIMEN_DROP;
                 break;
             case SHORT_BUCKET_READY:
                 //stuff
@@ -228,6 +232,9 @@ public class ArmController {
                 else{
                     SLIDE_HEIGHT = 400 + (SLIDE_STAGE * 150);
                 }
+                break;
+            case OPEN_CLAW:
+                //stuff
                 break;
         }
     }
