@@ -293,7 +293,7 @@ public class drive extends OpMode{
             armAngleR.setPosition(armAngleTarget);
         }
         */
-        //endregiontat
+        //endregion
 
         //region Full intake motion
         if(currentGamepad2.right_bumper){
@@ -319,8 +319,8 @@ public class drive extends OpMode{
             intakeAngleTarget = intakeRaisedAngle;
             intakeAngleL.setPosition(intakeAngleTarget);
             intakeAngleR.setPosition(intakeAngleTarget);
-            intakeL.setPower(0.0);
-            intakeR.setPower(0.0);
+            //intakeL.setPower(0.0);
+            //intakeR.setPower(0.0);
         }
         if(currentGamepad2.options){
             intakeL.setPower(1);
@@ -332,6 +332,8 @@ public class drive extends OpMode{
 
         if(currentGamepad2.x){
             claw.setPosition(.3);
+            intakeL.setPower(0);
+            intakeR.setPower(0);
         }
         if(currentGamepad2.y){
             claw.setPosition(.5);
@@ -386,7 +388,6 @@ public class drive extends OpMode{
         telemetry.addData("clawAngle", clawAngle.getPosition());
 
         telemetry.addData("claw", claw.getPosition());
-
 
         previousGamepad1.copy(currentGamepad1);
         previousGamepad2.copy(currentGamepad2);
