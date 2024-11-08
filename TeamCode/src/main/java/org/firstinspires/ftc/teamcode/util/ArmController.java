@@ -69,6 +69,7 @@ public class ArmController {
     public static int SLIDE_HEIGHT_SPECIMEN_PICK_UP; //get value
     public static int SLIDE_HEIGHT_SPECIMEN_PLACE; //get value
     public static int SLIDE_HEIGHT_LOW_BUCKET_DROP; //get value
+    public static int SLIDE_HEIGHT_HIGH_BUCKET_DROP = 1860;
 
     double outtakeTimer = 0; //Timer to control outtake
     public static double OUTTAKE_TIME = 150; //How Long Outtake runs for (ms)
@@ -199,7 +200,7 @@ public class ArmController {
             case EXTEND:
                 CLAW_POSITION = CLAW_OPEN;
                 ARM_ANGLE_POSITION = ARM_ANGLE_INTAKE;
-                EXTENDO_ANGLE= EXTENDO_EXTEND;
+                EXTENDO_ANGLE = EXTENDO_EXTEND;
                 INTAKE_ANGLE = INTAKE_ANGLE_INTAKE;
                 INTAKE_SERVO_POWER = INTAKE_SERVO_INTAKE;
                 SLIDE_HEIGHT = 5;
@@ -212,29 +213,28 @@ public class ArmController {
                 INTAKE_SERVO_POWER = INTAKE_SERVO_POWER_OFF;
                 break;
             case SPECIMEN_PICK_UP:
-                SLIDE_HEIGHT=SLIDE_HEIGHT_SPECIMEN_PICK_UP;
-                ARM_ANGLE_POSITION=ARM_ANGLE_SPECIMEN_PICK_UP;
-                CLAW_ANGLE_POSITION=CLAW_ANGLE_SPECIMEN_PICK_UP;
+                SLIDE_HEIGHT = SLIDE_HEIGHT_SPECIMEN_PICK_UP;
+                ARM_ANGLE_POSITION = ARM_ANGLE_SPECIMEN_PICK_UP;
+                CLAW_ANGLE_POSITION = CLAW_ANGLE_SPECIMEN_PICK_UP;
                 break;
             case SPECIMEN_PLACE:
-                SLIDE_HEIGHT=SLIDE_HEIGHT_SPECIMEN_PLACE;
+                SLIDE_HEIGHT = SLIDE_HEIGHT_SPECIMEN_PLACE;
                 ARM_ANGLE_POSITION = ARM_ANGLE_SPECIMEN_DROP;
+                CLAW_ANGLE_POSITION = CLAW_ANGLE_OUTTAKE;
                 break;
             case SHORT_BUCKET_READY:
-                //stuff
+                SLIDE_HEIGHT = SLIDE_HEIGHT_LOW_BUCKET_DROP;
+                ARM_ANGLE_POSITION = ARM_ANGLE_BUCKET_OUTTAKE;
+                CLAW_ANGLE_POSITION = CLAW_ANGLE_OUTTAKE;
                 break;
             case TALL_BUCKET_READY:
+                SLIDE_HEIGHT = SLIDE_HEIGHT_HIGH_BUCKET_DROP;
                 ARM_ANGLE_POSITION = ARM_ANGLE_BUCKET_OUTTAKE;
+                CLAW_ANGLE_POSITION = CLAW_ANGLE_OUTTAKE;
                // intakeServo.setPower(0);
-                if (SLIDE_STAGE == 0) {
-                    SLIDE_HEIGHT = 400;
-                }
-                else{
-                    SLIDE_HEIGHT = 400 + (SLIDE_STAGE * 150);
-                }
                 break;
             case OPEN_CLAW:
-                //stuff
+                CLAW_POSITION = CLAW_OPEN;
                 break;
         }
     }
