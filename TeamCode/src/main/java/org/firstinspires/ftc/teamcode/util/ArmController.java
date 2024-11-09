@@ -17,7 +17,7 @@ public class ArmController {
 
 
 
-    int SLIDE_HEIGHT = 5; //Live Updating Slide height
+    public static int SLIDE_HEIGHT = 5; //Live Updating Slide height
     int SLIDE_STAGE = 0; //Used for incremental Slide Height
     public static double SLIDE_POWER = 0.8; //Max Linear Slide Power
     public static double SLIDE_MAX_VELO = 2000; //Max Linear Slide Velocity
@@ -37,20 +37,20 @@ public class ArmController {
 
     public ArmState currentArmState = ArmState.EXTEND; //Creates a variables to store current Arm State
 
-    double ARM_ANGLE_POSITION = 0; //Live Updating Arm Angle Position (0 is intake position)
-    public static double ARM_ANGLE_INTAKE = 0;//Stores Value of Arm intake Position
+    double ARM_ANGLE_POSITION = 0.11; //Live Updating Arm Angle Position (0 is intake position)
+    public static double ARM_ANGLE_INTAKE = 0.11;//Stores Value of Arm intake Position
     public static double ARM_ANGLE_SPECIMEN_PICK_UP; //get value, likely opposite of normal outtake
-    public static double ARM_ANGLE_SPECIMEN_DROP = 1;//Stores value of arm outtake position for specimen
-    public static double ARM_ANGLE_BUCKET_OUTTAKE = 1;//Stores Value of Arm outtake Position
+    public static double ARM_ANGLE_SPECIMEN_DROP = .55;//Stores value of arm outtake position for specimen
+    public static double ARM_ANGLE_BUCKET_OUTTAKE = .55;//Stores Value of Arm outtake Position
 
     double CLAW_POSITION = .5; //Live Updating Arm Position (.5 is open)
     public static double CLAW_CLOSED = .3; //Stores Value of Claw closed Position
     //public static double CLAW_SERVO_TRANSITION = 0.6; //Stores value of Claw Outtake position
     public static double CLAW_OPEN = 0.5; //Stores value of Claw open position
 
-    public static double CLAW_ANGLE_POSITION; //stores value of claw angle
+    public static double CLAW_ANGLE_POSITION = 0.35; //stores value of claw angle
     public static double CLAW_ANGLE_INTAKE = 0.35; //stores value of claw angle for intake
-    public static double CLAW_ANGLE_SPECIMEN_PICK_UP; // get value
+    public static double CLAW_ANGLE_SPECIMEN_PICK_UP = 0.0; // get value
     public static double CLAW_ANGLE_OUTTAKE = 0.0; //stores value of the claw angle when dropping stuff
 
     public static double INTAKE_SERVO_POWER = 0.0; //Stores value of intake servos
@@ -59,13 +59,14 @@ public class ArmController {
     public static double INTAKE_SERVO_EDJECT = 1; //stores value of intake cr servos edjecting something
 
     public static double INTAKE_ANGLE = .35; //stores value of intake angle
-    public static double INTAKE_ANGLE_INTAKE = .46; //stores value of intakeAngle intake position
-    public static double INTAKE_ANGLE_RETRACT = .35; //stores value of intakeAngle when retracted
+    public static double INTAKE_ANGLE_INTAKE = .44; //stores value of intakeAngle intake position
+    public static double INTAKE_ANGLE_RETRACT = .20; //stores value of intakeAngle when retracted
 
     public static double EXTENDO_ANGLE = 1.0; //stores value fo current extendo
     public static double EXTENDO_EXTEND = .75; //stores value of extendo extending
     public static double EXTENDO_RETRACT = 1.0; //stores value of extendo retracting
 
+    public static int SLIDE_HEIGHT_LOWERED = 5;
     public static int SLIDE_HEIGHT_SERVO_TRANSITION = 100;
     public static int SLIDE_HEIGHT_SPECIMEN_PICK_UP; //get value
     public static int SLIDE_HEIGHT_LOW_SPECIMEN_PLACE; //get value
@@ -171,26 +172,26 @@ public class ArmController {
 
         //endregion
     }
-    public void switchArmState(){
+    public void switchArmState(){ //Switches between methods in sequential order
         switch (currentArmState) {
             case EXTEND:
-                currentArmState = ArmState.EXTEND;
-                updateArmState();
-                break;
-            case RETRACT:
                 currentArmState = ArmState.RETRACT;
                 updateArmState();
                 break;
+            case RETRACT:
+                currentArmState = ArmState.CLOSE_CLAW;
+                updateArmState();
+                break;
             case CLOSE_CLAW:
-                    currentArmState = ArmState.CLOSE_CLAW;
+                    currentArmState = ArmState.TALL_BUCKET_READY;
                     updateArmState();
                     break;
             case TALL_BUCKET_READY:
-                currentArmState = ArmState.TALL_BUCKET_READY;
+                currentArmState = ArmState.OPEN_CLAW;
                 updateArmState();
                 break;
             case OPEN_CLAW:
-                currentArmState = ArmState.OPEN_CLAW;
+                currentArmState = ArmState.EXTEND;
                 updateArmState();
                 break;
         }
@@ -201,11 +202,12 @@ public class ArmController {
         switch (currentArmState){
             case EXTEND:
                 CLAW_POSITION = CLAW_OPEN;
+                CLAW_ANGLE_POSITION = CLAW_ANGLE_INTAKE;
                 ARM_ANGLE_POSITION = ARM_ANGLE_INTAKE;
                 EXTENDO_ANGLE = EXTENDO_EXTEND;
                 INTAKE_ANGLE = INTAKE_ANGLE_INTAKE;
                 INTAKE_SERVO_POWER = INTAKE_SERVO_INTAKE;
-                SLIDE_HEIGHT = 5;
+                SLIDE_HEIGHT = SLIDE_HEIGHT_LOWERED;
                 break;
             case RETRACT:
                 EXTENDO_ANGLE = EXTENDO_RETRACT;

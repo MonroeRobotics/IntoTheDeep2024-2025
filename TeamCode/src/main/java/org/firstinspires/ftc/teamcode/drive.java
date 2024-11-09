@@ -24,37 +24,6 @@ public class drive extends OpMode {
     Gamepad previousGamepad2;
     //endregion
 
-    //region Extendo
-    Servo extendoL;
-    Servo extendoR;
-    //endregion
-
-    //region Intake CRServos
-    CRServo intakeL;
-    CRServo intakeR;
-    //endregion
-
-    //region Intake angle
-    Servo intakeAngleL;
-    Servo intakeAngleR;
-    //endregion
-
-    //region Arm
-    Servo armAngleL;
-    Servo armAngleR;
-    //endregion
-
-    //region Claw
-    Servo claw;
-    Servo clawAngle;
-    //endregion
-
-    //region Arm Slides
-    DcMotor leftSlide;
-    DcMotor rightSlide;
-    //endregion
-
-
     MecanumDrive drive;
     Vector2d position = new Vector2d(0,0);
     Pose2d pose = new Pose2d(position, 90);
@@ -64,20 +33,6 @@ public class drive extends OpMode {
     double yPower;
     double headingPower;
 
-    int slideTarget;
-    double extendoTarget;
-    double closeExtenoPos = 0.95;
-    double intakeAngleTarget;
-    double armAngleTarget;
-    double clawAngleTarget;
-
-    double highBucketHeight;
-    //cameraThing cameraThing;
-
-    double intakeAngleTimer = 100;
-    public static double intakeLoweredAngle = .44;
-    public static double intakeRaisedAngle = .20;
-    double timer;
     public boolean intakeExtended = false;
     public boolean sample = true;
     public boolean clawOpen = true;
