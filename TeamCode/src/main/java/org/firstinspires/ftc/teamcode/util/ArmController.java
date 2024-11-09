@@ -28,17 +28,18 @@ public class ArmController {
         RETRACT,
         CLOSE_CLAW,
         SPECIMEN_PICK_UP,
-        SPECIMEN_PLACE,
+        LOW_SPECIMEN_PLACE,
+        HIGH_SPECIMEN_PLACE,
         SHORT_BUCKET_READY,
         TALL_BUCKET_READY,
-        OPEN_CLAW //open claw
+        OPEN_CLAW, //open claw
     }
 
-    ArmState currentArmState = ArmState.EXTEND; //Creates a variables to store current Arm State
+    public ArmState currentArmState = ArmState.EXTEND; //Creates a variables to store current Arm State
 
     double ARM_ANGLE_POSITION = 0; //Live Updating Arm Angle Position (0 is intake position)
     public static double ARM_ANGLE_INTAKE = 0;//Stores Value of Arm intake Position
-    public static double ARM_ANGLE_SPECIMEN_PICK_UP; //get value
+    public static double ARM_ANGLE_SPECIMEN_PICK_UP; //get value, likely opposite of normal outtake
     public static double ARM_ANGLE_SPECIMEN_DROP = 1;//Stores value of arm outtake position for specimen
     public static double ARM_ANGLE_BUCKET_OUTTAKE = 1;//Stores Value of Arm outtake Position
 
@@ -67,12 +68,13 @@ public class ArmController {
 
     public static int SLIDE_HEIGHT_SERVO_TRANSITION = 100;
     public static int SLIDE_HEIGHT_SPECIMEN_PICK_UP; //get value
-    public static int SLIDE_HEIGHT_SPECIMEN_PLACE; //get value
+    public static int SLIDE_HEIGHT_LOW_SPECIMEN_PLACE; //get value
+    public static int SLIDE_HEIGHT_HIGH_SPECIMEN_PLACE; //get value
     public static int SLIDE_HEIGHT_LOW_BUCKET_DROP; //get value
     public static int SLIDE_HEIGHT_HIGH_BUCKET_DROP = 1860;
 
-    double outtakeTimer = 0; //Timer to control outtake
-    public static double OUTTAKE_TIME = 150; //How Long Outtake runs for (ms)
+    double edjectTimer = 0; //Timer to control outtake
+    public static double EDJECT_TIME = 500; //How Long Outtake runs for (ms)
     //endregion
 
     //region Arm Objects
@@ -217,8 +219,13 @@ public class ArmController {
                 ARM_ANGLE_POSITION = ARM_ANGLE_SPECIMEN_PICK_UP;
                 CLAW_ANGLE_POSITION = CLAW_ANGLE_SPECIMEN_PICK_UP;
                 break;
-            case SPECIMEN_PLACE:
-                SLIDE_HEIGHT = SLIDE_HEIGHT_SPECIMEN_PLACE;
+            case LOW_SPECIMEN_PLACE:
+                SLIDE_HEIGHT = SLIDE_HEIGHT_LOW_SPECIMEN_PLACE;
+                ARM_ANGLE_POSITION = ARM_ANGLE_SPECIMEN_DROP;
+                CLAW_ANGLE_POSITION = CLAW_ANGLE_OUTTAKE;
+                break;
+            case HIGH_SPECIMEN_PLACE:
+                SLIDE_HEIGHT = SLIDE_HEIGHT_HIGH_SPECIMEN_PLACE;
                 ARM_ANGLE_POSITION = ARM_ANGLE_SPECIMEN_DROP;
                 CLAW_ANGLE_POSITION = CLAW_ANGLE_OUTTAKE;
                 break;
@@ -276,19 +283,19 @@ public class ArmController {
 
     }
 
-    public void startOuttake(){
-        if (outtakeTimer <= System.currentTimeMillis()) {
-            outtakeTimer = System.currentTimeMillis() + OUTTAKE_TIME;
-            //intakeServo.setPower(1);
+    public void startEdject(){
+        if (edjectTimer <= System.currentTimeMillis()) {
+            edjectTimer = System.currentTimeMillis() + EDJECT_TIME;
+            INTAKE_SERVO_POWER = INTAKE_SERVO_EDJECT;
         }
-        else if (outtakeTimer >= System.currentTimeMillis() && outtakeTimer <= (System.currentTimeMillis() + (OUTTAKE_TIME * 2))){
-            outtakeTimer += OUTTAKE_TIME;
-            //intakeServo.setPower(1);
+        else if (edjectTimer >= System.currentTimeMillis() && edjectTimer <= (System.currentTimeMillis() + (EDJECT_TIME * 2))){
+            edjectTimer += EDJECT_TIME;
+            INTAKE_SERVO_POWER = INTAKE_SERVO_EDJECT;
         }
     }
 
     public void checkOuttakeTimer(){
-        if(outtakeTimer <= System.currentTimeMillis() && currentArmState == ArmState.TALL_BUCKET_READY){
+        if(edjectTimer <= System.currentTimeMillis() && currentArmState == ArmState.TALL_BUCKET_READY){
             //intakeServo.setPower(0);
         }
     }
@@ -319,10 +326,20 @@ public class ArmController {
         leftSlide.setTargetPosition(SLIDE_HEIGHT);
         rightSlide.setTargetPosition(SLIDE_HEIGHT);
 
-        //armServoLeft.setPosition(ARM_POSITION);
-        //armServoRight.setPosition(1 - ARM_POSITION);
+        intakeL.setPower(INTAKE_SERVO_POWER);
+        intakeR.setPower(INTAKE_SERVO_POWER);
 
-        //clawServo.setPosition(CLAW_SERVO_POSITION);
+        intakeAngleL.setPosition(INTAKE_ANGLE);
+        intakeAngleR.setPosition(INTAKE_ANGLE);
+
+        extendoL.setPosition(EXTENDO_ANGLE);
+        extendoR.setPosition(EXTENDO_ANGLE);
+
+        armAngleL.setPosition(ARM_ANGLE_POSITION);
+        armAngleR.setPosition(ARM_ANGLE_POSITION);
+
+        clawAngle.setPosition(CLAW_POSITION);
+        claw.setPosition(CLAW_POSITION);
     }
 
     public void resetSlideZero(){
