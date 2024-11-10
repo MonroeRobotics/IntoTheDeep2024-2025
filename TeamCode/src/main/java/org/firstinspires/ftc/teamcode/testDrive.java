@@ -128,7 +128,7 @@ public class testDrive extends OpMode{
         intakeR.setDirection(CRServo.Direction.REVERSE);
         armAngleR.setDirection(Servo.Direction.REVERSE);
 
-        extendoTarget=1.0;
+        extendoTarget=.95;
         extendoL.setPosition(extendoTarget);
         extendoR.setPosition(extendoTarget);
 
@@ -186,23 +186,23 @@ public class testDrive extends OpMode{
         //region slides
         if (currentGamepad2.dpad_up){
             slideTarget = 1860;
-            armAngleTarget=.55;
+            //armAngleTarget=.55;
             armAngleL.setPosition(armAngleTarget);
             armAngleR.setPosition(armAngleTarget);
-            clawAngle.setPosition(0.0);
+            //clawAngle.setPosition(0.0);
         }
         if (currentGamepad2.dpad_down){
             slideTarget = 5;
-            armAngleTarget=.11;
+            //armAngleTarget=.11;
             armAngleL.setPosition(armAngleTarget);
             armAngleR.setPosition(armAngleTarget);
-            clawAngle.setPosition(.25);
+            //clawAngle.setPosition(.25);
         }
         leftSlide.setTargetPosition(slideTarget);
         rightSlide.setTargetPosition(slideTarget);
         leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        /*if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
+        if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
             slideTarget +=10;
         }
         if(currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
@@ -210,11 +210,11 @@ public class testDrive extends OpMode{
             if (slideTarget <0){
                 slideTarget = 0;
             }
-        }*/
+        }
         //endregion
 
         //region extendo for testing
-
+        /*
         if(currentGamepad2.a && !previousGamepad2.a) {
             extendoTarget += .05;
             extendoL.setPosition(extendoTarget);
@@ -231,7 +231,7 @@ public class testDrive extends OpMode{
                 extendoTarget=0;
             }
         }
-
+        */
         //endregion
 
         //region intakeAngle for testing
@@ -274,9 +274,9 @@ public class testDrive extends OpMode{
         //endregion
 
         //region armAngle for testing
-        /*
+
         if(currentGamepad2.a && !previousGamepad2.a){
-            armAngleTarget += .05;
+            armAngleTarget -= .01;
             if(armAngleTarget>1.0){
                 armAngleTarget=1.0;
             }
@@ -284,18 +284,18 @@ public class testDrive extends OpMode{
             armAngleR.setPosition(armAngleTarget);
         }
         if(currentGamepad2.b && !previousGamepad2.b){
-            armAngleTarget -= .05;
+            armAngleTarget += .01;
             if(armAngleTarget<0.0){
                 armAngleTarget =0.0;
             }
             armAngleL.setPosition(armAngleTarget);
             armAngleR.setPosition(armAngleTarget);
         }
-        */
+
         //endregion
 
         //region Full intake motion
-        if(currentGamepad2.right_bumper){
+        /*if(currentGamepad2.right_bumper){
             extendoTarget=.75;
             extendoL.setPosition(extendoTarget);
             extendoR.setPosition(extendoTarget);
@@ -312,7 +312,7 @@ public class testDrive extends OpMode{
             intakeR.setPower(-1.0);
         }
         if(currentGamepad2.left_bumper){
-            extendoTarget=1.0;
+            extendoTarget=.95;
             extendoL.setPosition(extendoTarget);
             extendoR.setPosition(extendoTarget);
             intakeAngleTarget = intakeRaisedAngle;
@@ -321,6 +321,7 @@ public class testDrive extends OpMode{
             //intakeL.setPower(0.0);
             //intakeR.setPower(0.0);
         }
+        */
         if(currentGamepad2.options){
             intakeL.setPower(1);
             intakeR.setPower(1);

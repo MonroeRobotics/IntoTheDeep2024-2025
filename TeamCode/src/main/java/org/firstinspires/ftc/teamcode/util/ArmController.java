@@ -37,10 +37,10 @@ public class ArmController {
 
     public ArmState currentArmState = ArmState.EXTEND; //Creates a variables to store current Arm State
 
-    double ARM_ANGLE_POSITION = 0.11; //Live Updating Arm Angle Position (0 is intake position)
-    public static double ARM_ANGLE_INTAKE = 0.11;//Stores Value of Arm intake Position
-    public static double ARM_ANGLE_SPECIMEN_PICK_UP; //get value, likely opposite of normal outtake
-    public static double ARM_ANGLE_SPECIMEN_DROP = .55;//Stores value of arm outtake position for specimen
+    double ARM_ANGLE_POSITION = 0.12; //Live Updating Arm Angle Position (0 is intake position) should normally be .11
+    public static double ARM_ANGLE_INTAKE = 0.12;//Stores Value of Arm intake Position should normally be .11
+    public static double ARM_ANGLE_SPECIMEN_PICK_UP = .64; //get value, likely opposite of normal outtake
+    public static double ARM_ANGLE_SPECIMEN_DROP = .47;//Stores value of arm outtake position for specimen
     public static double ARM_ANGLE_BUCKET_OUTTAKE = .55;//Stores Value of Arm outtake Position
 
     double CLAW_POSITION = .5; //Live Updating Arm Position (.5 is open)
@@ -48,34 +48,38 @@ public class ArmController {
     //public static double CLAW_SERVO_TRANSITION = 0.6; //Stores value of Claw Outtake position
     public static double CLAW_OPEN = 0.5; //Stores value of Claw open position
 
-    public static double CLAW_ANGLE_POSITION = 0.35; //stores value of claw angle
-    public static double CLAW_ANGLE_INTAKE = 0.35; //stores value of claw angle for intake
-    public static double CLAW_ANGLE_SPECIMEN_PICK_UP = 0.0; // get value
-    public static double CLAW_ANGLE_OUTTAKE = 0.0; //stores value of the claw angle when dropping stuff
+    public static double CLAW_ANGLE_POSITION = .4; //stores value of claw angle
+    public static double CLAW_ANGLE_INTAKE = .4; //stores value of claw angle for intake
+    public static double CLAW_ANGLE_SPECIMEN_PICK_UP = .8; //
+    public static double CLAW_ANGLE_OUTTAKE = .8; //stores value of the claw angle when dropping stuff
+    public static double CLAW_ANGLE_SPECIMEN_OUTTAKE = .95;//stuff
 
     public static double INTAKE_SERVO_POWER = 0.0; //Stores value of intake servos
     public static double INTAKE_SERVO_POWER_OFF = 0.0; //stores value of intake cr servos not spinning
     public static double INTAKE_SERVO_INTAKE = -1; //stores value of intake CR servos intaking
     public static double INTAKE_SERVO_EDJECT = 1; //stores value of intake cr servos edjecting something
 
-    public static double INTAKE_ANGLE = .35; //stores value of intake angle
+    public static double INTAKE_ANGLE = .20; //stores value of intake angle
     public static double INTAKE_ANGLE_INTAKE = .44; //stores value of intakeAngle intake position
     public static double INTAKE_ANGLE_RETRACT = .20; //stores value of intakeAngle when retracted
 
-    public static double EXTENDO_ANGLE = 1.0; //stores value fo current extendo
+    public static double EXTENDO_ANGLE = .95; //stores value fo current extendo
     public static double EXTENDO_EXTEND = .75; //stores value of extendo extending
-    public static double EXTENDO_RETRACT = 1.0; //stores value of extendo retracting
+    public static double EXTENDO_RETRACT = .95; //stores value of extendo retracting
 
     public static int SLIDE_HEIGHT_LOWERED = 5;
     public static int SLIDE_HEIGHT_SERVO_TRANSITION = 100;
-    public static int SLIDE_HEIGHT_SPECIMEN_PICK_UP; //get value
+    public static int SLIDE_HEIGHT_SPECIMEN_PICK_UP = 5; //get value
     public static int SLIDE_HEIGHT_LOW_SPECIMEN_PLACE; //get value
-    public static int SLIDE_HEIGHT_HIGH_SPECIMEN_PLACE; //get value
+    public static int SLIDE_HEIGHT_HIGH_SPECIMEN_PLACE = 825; //get value
     public static int SLIDE_HEIGHT_LOW_BUCKET_DROP; //get value
-    public static int SLIDE_HEIGHT_HIGH_BUCKET_DROP = 1860;
+    public static int SLIDE_HEIGHT_HIGH_BUCKET_DROP = 1880;
 
     double edjectTimer = 0; //Timer to control outtake
-    public static double EDJECT_TIME = 500; //How Long Outtake runs for (ms)
+    public static double EDJECT_TIME = 500; //How Long edject runs for (ms)
+
+    double intakeTimer = 0; //timer to control intake drop delay
+    public static double INTAKE_TIMER = 150;//how long intake waits to drop (ms)
     //endregion
 
     //region Arm Objects
@@ -135,7 +139,7 @@ public class ArmController {
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftSlide.setTargetPosition(SLIDE_HEIGHT);
         rightSlide.setTargetPosition(SLIDE_HEIGHT);
@@ -170,6 +174,7 @@ public class ArmController {
         claw.setPosition(CLAW_POSITION);
         //endregion
 
+        currentArmState = ArmState.RETRACT;
         //endregion
     }
     public void switchArmState(){ //Switches between methods in sequential order
@@ -205,16 +210,19 @@ public class ArmController {
                 CLAW_ANGLE_POSITION = CLAW_ANGLE_INTAKE;
                 ARM_ANGLE_POSITION = ARM_ANGLE_INTAKE;
                 EXTENDO_ANGLE = EXTENDO_EXTEND;
-                INTAKE_ANGLE = INTAKE_ANGLE_INTAKE;
+                //INTAKE_ANGLE = INTAKE_ANGLE_INTAKE;
                 INTAKE_SERVO_POWER = INTAKE_SERVO_INTAKE;
                 SLIDE_HEIGHT = SLIDE_HEIGHT_LOWERED;
                 break;
             case RETRACT:
                 EXTENDO_ANGLE = EXTENDO_RETRACT;
                 INTAKE_ANGLE = INTAKE_ANGLE_RETRACT;
+                ARM_ANGLE_POSITION = ARM_ANGLE_INTAKE;
+                CLAW_ANGLE_POSITION = CLAW_ANGLE_INTAKE;
+                INTAKE_SERVO_POWER = INTAKE_SERVO_POWER_OFF;
+                break;
             case CLOSE_CLAW:
                 CLAW_POSITION = CLAW_CLOSED;
-                INTAKE_SERVO_POWER = INTAKE_SERVO_POWER_OFF;
                 break;
             case SPECIMEN_PICK_UP:
                 SLIDE_HEIGHT = SLIDE_HEIGHT_SPECIMEN_PICK_UP;
@@ -265,6 +273,7 @@ public class ArmController {
     public int getSlideHeight(){
         return SLIDE_HEIGHT;
     }
+    public double getIntakeAngle(){return INTAKE_ANGLE;}
 
 
     public void setSlideHeight(int slideHeight){
@@ -286,17 +295,26 @@ public class ArmController {
     }
 
     public void startEdject(){
+        edjectTimer = System.currentTimeMillis() + EDJECT_TIME;
+        INTAKE_SERVO_POWER = INTAKE_SERVO_EDJECT;
+    }
+
+    public void checkEdject(){
         if (edjectTimer <= System.currentTimeMillis()) {
-            edjectTimer = System.currentTimeMillis() + EDJECT_TIME;
-            INTAKE_SERVO_POWER = INTAKE_SERVO_EDJECT;
-        }
-        else if (edjectTimer >= System.currentTimeMillis() && edjectTimer <= (System.currentTimeMillis() + (EDJECT_TIME * 2))){
-            edjectTimer += EDJECT_TIME;
-            INTAKE_SERVO_POWER = INTAKE_SERVO_EDJECT;
+            INTAKE_SERVO_POWER = INTAKE_SERVO_POWER_OFF;
         }
     }
 
-    public void checkOuttakeTimer(){
+    public void startIntake(){
+        intakeTimer = System.currentTimeMillis() + INTAKE_TIMER;
+    }
+    public void checkIntake(){
+        if (currentArmState == ArmState.EXTEND && intakeTimer <= System.currentTimeMillis()){
+            INTAKE_ANGLE = INTAKE_ANGLE_INTAKE;
+        }
+    }
+
+    public void checkEdjectTimer(){
         if(edjectTimer <= System.currentTimeMillis() && currentArmState == ArmState.TALL_BUCKET_READY){
             //intakeServo.setPower(0);
         }
@@ -320,7 +338,7 @@ public class ArmController {
         else if(currentArmState != ArmState.EXTEND) {
             //clawServo.setPosition(CLAW_SERVO_POSITION);
         }
-        checkOuttakeTimer();
+        checkEdjectTimer();
     }
 
     public void updateArmABS(){
@@ -340,7 +358,7 @@ public class ArmController {
         armAngleL.setPosition(ARM_ANGLE_POSITION);
         armAngleR.setPosition(ARM_ANGLE_POSITION);
 
-        clawAngle.setPosition(CLAW_POSITION);
+        clawAngle.setPosition(CLAW_ANGLE_POSITION);
         claw.setPosition(CLAW_POSITION);
     }
 

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -41,6 +43,15 @@ public class drive extends OpMode {
 
     @Override
     public void init() {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        drive = new MecanumDrive(hardwareMap,pose);
+
+        currentGamepad1 = new Gamepad();
+        previousGamepad1 = new Gamepad();
+        currentGamepad2 = new Gamepad();
+        previousGamepad2 = new Gamepad();
+
+        armController = new ArmController(hardwareMap);
         armController.initArm();
     }
 
@@ -133,9 +144,11 @@ public class drive extends OpMode {
         if(currentGamepad2.x && !previousGamepad2.x){
             if(clawOpen){
                 armController.currentArmState = ArmController.ArmState.CLOSE_CLAW;
+                clawOpen = false;
             }
             else{
                 armController.currentArmState = ArmController.ArmState.OPEN_CLAW;
+                clawOpen = true;
             }
         }
         /*if(currentGamepad2.a && !previousGamepad2.a){
@@ -158,10 +171,17 @@ public class drive extends OpMode {
         armController.updateArmState();
         armController.updateArmABS();
 
+        armController.checkEdject();
+        armController.checkIntake();
+
         previousGamepad1.copy(currentGamepad1);
         previousGamepad2.copy(currentGamepad2);
 
         currentGamepad1.copy(gamepad1);
         currentGamepad2.copy(gamepad2);
+
+        telemetry.addData("intakeAngle", String.valueOf(armController.getIntakeAngle()));
+        telemetry.addData("currentArmState", armController.getCurrentArmState());
+        telemetry.addData("slide height", armController.getSlideHeight());
     }
 }
