@@ -33,6 +33,7 @@ public class ArmController {
         SHORT_BUCKET_READY,
         TALL_BUCKET_READY,
         OPEN_CLAW, //open claw
+        SPECIMEN_PLACE_SEQUENCE
     }
 
     public ArmState currentArmState = ArmState.EXTEND; //Creates a variables to store current Arm State
@@ -74,6 +75,8 @@ public class ArmController {
     public static int SLIDE_HEIGHT_HIGH_SPECIMEN_PLACE = 825; //get value
     public static int SLIDE_HEIGHT_LOW_BUCKET_DROP; //get value
     public static int SLIDE_HEIGHT_HIGH_BUCKET_DROP = 1880;
+    public static int SLIDE_HEIGHT_HIGH_SPECIMEN_DROP = 725;
+    public static int SLIDE_HEIGHT_LOW_SPECIMEN_DROP; //get value, Low specimen place -100
 
     double edjectTimer = 0; //Timer to control outtake
     public static double EDJECT_TIME = 500; //How Long edject runs for (ms)
@@ -135,6 +138,9 @@ public class ArmController {
             leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
+
+        leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -252,6 +258,14 @@ public class ArmController {
                 break;
             case OPEN_CLAW:
                 CLAW_POSITION = CLAW_OPEN;
+                break;
+            case SPECIMEN_PLACE_SEQUENCE:
+                SLIDE_HEIGHT = SLIDE_HEIGHT_HIGH_SPECIMEN_DROP; //implement high and low difference
+                double somethingMinus = SLIDE_HEIGHT -10;
+                double somethingPlus = SLIDE_HEIGHT + 10;
+                if(somethingMinus <= leftSlide.getCurrentPosition() && leftSlide.getCurrentPosition() >= somethingPlus) {
+                    CLAW_POSITION = CLAW_OPEN;
+                }
                 break;
         }
     }

@@ -58,9 +58,15 @@ public class drive extends OpMode {
     @Override
     public void loop() {
         //region drive
-        xPower = -currentGamepad1.left_stick_y;
-        yPower = -currentGamepad1.left_stick_x;
-        headingPower = -currentGamepad1.right_stick_x;
+        if(currentGamepad1.left_stick_y >= .05 || currentGamepad1.left_stick_y <= -.05){
+            xPower = -currentGamepad1.left_stick_y;
+        }
+        if(currentGamepad1.left_stick_x >= .05 || currentGamepad1.left_stick_x <= -.05){
+            yPower = -currentGamepad1.left_stick_x;
+        }
+        if (currentGamepad1.right_stick_x >= .05 || currentGamepad1.right_stick_x <= -.05){
+            headingPower = -currentGamepad1.right_stick_x;
+        }
 
         xPower *= drivePower;
         yPower *= drivePower;
@@ -145,6 +151,10 @@ public class drive extends OpMode {
             if(clawOpen){
                 armController.currentArmState = ArmController.ArmState.CLOSE_CLAW;
                 clawOpen = false;
+            }
+            else if (!clawOpen && !sample){
+                armController.currentArmState = ArmController.ArmState.SPECIMEN_PLACE_SEQUENCE;
+                clawOpen = true;
             }
             else{
                 armController.currentArmState = ArmController.ArmState.OPEN_CLAW;
