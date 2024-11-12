@@ -105,6 +105,8 @@ public class ArmController {
     DcMotorEx leftSlide;
     //endregion
 
+    boolean edject;
+
     public ArmController (HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
     }
@@ -311,11 +313,13 @@ public class ArmController {
     public void startEdject(){
         edjectTimer = System.currentTimeMillis() + EDJECT_TIME;
         INTAKE_SERVO_POWER = INTAKE_SERVO_EDJECT;
+        edject = true;
     }
 
     public void checkEdject(){
         if (edjectTimer <= System.currentTimeMillis()) {
             INTAKE_SERVO_POWER = INTAKE_SERVO_POWER_OFF;
+            edject = false;
         }
     }
 
@@ -323,7 +327,7 @@ public class ArmController {
         intakeTimer = System.currentTimeMillis() + INTAKE_TIMER;
     }
     public void checkIntake(){
-        if (currentArmState == ArmState.EXTEND && intakeTimer <= System.currentTimeMillis()){
+        if (currentArmState == ArmState.EXTEND && intakeTimer <= System.currentTimeMillis() && !edject){
             INTAKE_ANGLE = INTAKE_ANGLE_INTAKE;
         }
     }
