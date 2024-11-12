@@ -18,7 +18,7 @@ public class MeepMeepTesting {
         Pose2d redCollectBackUp = new Pose2d(35,0, Math.toRadians(180));
         Pose2d redHang = new Pose2d(0,-27,Math.toRadians(270));
 
-        Pose2d blueSubmersible = new Pose2d(0,35, Math.toRadians(0));
+        Pose2d blueSubmersible = new Pose2d(0,35, Math.toRadians(90));
         Pose2d blueSample1 = new Pose2d(-28,-46,Math.toRadians( 90));
         Pose2d blueSample2 = new Pose2d(-58, -26,Math.toRadians(90));
         Pose2d blueSample3 = new Pose2d(-28, -26,Math.toRadians(90));
@@ -46,11 +46,11 @@ public class MeepMeepTesting {
 
         MeepMeep meepMeep = new MeepMeep(800);
 
-        RoadRunnerBotEntity redBot1 = new DefaultBotBuilder(meepMeep)
+        RoadRunnerBotEntity blueBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
-                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(35, 58, Math.toRadians(-90)))
-                        .lineToLinearHeading(blueBasket)
+                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(35, 58, Math.toRadians(90)))
+                        .lineToLinearHeading(blueSubmersible)
                         .lineToLinearHeading(blueNeutralSample1)
                         .lineToLinearHeading(blueBasket)
                         .lineToLinearHeading(blueNeutralSample2Approach)
@@ -77,7 +77,7 @@ public class MeepMeepTesting {
         meepMeep.setBackground(MeepMeep.Background.FIELD_INTOTHEDEEP_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
-                .addEntity(redBot1)
+                .addEntity(blueBot)
                 .start();
 
     }
