@@ -70,6 +70,6 @@ public class redAuto extends LinearOpMode {
 
         toSubmersible = drive.actionBuilder(initialPosition)
                 .splineToLinearHeading(blueSubmersible, Math.toRadians(90))
-                .
+                ;
     }
 }

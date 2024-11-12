@@ -123,6 +123,10 @@ public class testDrive extends OpMode{
         leftSlide.setPower(drivePower);
         rightSlide.setPower(drivePower);
 
+        slideTarget = 5;
+        leftSlide.setTargetPosition(slideTarget);
+        rightSlide.setTargetPosition(slideTarget);
+
         extendoR.setDirection(Servo.Direction.REVERSE);
         intakeAngleR.setDirection(Servo.Direction.REVERSE);
         intakeR.setDirection(CRServo.Direction.REVERSE);
@@ -141,7 +145,7 @@ public class testDrive extends OpMode{
         armAngleR.setPosition(armAngleTarget);
 
         claw.setPosition(.5);
-        clawAngle.setPosition(.25);
+        clawAngle.setPosition(.4);
     }
 
     @Override
@@ -204,11 +208,14 @@ public class testDrive extends OpMode{
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
             slideTarget +=10;
+            if (slideTarget < 1890){
+                slideTarget = 1885;
+            }
         }
         if(currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
             slideTarget -=10;
-            if (slideTarget <0){
-                slideTarget = 0;
+            if (slideTarget <5){
+                slideTarget = 5;
             }
         }
         //endregion

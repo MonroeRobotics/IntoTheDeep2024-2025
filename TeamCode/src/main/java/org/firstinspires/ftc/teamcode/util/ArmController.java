@@ -40,7 +40,7 @@ public class ArmController {
 
     double ARM_ANGLE_POSITION = 0.12; //Live Updating Arm Angle Position (0 is intake position) should normally be .11
     public static double ARM_ANGLE_INTAKE = 0.12;//Stores Value of Arm intake Position should normally be .11
-    public static double ARM_ANGLE_SPECIMEN_PICK_UP = .64; //get value, likely opposite of normal outtake
+    public static double ARM_ANGLE_SPECIMEN_PICK_UP = .67; //get value, likely opposite of normal outtake
     public static double ARM_ANGLE_SPECIMEN_DROP = .47;//Stores value of arm outtake position for specimen
     public static double ARM_ANGLE_BUCKET_OUTTAKE = .55;//Stores Value of Arm outtake Position
 
@@ -82,7 +82,7 @@ public class ArmController {
     public static double EDJECT_TIME = 500; //How Long edject runs for (ms)
 
     double intakeTimer = 0; //timer to control intake drop delay
-    public static double INTAKE_TIMER = 150;//how long intake waits to drop (ms)
+    public static double INTAKE_TIMER = 200;//how long intake waits to drop (ms)
     //endregion
 
     //region Arm Objects
@@ -216,7 +216,7 @@ public class ArmController {
                 CLAW_ANGLE_POSITION = CLAW_ANGLE_INTAKE;
                 ARM_ANGLE_POSITION = ARM_ANGLE_INTAKE;
                 EXTENDO_ANGLE = EXTENDO_EXTEND;
-                //INTAKE_ANGLE = INTAKE_ANGLE_INTAKE;
+                //INTAKE_ANGLE = INTAKE_ANGLE_INTAKE; Intake angle is adjusted with a seperate class so we can get a delay
                 INTAKE_SERVO_POWER = INTAKE_SERVO_INTAKE;
                 SLIDE_HEIGHT = SLIDE_HEIGHT_LOWERED;
                 break;
@@ -225,10 +225,10 @@ public class ArmController {
                 INTAKE_ANGLE = INTAKE_ANGLE_RETRACT;
                 ARM_ANGLE_POSITION = ARM_ANGLE_INTAKE;
                 CLAW_ANGLE_POSITION = CLAW_ANGLE_INTAKE;
-                INTAKE_SERVO_POWER = INTAKE_SERVO_POWER_OFF;
                 break;
             case CLOSE_CLAW:
                 CLAW_POSITION = CLAW_CLOSED;
+                INTAKE_SERVO_POWER = INTAKE_SERVO_POWER_OFF;
                 break;
             case SPECIMEN_PICK_UP:
                 SLIDE_HEIGHT = SLIDE_HEIGHT_SPECIMEN_PICK_UP;
