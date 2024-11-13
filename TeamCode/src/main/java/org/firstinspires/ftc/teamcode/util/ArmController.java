@@ -75,7 +75,7 @@ public class ArmController {
     public static int SLIDE_HEIGHT_LOW_SPECIMEN_PLACE; //get value
     public static int SLIDE_HEIGHT_HIGH_SPECIMEN_PLACE = 825; //get value
     public static int SLIDE_HEIGHT_LOW_BUCKET_DROP; //get value
-    public static int SLIDE_HEIGHT_HIGH_BUCKET_DROP = 1880;
+    public static int SLIDE_HEIGHT_HIGH_BUCKET_DROP = 1835;
     public static int SLIDE_HEIGHT_HIGH_SPECIMEN_DROP = 725;
     public static int SLIDE_HEIGHT_LOW_SPECIMEN_DROP; //get value, Low specimen place -100
 
@@ -83,7 +83,7 @@ public class ArmController {
     public static double EDJECT_TIME = 1500; //How Long edject runs for (ms)
 
     double intakeTimer = 0; //timer to control intake drop delay
-    public static double INTAKE_TIMER = 200;//how long intake waits to drop (ms)
+    public static double INTAKE_TIMER = 500;//how long intake waits to drop (ms)
     //endregion
 
     //region Arm Objects
@@ -148,7 +148,7 @@ public class ArmController {
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        //rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         SLIDE_HEIGHT = SLIDE_HEIGHT_LOWERED;
 

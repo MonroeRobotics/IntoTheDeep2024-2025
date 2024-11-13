@@ -208,13 +208,13 @@ public class testDrive extends OpMode{
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
             slideTarget +=10;
-            if (slideTarget < 1890){
-                slideTarget = 1885;
+            if (slideTarget > 1840){
+                slideTarget = 1835;
             }
         }
         if(currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
             slideTarget -=10;
-            if (slideTarget <5){
+            if (slideTarget < 5){
                 slideTarget = 5;
             }
         }
