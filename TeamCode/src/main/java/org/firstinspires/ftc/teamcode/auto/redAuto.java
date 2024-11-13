@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.auto;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.driveClasses.MecanumDrive;
 import org.firstinspires.ftc.teamcode.util.ArmController;
@@ -50,6 +53,12 @@ public class redAuto extends LinearOpMode {
     Vector2d startingVector = new Vector2d(0,0);
     Pose2d startingPos = new Pose2d(startingVector, Math.toRadians(0));
 
+    Gamepad currentGamepad1;
+    Gamepad previousGamepad1;
+
+    Gamepad currentGamepad2;
+    Gamepad previousGamepad2;
+
     enum autoState {
         START,
         SUBMERSIBLE,
@@ -65,16 +74,19 @@ public class redAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         drive = new MecanumDrive(hardwareMap, startingPos);
-
-        Pose2d initialPosition = new Pose2d(35,58, Math.toRadians(90));
-        drive = new MecanumDrive(hardwareMap,initialPosition);
 
         armController = new ArmController(hardwareMap);
         armController.initArm();
 
-        toSubmersible = drive.actionBuilder(initialPosition)
-                .splineToLinearHeading(blueSubmersible, Math.toRadians(90))
-                ;
+        Pose2d initialPosition = new Pose2d(35,58, Math.toRadians(90));
+        drive = new MecanumDrive(hardwareMap,initialPosition);
+
+
+
+        while (opModeIsActive()){
+
+        }
     }
 }
