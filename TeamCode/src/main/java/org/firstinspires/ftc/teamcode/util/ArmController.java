@@ -61,7 +61,7 @@ public class ArmController {
     public static double INTAKE_SERVO_EDJECT = 1; //stores value of intake cr servos edjecting something
 
     public static double INTAKE_ANGLE = .20; //stores value of intake angle
-    public static double INTAKE_ANGLE_INTAKE = .44; //stores value of intakeAngle intake position
+    public static double INTAKE_ANGLE_INTAKE = .43; //stores value of intakeAngle intake position
     public static double INTAKE_ANGLE_RETRACT = .20; //stores value of intakeAngle when retracted
 
     public static double EXTENDO_ANGLE = .95; //stores value fo current extendo
@@ -79,7 +79,7 @@ public class ArmController {
     public static int SLIDE_HEIGHT_LOW_SPECIMEN_DROP; //get value, Low specimen place -100
 
     double edjectTimer = 0; //Timer to control outtake
-    public static double EDJECT_TIME = 500; //How Long edject runs for (ms)
+    public static double EDJECT_TIME = 1500; //How Long edject runs for (ms)
 
     double intakeTimer = 0; //timer to control intake drop delay
     public static double INTAKE_TIMER = 200;//how long intake waits to drop (ms)
@@ -221,7 +221,7 @@ public class ArmController {
                 ARM_ANGLE_POSITION = ARM_ANGLE_INTAKE;
                 EXTENDO_ANGLE = EXTENDO_EXTEND;
                 //INTAKE_ANGLE = INTAKE_ANGLE_INTAKE; Intake angle is adjusted with a seperate class so we can get a delay
-                INTAKE_SERVO_POWER = INTAKE_SERVO_INTAKE;
+                //INTAKE_SERVO_POWER = INTAKE_SERVO_INTAKE; same reason as intake angle
                 SLIDE_HEIGHT = SLIDE_HEIGHT_LOWERED;
                 break;
             case RETRACT:
@@ -318,25 +318,25 @@ public class ArmController {
         edject = true;
     }
 
-    public void checkEdject(){
-        if (edjectTimer <= System.currentTimeMillis()) {
+    public void checkIntakeServoPower(){
+        if (edjectTimer <= System.currentTimeMillis() && edject) {
             INTAKE_SERVO_POWER = INTAKE_SERVO_POWER_OFF;
             edject = false;
+        }
+        else if (currentArmState == ArmState.EXTEND && !edject){
+            INTAKE_SERVO_POWER = INTAKE_SERVO_INTAKE;
+        }
+        else if (currentArmState == ArmState.RETRACT && !edject){
+            INTAKE_SERVO_POWER = INTAKE_SERVO_POWER_OFF;
         }
     }
 
     public void startIntake(){
         intakeTimer = System.currentTimeMillis() + INTAKE_TIMER;
     }
-    public void checkIntake(){
-        if (currentArmState == ArmState.EXTEND && intakeTimer <= System.currentTimeMillis() && !edject){
+    public void checkIntakeAngle(){
+        if (currentArmState == ArmState.EXTEND && intakeTimer <= System.currentTimeMillis()){
             INTAKE_ANGLE = INTAKE_ANGLE_INTAKE;
-        }
-    }
-
-    public void checkEdjectTimer(){
-        if(edjectTimer <= System.currentTimeMillis() && currentArmState == ArmState.TALL_BUCKET_READY){
-            //intakeServo.setPower(0);
         }
     }
 
@@ -358,7 +358,7 @@ public class ArmController {
         else if(currentArmState != ArmState.EXTEND) {
             //clawServo.setPosition(CLAW_SERVO_POSITION);
         }
-        checkEdjectTimer();
+        checkIntakeServoPower();
     }
 
     public void updateArmABS(){
