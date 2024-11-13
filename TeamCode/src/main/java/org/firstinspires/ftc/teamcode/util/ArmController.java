@@ -149,6 +149,8 @@ public class ArmController {
 
         leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        SLIDE_HEIGHT = SLIDE_HEIGHT_LOWERED;
+
         leftSlide.setTargetPosition(SLIDE_HEIGHT);
         rightSlide.setTargetPosition(SLIDE_HEIGHT);
 
