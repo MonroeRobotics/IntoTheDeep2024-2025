@@ -35,6 +35,7 @@ public class drive extends OpMode {
     public boolean intakeExtended = false;
     public boolean sample = true;
     public boolean clawOpen = true;
+    public boolean specSequenceRan;
 
     ArmController armController;
     int stage;
@@ -128,24 +129,48 @@ public class drive extends OpMode {
         //region dpad
         if(currentGamepad2.dpad_up && !previousGamepad2.dpad_up){
             stage += 1;
-            if (sample){
-                armController.currentArmState = ArmController.ArmState.TALL_BUCKET_READY;
+            if (stage > 2){
+                stage = 2;
+            }
+
+            if(sample) {
+                if (stage == 1) {
+                    armController.currentArmState = ArmController.ArmState.TALL_BUCKET_READY;
+                }
+                else if (stage == 2) {
+                    armController.currentArmState = ArmController.ArmState.SHORT_BUCKET_READY;
+                }
             }
             else {
-                armController.currentArmState = ArmController.ArmState.HIGH_SPECIMEN_PLACE;
+                else if (stage == 1) {
+                    armController.currentArmState = ArmController.ArmState.HIGH_SPECIMEN_PLACE;
+                } else if (stage == 2) {
+                    armController.currentArmState = ArmController.ArmState.LOW_SPECIMEN_PLACE;
+                }
             }
         }
 
         if(currentGamepad2.dpad_down & !previousGamepad2.dpad_down){
             stage -= 1;
+            if (stage <0 ){
+                stage = 0;
+            }
+
             if(sample){
-                if(stage == 0){
+                if (stage == 1) {
+                    armController.currentArmState = ArmController.ArmState.SHORT_BUCKET_READY;
+                }
+                else if(stage == 0){
                     armController.currentArmState = ArmController.ArmState.RETRACT;
                 }
-                armController.currentArmState = ArmController.ArmState.SHORT_BUCKET_READY;
             }
             else {
-                armController.currentArmState = ArmController.ArmState.LOW_SPECIMEN_PLACE;
+                if (stage == 1) {
+                    armController.currentArmState = ArmController.ArmState.LOW_SPECIMEN_PLACE;
+                }
+                else if (stage == 0){
+                    armController.currentArmState = ArmController.ArmState.RETRACT;
+                }
             }
         }
         //endregion
@@ -156,10 +181,13 @@ public class drive extends OpMode {
                 armController.currentArmState = ArmController.ArmState.CLOSE_CLAW;
                 clawOpen = false;
             }
-            else if (!clawOpen && !sample){
+            else if (!clawOpen && !sample && !specSequenceRan){
                 armController.currentArmState = ArmController.ArmState.SPECIMEN_PLACE_SEQUENCE;
-                clawOpen = true;
-                sample = true;
+                specSequenceRan = true;
+            }
+            else if(!clawOpen && !sample && specSequenceRan){
+                armController.currentArmState = ArmController.ArmState.OPEN_CLAW;
+                specSequenceRan = false;
             }
             else{
                 armController.currentArmState = ArmController.ArmState.OPEN_CLAW;
