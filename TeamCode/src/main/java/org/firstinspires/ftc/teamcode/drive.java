@@ -37,6 +37,7 @@ public class drive extends OpMode {
     public boolean clawOpen = true;
 
     ArmController armController;
+    int stage;
 
     @Override
     public void init() {
@@ -50,6 +51,7 @@ public class drive extends OpMode {
 
         armController = new ArmController(hardwareMap);
         armController.initArm();
+        stage = 0;
     }
 
     @Override
@@ -125,6 +127,7 @@ public class drive extends OpMode {
 
         //region dpad
         if(currentGamepad2.dpad_up && !previousGamepad2.dpad_up){
+            stage += 1;
             if (sample){
                 armController.currentArmState = ArmController.ArmState.TALL_BUCKET_READY;
             }
@@ -134,7 +137,11 @@ public class drive extends OpMode {
         }
 
         if(currentGamepad2.dpad_down & !previousGamepad2.dpad_down){
+            stage -= 1;
             if(sample){
+                if(stage == 0){
+                    armController.currentArmState = ArmController.ArmState.RETRACT;
+                }
                 armController.currentArmState = ArmController.ArmState.SHORT_BUCKET_READY;
             }
             else {
