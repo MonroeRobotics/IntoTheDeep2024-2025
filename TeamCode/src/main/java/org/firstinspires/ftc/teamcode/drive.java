@@ -152,6 +152,7 @@ public class drive extends OpMode {
             else if (!clawOpen && !sample){
                 armController.currentArmState = ArmController.ArmState.SPECIMEN_PLACE_SEQUENCE;
                 clawOpen = true;
+                sample = true;
             }
             else{
                 armController.currentArmState = ArmController.ArmState.OPEN_CLAW;

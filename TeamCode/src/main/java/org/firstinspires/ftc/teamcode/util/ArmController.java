@@ -42,19 +42,19 @@ public class ArmController {
     double ARM_ANGLE_POSITION = 0.12; //Live Updating Arm Angle Position (0 is intake position) should normally be .11
     public static double ARM_ANGLE_INTAKE = 0.12;//Stores Value of Arm intake Position should normally be .11
     public static double ARM_ANGLE_SPECIMEN_PICK_UP = .67; //get value, likely opposite of normal outtake
-    public static double ARM_ANGLE_SPECIMEN_DROP = .47;//Stores value of arm outtake position for specimen
-    public static double ARM_ANGLE_BUCKET_OUTTAKE = .55;//Stores Value of Arm outtake Position
+    public static double ARM_ANGLE_SPECIMEN_DROP = .41;//Stores value of arm outtake position for specimen
+    public static double ARM_ANGLE_BUCKET_OUTTAKE = .56;//Stores Value of Arm outtake Position
 
     double CLAW_POSITION = .5; //Live Updating Arm Position (.5 is open)
     public static double CLAW_CLOSED = .3; //Stores Value of Claw closed Position
     //public static double CLAW_SERVO_TRANSITION = 0.6; //Stores value of Claw Outtake position
     public static double CLAW_OPEN = 0.5; //Stores value of Claw open position
 
-    public static double CLAW_ANGLE_POSITION = .4; //stores value of claw angle
-    public static double CLAW_ANGLE_INTAKE = .4; //stores value of claw angle for intake
-    public static double CLAW_ANGLE_SPECIMEN_PICK_UP = .8; //
-    public static double CLAW_ANGLE_OUTTAKE = .8; //stores value of the claw angle when dropping stuff
-    public static double CLAW_ANGLE_SPECIMEN_OUTTAKE = .95;//stuff
+    public static double CLAW_ANGLE_POSITION = .2; //stores value of claw angle
+    public static double CLAW_ANGLE_INTAKE = .2; //stores value of claw angle for intake
+    public static double CLAW_ANGLE_SPECIMEN_PICK_UP = .55; //
+    public static double CLAW_ANGLE_OUTTAKE = .55; //stores value of the claw angle when dropping stuff
+    public static double CLAW_ANGLE_SPECIMEN_OUTTAKE = 1;//stuff
 
     public static double INTAKE_SERVO_POWER = 0.0; //Stores value of intake servos
     public static double INTAKE_SERVO_POWER_OFF = 0.0; //stores value of intake cr servos not spinning
@@ -76,7 +76,7 @@ public class ArmController {
     public static int SLIDE_HEIGHT_HIGH_SPECIMEN_PLACE = 825; //get value
     public static int SLIDE_HEIGHT_LOW_BUCKET_DROP; //get value
     public static int SLIDE_HEIGHT_HIGH_BUCKET_DROP = 1835;
-    public static int SLIDE_HEIGHT_HIGH_SPECIMEN_DROP = 725;
+    public static int SLIDE_HEIGHT_HIGH_SPECIMEN_DROP = 385;
     public static int SLIDE_HEIGHT_LOW_SPECIMEN_DROP; //get value, Low specimen place -100
 
     double edjectTimer = 0; //Timer to control outtake
@@ -243,12 +243,12 @@ public class ArmController {
             case LOW_SPECIMEN_PLACE:
                 SLIDE_HEIGHT = SLIDE_HEIGHT_LOW_SPECIMEN_PLACE;
                 ARM_ANGLE_POSITION = ARM_ANGLE_SPECIMEN_DROP;
-                CLAW_ANGLE_POSITION = CLAW_ANGLE_OUTTAKE;
+                CLAW_ANGLE_POSITION = CLAW_ANGLE_SPECIMEN_OUTTAKE;
                 break;
             case HIGH_SPECIMEN_PLACE:
                 SLIDE_HEIGHT = SLIDE_HEIGHT_HIGH_SPECIMEN_PLACE;
                 ARM_ANGLE_POSITION = ARM_ANGLE_SPECIMEN_DROP;
-                CLAW_ANGLE_POSITION = CLAW_ANGLE_OUTTAKE;
+                CLAW_ANGLE_POSITION = CLAW_ANGLE_SPECIMEN_OUTTAKE;
                 break;
             case SHORT_BUCKET_READY:
                 SLIDE_HEIGHT = SLIDE_HEIGHT_LOW_BUCKET_DROP;
@@ -266,11 +266,6 @@ public class ArmController {
                 break;
             case SPECIMEN_PLACE_SEQUENCE:
                 SLIDE_HEIGHT = SLIDE_HEIGHT_HIGH_SPECIMEN_DROP; //implement high and low difference
-                double somethingMinus = SLIDE_HEIGHT -10;
-                double somethingPlus = SLIDE_HEIGHT + 10;
-                if(somethingMinus <= leftSlide.getCurrentPosition() && leftSlide.getCurrentPosition() >= somethingPlus) {
-                    CLAW_POSITION = CLAW_OPEN;
-                }
                 break;
         }
     }
