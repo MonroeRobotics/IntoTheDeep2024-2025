@@ -12,10 +12,11 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.driveClasses.MecanumDrive;
 import org.firstinspires.ftc.teamcode.util.ArmController;
+import org.firstinspires.ftc.teamcode.util.AutoConfiguration;
 
-@Autonomous(name = "Red Auto", group = "Main")
+@Autonomous(name = "Blue Auto", group = "Main")
 @Config
-public class redAuto extends LinearOpMode {
+public class blueAuto extends LinearOpMode {
 
     //region Dashboard Variables
 
@@ -29,6 +30,9 @@ public class redAuto extends LinearOpMode {
 
     //endregion
 
+    Pose2d startingDrivePose;
+    Pose2d startingDrivePoseLeft = new Pose2d(0,0,Math.toRadians(0));
+    Pose2d startingDrivePoseRight = new Pose2d(0,0, Math.toRadians(0));
     Pose2d blueSubmersible = new Pose2d(0,35, Math.toRadians(90));
     Pose2d blueBasket = new Pose2d(53,53,Math.toRadians(220));
 
@@ -42,6 +46,7 @@ public class redAuto extends LinearOpMode {
 
     MecanumDrive drive;
     ArmController armController;
+    AutoConfiguration autoConfiguration;
 
     //region trajectory declerations
     TrajectoryActionBuilder toSubmersible;
@@ -53,12 +58,6 @@ public class redAuto extends LinearOpMode {
     Vector2d startingVector = new Vector2d(0,0);
     Pose2d startingPos = new Pose2d(startingVector, Math.toRadians(0));
 
-    Gamepad currentGamepad1;
-    Gamepad previousGamepad1;
-
-    Gamepad currentGamepad2;
-    Gamepad previousGamepad2;
-
     enum autoState {
         START,
         SUBMERSIBLE,
@@ -68,9 +67,13 @@ public class redAuto extends LinearOpMode {
         NEUTRAL3,
         BUCKET,
         DROP,
-        PARK
+        PARK,
+        STOP
     }
     autoState queuedState = autoState.START;
+
+    Gamepad currentGamepad1;
+    Gamepad previousGamepad1;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -83,7 +86,30 @@ public class redAuto extends LinearOpMode {
         Pose2d initialPosition = new Pose2d(35,58, Math.toRadians(90));
         drive = new MecanumDrive(hardwareMap,initialPosition);
 
+        currentGamepad1 = new Gamepad();
+        previousGamepad1 = new Gamepad();
+        currentGamepad1.copy(gamepad1);
+        previousGamepad1.copy(currentGamepad1);
 
+        autoConfiguration = new AutoConfiguration(telemetry, AutoConfiguration.AllianceColor.RED);
+
+        autoConfiguration.processInput(currentGamepad1, previousGamepad1);
+
+        while (opModeInInit()){
+            autoConfiguration.processInput(currentGamepad1,previousGamepad1);
+
+            previousGamepad1.copy(currentGamepad1);
+            currentGamepad1.copy(gamepad1);
+
+            if(autoConfiguration.getStartPosition() == AutoConfiguration.StartPosition.LEFT){
+                startingDrivePose = startingDrivePoseLeft;
+            }
+            else{
+                startingDrivePose = startingDrivePoseRight;
+            }
+
+            TrajectoryActionBuilder specimenPlace = drive.actionBuilder(startingDrivePose);
+        }
 
         while (opModeIsActive()){
 

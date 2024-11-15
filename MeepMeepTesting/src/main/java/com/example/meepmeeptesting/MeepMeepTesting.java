@@ -1,10 +1,9 @@
 package com.example.meepmeeptesting;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-
-import org.rowlandhall.meepmeep.MeepMeep;
-import org.rowlandhall.meepmeep.roadrunner.DefaultBotBuilder;
-import org.rowlandhall.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.noahbres.meepmeep.MeepMeep;
+import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
+import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class MeepMeepTesting {
     public static void main(String[] args) {
@@ -40,6 +39,8 @@ public class MeepMeepTesting {
         Pose2d blueNeutralSample3Approach = new Pose2d(57,26,Math.toRadians(0));
         Pose2d blueNeutralSample3 = new Pose2d(62,26,Math.toRadians(0));
 
+        Pose2d startPos1 = new Pose2d(35, 58, Math.toRadians(90));
+
 
 
 
@@ -49,17 +50,19 @@ public class MeepMeepTesting {
         RoadRunnerBotEntity blueBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
-                .followTrajectorySequence(drive -> drive.trajectorySequenceBuilder(new Pose2d(35, 58, Math.toRadians(90)))
-                        .lineToLinearHeading(blueSubmersible)
-                        .lineToLinearHeading(blueNeutralSample1)
-                        .lineToLinearHeading(blueBasket)
-                        .lineToLinearHeading(blueNeutralSample2Approach)
-                        .lineToLinearHeading(blueNeutralSample2)
-                        .lineToLinearHeading(blueBasket)
-                        .lineToLinearHeading(blueNeutralSample3Approach)
-                        .lineToLinearHeading(blueNeutralSample3)
-                        .lineToLinearHeading(blueBasket)
-                        .build());
+                .build();
+
+        blueBot.runAction(blueBot.getDrive().actionBuilder(new Pose2d(0,0,0)))
+                .lineToXLinearHeading(blueSubmersible)
+                .lineToLinearHeading(blueNeutralSample1)
+                .lineToLinearHeading(blueBasket)
+                .lineToLinearHeading(blueNeutralSample2Approach)
+                .lineToLinearHeading(blueNeutralSample2)
+                .lineToLinearHeading(blueBasket)
+                .lineToLinearHeading(blueNeutralSample3Approach)
+                .lineToLinearHeading(blueNeutralSample3)
+                .lineToLinearHeading(blueBasket)
+                .build();
         RoadRunnerBotEntity blueBot1 = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
