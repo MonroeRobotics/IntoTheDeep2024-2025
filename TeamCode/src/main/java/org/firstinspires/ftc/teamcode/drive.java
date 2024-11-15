@@ -129,25 +129,25 @@ public class drive extends OpMode {
         //region dpad
         if(currentGamepad2.dpad_up && !previousGamepad2.dpad_up){
             stage += 1;
-            if (stage > 2){
-                stage = 2;
+            if (stage > 1){
+                stage = 1;
             }
 
             if(sample) {
                 if (stage == 1) {
                     armController.currentArmState = ArmController.ArmState.TALL_BUCKET_READY;
                 }
-                else if (stage == 2) {
+                /*else if (stage == 2) {
                     armController.currentArmState = ArmController.ArmState.SHORT_BUCKET_READY;
-                }
+                }*/
             }
             else {
                 if (stage == 1) {
                     armController.currentArmState = ArmController.ArmState.HIGH_SPECIMEN_PLACE;
                 }
-                else if (stage == 2) {
+                /*else if (stage == 2) {
                     armController.currentArmState = ArmController.ArmState.LOW_SPECIMEN_PLACE;
-                }
+                }*/
             }
         }
 
@@ -158,18 +158,18 @@ public class drive extends OpMode {
             }
 
             if(sample){
-                if (stage == 1) {
+                /*if (stage == 1) {
                     armController.currentArmState = ArmController.ArmState.SHORT_BUCKET_READY;
-                }
-                else if(stage == 0){
+                }*/
+                if(stage == 0){
                     armController.currentArmState = ArmController.ArmState.RETRACT;
                 }
             }
             else {
-                if (stage == 1) {
+                /*if (stage == 1) {
                     armController.currentArmState = ArmController.ArmState.LOW_SPECIMEN_PLACE;
-                }
-                else if (stage == 0){
+                }*/
+                if (stage == 0){
                     armController.currentArmState = ArmController.ArmState.RETRACT;
                 }
             }

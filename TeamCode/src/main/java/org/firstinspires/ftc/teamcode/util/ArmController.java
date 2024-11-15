@@ -163,6 +163,9 @@ public class ArmController {
 
         leftSlide.setVelocity(SLIDE_MAX_VELO);
         rightSlide.setVelocity(SLIDE_MAX_VELO);
+
+        leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         //endregion
 
         //region Servos

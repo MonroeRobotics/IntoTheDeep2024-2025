@@ -111,8 +111,8 @@ public class blueAuto extends LinearOpMode {
             TrajectoryActionBuilder specimenPlace = drive.actionBuilder(startingDrivePose)
                     .splineTo(blueSubmersible, Math.toRadians(90));
 
-            TrajectoryActionBuilder blueNeutral1 = drive.actionBuilder()
-                    .splineTo(blueSubmersible, Math.toRadians(90));
+            /*TrajectoryActionBuilder blueNeutral1 = drive.actionBuilder()
+                    .splineTo(blueSubmersible, Math.toRadians(90));*/
         }
 
         while (opModeIsActive()){
