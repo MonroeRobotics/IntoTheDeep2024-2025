@@ -142,9 +142,10 @@ public class drive extends OpMode {
                 }
             }
             else {
-                else if (stage == 1) {
+                if (stage == 1) {
                     armController.currentArmState = ArmController.ArmState.HIGH_SPECIMEN_PLACE;
-                } else if (stage == 2) {
+                }
+                else if (stage == 2) {
                     armController.currentArmState = ArmController.ArmState.LOW_SPECIMEN_PLACE;
                 }
             }
@@ -188,6 +189,7 @@ public class drive extends OpMode {
             else if(!clawOpen && !sample && specSequenceRan){
                 armController.currentArmState = ArmController.ArmState.OPEN_CLAW;
                 specSequenceRan = false;
+                clawOpen = true;
             }
             else{
                 armController.currentArmState = ArmController.ArmState.OPEN_CLAW;
