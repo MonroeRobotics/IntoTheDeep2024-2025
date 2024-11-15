@@ -33,7 +33,7 @@ public class blueAuto extends LinearOpMode {
     Pose2d startingDrivePose;
     Pose2d startingDrivePoseLeft = new Pose2d(0,0,Math.toRadians(0));
     Pose2d startingDrivePoseRight = new Pose2d(0,0, Math.toRadians(0));
-    Pose2d blueSubmersible = new Pose2d(0,35, Math.toRadians(90));
+    Vector2d blueSubmersible = new Vector2d(0,35);
     Pose2d blueBasket = new Pose2d(53,53,Math.toRadians(220));
 
     Pose2d blueNeutralSample1 = new Pose2d(48,33,Math.toRadians(-90));
@@ -108,7 +108,11 @@ public class blueAuto extends LinearOpMode {
                 startingDrivePose = startingDrivePoseRight;
             }
 
-            TrajectoryActionBuilder specimenPlace = drive.actionBuilder(startingDrivePose);
+            TrajectoryActionBuilder specimenPlace = drive.actionBuilder(startingDrivePose)
+                    .splineTo(blueSubmersible, Math.toRadians(90));
+
+            TrajectoryActionBuilder blueNeutral1 = drive.actionBuilder()
+                    .splineTo(blueSubmersible, Math.toRadians(90));
         }
 
         while (opModeIsActive()){
