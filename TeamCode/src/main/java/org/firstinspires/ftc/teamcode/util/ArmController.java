@@ -150,7 +150,11 @@ public class ArmController {
 
         //rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        //makes sure stuff is in the right spot to start
         SLIDE_HEIGHT = SLIDE_HEIGHT_LOWERED;
+        INTAKE_ANGLE = INTAKE_ANGLE_RETRACT;
+        CLAW_ANGLE_POSITION = CLAW_ANGLE_INTAKE;
+        EXTENDO_ANGLE = EXTENDO_RETRACT;
 
         leftSlide.setTargetPosition(SLIDE_HEIGHT);
         rightSlide.setTargetPosition(SLIDE_HEIGHT);
@@ -233,6 +237,8 @@ public class ArmController {
                 INTAKE_ANGLE = INTAKE_ANGLE_RETRACT;
                 ARM_ANGLE_POSITION = ARM_ANGLE_INTAKE;
                 CLAW_ANGLE_POSITION = CLAW_ANGLE_INTAKE;
+                SLIDE_HEIGHT = SLIDE_HEIGHT_LOWERED;
+                CLAW_POSITION = CLAW_OPEN;
                 break;
             case CLOSE_CLAW:
                 CLAW_POSITION = CLAW_CLOSED;

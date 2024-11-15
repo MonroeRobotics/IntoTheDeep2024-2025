@@ -149,7 +149,7 @@ public class testDrive extends OpMode{
         armAngleR.setPosition(armAngleTarget);
 
         claw.setPosition(.5);
-        clawAngle.setPosition(.4);
+        clawAngle.setPosition(.2);
     }
 
     @Override
@@ -351,14 +351,14 @@ public class testDrive extends OpMode{
         }
 
         if(currentGamepad2.dpad_left && !previousGamepad2.dpad_left){
-            clawAngleTarget +=.05;
+            clawAngleTarget +=.01;
             if (clawAngleTarget>1.0){
                 clawAngleTarget=1.0;
             }
             clawAngle.setPosition(clawAngleTarget);
         }
         if(currentGamepad2.dpad_right && !previousGamepad2.dpad_right){
-            clawAngleTarget -= .05;
+            clawAngleTarget -= .01;
             if(clawAngleTarget<0){
                 clawAngleTarget=0.0;
             }
