@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.auto;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
@@ -31,16 +32,16 @@ public class blueAuto extends LinearOpMode {
     //endregion
 
     Pose2d startingDrivePose;
-    Pose2d startingDrivePoseLeft = new Pose2d(0,0,Math.toRadians(0));
-    Pose2d startingDrivePoseRight = new Pose2d(0,0, Math.toRadians(0));
+    Pose2d startingDrivePoseLeft = new Pose2d(16.58, 62.45, Math.toRadians(-90));
+    Pose2d startingDrivePoseRight = new Pose2d(-16.58,62.45, Math.toRadians(-90));
     Vector2d blueSubmersible = new Vector2d(0,35);
-    Pose2d blueBasket = new Pose2d(53,53,Math.toRadians(220));
+    Vector2d blueBasket = new Vector2d(53,53); //220
 
-    Pose2d blueNeutralSample1 = new Pose2d(48,33,Math.toRadians(-90));
-    Pose2d blueNeutralSample2Approach = new Pose2d(58,39,Math.toRadians(-90));
-    Pose2d blueNeutralSample2 = new Pose2d(58,33,Math.toRadians(-90));
-    Pose2d blueNeutralSample3Approach = new Pose2d(57,26,Math.toRadians(0));
-    Pose2d blueNeutralSample3 = new Pose2d(62,26,Math.toRadians(0));
+    Vector2d blueNeutralSample1 = new Vector2d(48,33); //-90
+    Vector2d blueNeutralSample2Approach = new Vector2d(58,39); //-90
+    Vector2d blueNeutralSample2 = new Vector2d(58,33); //-90
+    Vector2d blueNeutralSample3Approach = new Vector2d(57,26); //0
+    Vector2d blueNeutralSample3 = new Vector2d(62,26); //0
 
     int autoCycleCount = 0;
 
@@ -55,8 +56,6 @@ public class blueAuto extends LinearOpMode {
     TrajectoryActionBuilder toNeutralBlue3;
     //endregion
 
-    Vector2d startingVector = new Vector2d(0,0);
-    Pose2d startingPos = new Pose2d(startingVector, Math.toRadians(0));
 
     enum autoState {
         START,
@@ -78,7 +77,7 @@ public class blueAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        drive = new MecanumDrive(hardwareMap, startingPos);
+        drive = new MecanumDrive(hardwareMap, startingDrivePose);
 
         armController = new ArmController(hardwareMap);
         armController.initArm();
@@ -91,7 +90,7 @@ public class blueAuto extends LinearOpMode {
         currentGamepad1.copy(gamepad1);
         previousGamepad1.copy(currentGamepad1);
 
-        autoConfiguration = new AutoConfiguration(telemetry, AutoConfiguration.AllianceColor.RED);
+        autoConfiguration = new AutoConfiguration(telemetry, AutoConfiguration.AllianceColor.BLUE);
 
         autoConfiguration.processInput(currentGamepad1, previousGamepad1);
 
@@ -107,16 +106,45 @@ public class blueAuto extends LinearOpMode {
             else{
                 startingDrivePose = startingDrivePoseRight;
             }
-
-            TrajectoryActionBuilder specimenPlace = drive.actionBuilder(startingDrivePose)
-                    .splineTo(blueSubmersible, Math.toRadians(90));
-
-            /*TrajectoryActionBuilder blueNeutral1 = drive.actionBuilder()
+            /*
+            Pose2d poseEstimate = drive.pose;
+            TrajectoryActionBuilder blueNeutral1 = drive.actionBuilder(poseEstimate)
                     .splineTo(blueSubmersible, Math.toRadians(90));*/
         }
 
         while (opModeIsActive()){
-
+            switch (queuedState){
+                case START:
+                    //add anything that affects which path you'll take
+                    //Like scoring neutral samples or shoving specimens
+                    queuedState = autoState.PLACE;
+                    break;
+                case SUBMERSIBLE:
+                    TrajectoryActionBuilder specimenPlace = drive.actionBuilder(startingDrivePose)
+                            .strafeToLinearHeading(blueSubmersible, Math.toRadians(90));
+                    specimenPlace.build();
+                    //queuedState = autoState.NEUTRAL1;
+                    break;
+                case NEUTRAL1:
+                    Pose2d locationEstimation0 = drive.pose;
+                    TrajectoryActionBuilder toNeutral1 = drive.actionBuilder(locationEstimation0)
+                            .strafeToLinearHeading(new Vector2d(0, 26), Math.toRadians(90))
+                            .splineTo(blueNeutralSample1, Math.toRadians(-90));
+                    toNeutral1.build();
+                    armController.currentArmState = ArmController.ArmState.POINT_BLANK_INTAKE;
+                    queuedState = autoState.BUCKET;
+                    break;
+                case BUCKET:
+                    armController.currentArmState = ArmController.ArmState.TALL_BUCKET_READY;
+                    Pose2d locationEstimation1 = drive.pose;
+                    TrajectoryActionBuilder toBucket = drive.actionBuilder(locationEstimation1)
+                            .strafeToLinearHeading(blueBasket, Math.toRadians(225));
+                    toBucket.build();
+                    queuedState = autoState.NEUTRAL2;
+                    break;
+                case NEUTRAL2:
+                    break;
+            }
         }
     }
 }

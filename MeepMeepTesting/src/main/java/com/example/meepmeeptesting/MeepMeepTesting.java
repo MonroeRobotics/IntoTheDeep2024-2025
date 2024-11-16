@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
+import com.noahbres.meepmeep.core.entity.BotEntity;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
@@ -19,13 +20,13 @@ public class MeepMeepTesting {
         Vector2d redCollectBackUp = new Vector2d(35,0); //180
         Vector2d redHang = new Vector2d(0,-27); //270
 
-
-        Vector2d blueSubmersible = new Vector2d(0,35); //90
+        Vector2d blueStartLeft = new Vector2d(16.58, 62.45);
+        Vector2d blueSubmersible = new Vector2d(0,34); //90
         Vector2d blueSample1 = new Vector2d(-28,-46); //90
         Vector2d blueSample2 = new Vector2d(-58, -26); //90
         Vector2d blueSample3 = new Vector2d(-28, -26); //90
         Vector2d blueHumanPlayer = new Vector2d(-49,-52); //360
-        Vector2d blueBasket = new Vector2d(53,53);//220
+        Vector2d blueBasket = new Vector2d(53,53);//225
         Vector2d blueBasketReturn = new Vector2d(-55,0); //130
         Vector2d blueCollectBackUp = new Vector2d(-35,0); //0
         Vector2d blueHang = new Vector2d(0,27);//270
@@ -74,6 +75,19 @@ public class MeepMeepTesting {
                 .strafeToLinearHeading(blueNeutralSample3Approach, Math.toRadians(0))
                 .strafeToLinearHeading(blueNeutralSample3, Math.toRadians(0))
                 .build());
+
+
+        RoadRunnerBotEntity jacobsBot = new DefaultBotBuilder(meepMeep)
+                .setConstraints(60,60,Math.toRadians(180), Math.toRadians(180), 12.673259843)
+                .build();
+
+        jacobsBot.runAction(jacobsBot.getDrive().actionBuilder(new Pose2d(blueStartLeft, Math.toRadians(90)))
+                .strafeToLinearHeading(blueSubmersible, Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(0, 38), Math.toRadians(90))
+                .splineTo(blueNeutralSample1, Math.toRadians(-90))
+                .strafeToLinearHeading(blueBasket, Math.toRadians(225))
+                .build());
+
         /*blueBot2.runAction(blueBot2.getDrive().actionBuilder(new Pose2d(-35, 58, Math.toRadians(-90)))
                         .strafeToLinearHeading(blueBasket, Math.toRadians(-90))
                         //.strafeToLinearHeading
@@ -108,7 +122,8 @@ public class MeepMeepTesting {
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
                 //.addEntity(blueBot1)
-                .addEntity(blueBot1)
+                .addEntity(jacobsBot)
+                //.addEntity(blueBot1)
                 .start();
 
     }
