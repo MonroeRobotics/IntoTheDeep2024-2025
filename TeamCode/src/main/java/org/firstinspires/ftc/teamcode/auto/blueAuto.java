@@ -7,9 +7,11 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.driveClasses.MecanumDrive;
 import org.firstinspires.ftc.teamcode.util.ArmController;
@@ -145,6 +147,12 @@ public class blueAuto extends LinearOpMode {
                 case NEUTRAL2:
                     break;
             }
+            telemetry.update();
+            drive.updatePoseEstimate();
+            armController.updateArmState();
+            armController.updateArmABS();
+            armController.checkIntakeAngle();
+            armController.checkIntakeServoPower();
         }
     }
 }

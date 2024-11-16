@@ -40,7 +40,7 @@ public class ArmController {
     public ArmState currentArmState = ArmState.EXTEND; //Creates a variables to store current Arm State
 
     double ARM_ANGLE_POSITION = 0.12; //Live Updating Arm Angle Position (0 is intake position) should normally be .11
-    public static double ARM_ANGLE_INTAKE = 0.12;//Stores Value of Arm intake Position should normally be .11
+    public static double ARM_ANGLE_INTAKE = 0.14;//Stores Value of Arm intake Position should normally be .11
     public static double ARM_ANGLE_SPECIMEN_PICK_UP = .67; //get value, likely opposite of normal outtake
     public static double ARM_ANGLE_SPECIMEN_DROP = .41;//Stores value of arm outtake position for specimen
     public static double ARM_ANGLE_BUCKET_OUTTAKE = .56;//Stores Value of Arm outtake Position
