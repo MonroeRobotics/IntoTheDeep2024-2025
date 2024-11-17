@@ -19,7 +19,9 @@ public class ArmController {
 
     public static int SLIDE_HEIGHT = 5; //Live Updating Slide height
     int SLIDE_STAGE = 0; //Used for incremental Slide Height
-    public static double SLIDE_POWER = 0.8; //Max Linear Slide Power
+    public static double SLIDE_POWER_ON = 0.8; //Max Linear Slide Power
+    public  static double SLIDE_POWER = .8; //adjustable thingy
+    public static double SLIDE_POWER_OFF = 0.0; //for saving power when slides are lowered
     public static double SLIDE_MAX_VELO = 2000; //Max Linear Slide Velocity
 
 
@@ -40,7 +42,7 @@ public class ArmController {
     public ArmState currentArmState = ArmState.EXTEND; //Creates a variables to store current Arm State
 
     double ARM_ANGLE_POSITION = 0.12; //Live Updating Arm Angle Position (0 is intake position) should normally be .11
-    public static double ARM_ANGLE_INTAKE = 0.14;//Stores Value of Arm intake Position should normally be .11
+    public static double ARM_ANGLE_INTAKE = 0.12;//Stores Value of Arm intake Position should normally be .11
     public static double ARM_ANGLE_SPECIMEN_PICK_UP = .67; //get value, likely opposite of normal outtake
     public static double ARM_ANGLE_SPECIMEN_DROP = .41;//Stores value of arm outtake position for specimen
     public static double ARM_ANGLE_BUCKET_OUTTAKE = .56;//Stores Value of Arm outtake Position
@@ -69,14 +71,14 @@ public class ArmController {
     public static double EXTENDO_EXTEND = .75; //stores value of extendo extending
     public static double EXTENDO_RETRACT = .95; //stores value of extendo retracting
 
-    public static int SLIDE_HEIGHT_LOWERED = 5;
+    public static int SLIDE_HEIGHT_LOWERED = 0;
     public static int SLIDE_HEIGHT_SERVO_TRANSITION = 100;
-    public static int SLIDE_HEIGHT_SPECIMEN_PICK_UP = 5; //get value
+    public static int SLIDE_HEIGHT_SPECIMEN_PICK_UP = 0; //get value
     public static int SLIDE_HEIGHT_LOW_SPECIMEN_PLACE; //get value
     public static int SLIDE_HEIGHT_HIGH_SPECIMEN_PLACE = 825; //get value
     public static int SLIDE_HEIGHT_LOW_BUCKET_DROP; //get value
     public static int SLIDE_HEIGHT_HIGH_BUCKET_DROP = 1835;
-    public static int SLIDE_HEIGHT_HIGH_SPECIMEN_DROP = 385;
+    public static int SLIDE_HEIGHT_HIGH_SPECIMEN_DROP = 365;
     public static int SLIDE_HEIGHT_LOW_SPECIMEN_DROP; //get value, Low specimen place -100
 
     double edjectTimer = 0; //Timer to control outtake
@@ -342,6 +344,15 @@ public class ArmController {
     public void checkIntakeAngle(){
         if (currentArmState == ArmState.EXTEND && intakeTimer <= System.currentTimeMillis()){
             INTAKE_ANGLE = INTAKE_ANGLE_INTAKE;
+        }
+    }
+
+    public void checkSlidePower(){
+        if (leftSlide.getCurrentPosition() == 0 && rightSlide.getCurrentPosition() == 0 && currentArmState == ArmState.RETRACT){
+            SLIDE_POWER = SLIDE_POWER_OFF;
+        }
+        else{
+            SLIDE_POWER = SLIDE_POWER_ON;
         }
     }
 

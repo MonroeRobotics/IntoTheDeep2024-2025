@@ -119,7 +119,7 @@ public class blueAuto extends LinearOpMode {
                 case START:
                     //add anything that affects which path you'll take
                     //Like scoring neutral samples or shoving specimens
-                    queuedState = autoState.PLACE;
+                    queuedState = autoState.SUBMERSIBLE;
                     break;
                 case SUBMERSIBLE:
                     TrajectoryActionBuilder specimenPlace = drive.actionBuilder(startingDrivePose)
