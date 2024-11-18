@@ -192,7 +192,7 @@ public class testDrive extends OpMode{
 
 
         //region slides
-        if (currentGamepad2.dpad_up){
+        /*if (currentGamepad2.dpad_up){
             slideTarget = 1860;
             //armAngleTarget=.55;
             armAngleL.setPosition(armAngleTarget);
@@ -205,7 +205,7 @@ public class testDrive extends OpMode{
             armAngleL.setPosition(armAngleTarget);
             armAngleR.setPosition(armAngleTarget);
             //clawAngle.setPosition(.25);
-        }
+        }*/
         leftSlide.setTargetPosition(slideTarget);
         rightSlide.setTargetPosition(slideTarget);
         leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -225,9 +225,9 @@ public class testDrive extends OpMode{
         //endregion
 
         //region extendo for testing
-        /*
+
         if(currentGamepad2.a && !previousGamepad2.a) {
-            extendoTarget += .05;
+            extendoTarget += .01;
             extendoL.setPosition(extendoTarget);
             extendoR.setPosition(extendoTarget);
             if (extendoTarget > 1.0) {
@@ -235,19 +235,19 @@ public class testDrive extends OpMode{
             }
         }
         if(currentGamepad2.b && !previousGamepad2.b){
-            extendoTarget -=.05;
+            extendoTarget -=.01;
             extendoL.setPosition(extendoTarget);
             extendoR.setPosition(extendoTarget);
             if(extendoTarget<0.0){
                 extendoTarget=0;
             }
         }
-        */
+
         //endregion
 
         //region intakeAngle for testing
-        /*
-        if(currentGamepad2.b && !previousGamepad2.b){
+
+        if(currentGamepad2.y && !previousGamepad2.y){
             intakeAngleTarget -=.01;
             if(intakeAngleTarget<0.0){
                 intakeAngleTarget=0.0;
@@ -255,7 +255,7 @@ public class testDrive extends OpMode{
             intakeAngleL.setPosition(intakeAngleTarget);
             intakeAngleR.setPosition(intakeAngleTarget);
         }
-        if(currentGamepad2.a &&!previousGamepad2.a){
+        if(currentGamepad2.x &&!previousGamepad2.x){
             intakeAngleTarget += .01;
             if(intakeAngleTarget>1.0){
                 intakeAngleTarget=1;
@@ -263,7 +263,7 @@ public class testDrive extends OpMode{
             intakeAngleL.setPosition(intakeAngleTarget);
             intakeAngleR.setPosition(intakeAngleTarget);
         }
-        */
+
         //endregion
 
         //region CRServos for testing
@@ -285,7 +285,7 @@ public class testDrive extends OpMode{
         //endregion
 
         //region armAngle for testing
-
+        /*
         if(currentGamepad2.a && !previousGamepad2.a){
             armAngleTarget -= .01;
             if(armAngleTarget>1.0){
@@ -302,7 +302,7 @@ public class testDrive extends OpMode{
             armAngleL.setPosition(armAngleTarget);
             armAngleR.setPosition(armAngleTarget);
         }
-
+        */
         //endregion
 
         //region Full intake motion
@@ -340,7 +340,7 @@ public class testDrive extends OpMode{
         //endregion
 
         //region claw for testing
-
+        /*
         if(currentGamepad2.x){
             claw.setPosition(.3);
             intakeL.setPower(0);
@@ -349,7 +349,7 @@ public class testDrive extends OpMode{
         if(currentGamepad2.y){
             claw.setPosition(.5);
         }
-
+        */
         if(currentGamepad2.dpad_left && !previousGamepad2.dpad_left){
             clawAngleTarget +=.01;
             if (clawAngleTarget>1.0){
