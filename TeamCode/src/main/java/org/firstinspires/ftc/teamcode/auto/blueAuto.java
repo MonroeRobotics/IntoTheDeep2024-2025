@@ -29,6 +29,10 @@ public class blueAuto extends LinearOpMode {
     public static double INTAKE_TIME;
     public static double HUMAN_PLAYER_WAIT_TIME;
     public static double ERROR_THRESHOLD = 10;
+
+    public static double TO_BUCKET_TIME;
+    public static double TO_NEUTRAL_TIME;
+    public  static  double TO_SUBMERSIBLE_TIME;
     double waitTimer;
     int cycleNumber;
 
