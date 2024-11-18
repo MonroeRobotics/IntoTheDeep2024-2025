@@ -32,6 +32,7 @@ public class blueAuto extends LinearOpMode {
     public static double HUMAN_PLAYER_WAIT_TIME;
     public static double ERROR_THRESHOLD = 10;
     double waitTimer;
+    int cycleNumber;
 
     //endregion
 
@@ -121,45 +122,92 @@ public class blueAuto extends LinearOpMode {
                 case START:
                     //add anything that affects which path you'll take
                     //Like scoring neutral samples or shoving specimens
-                    queuedState = autoState.SUBMERSIBLE;
+                    if (AutoConfiguration.bucketOnly){
+                        queuedState = autoState.BUCKET;
+                    }
+                    else {
+                        queuedState = autoState.SUBMERSIBLE;
+                    }
                     break;
                 case SUBMERSIBLE:
                     TrajectoryActionBuilder specimenPlace = drive.actionBuilder(startingDrivePose)
                             .strafeToLinearHeading(blueSubmersible, Math.toRadians(90));
                     Action specimenPlaceAction = specimenPlace.build();
                     Actions.runBlocking(new SequentialAction(specimenPlaceAction));
-                    //queuedState = autoState.NEUTRAL1;
+                    queuedState = autoState.PLACE;
                     break;
                 case PLACE:
+                    armController.currentArmState = ArmController.ArmState.SPECIMEN_PLACE_SEQUENCE;
+                    if ((armController.getSlideHeight() >= 360) && (armController.getSlideHeight() <= 370)){
+                        armController.currentArmState = ArmController.ArmState.OPEN_CLAW;
+                        queuedState = autoState.NEUTRAL1;
+                    }
                     break;
                 case NEUTRAL1:
-                    Pose2d locationEstimation0 = drive.pose;
-                    TrajectoryActionBuilder toNeutral1 = drive.actionBuilder(locationEstimation0)
+                    Pose2d neutralOneStart = drive.pose;
+                    TrajectoryActionBuilder toNeutral1 = drive.actionBuilder(neutralOneStart)
                             .strafeToLinearHeading(new Vector2d(0, 26), Math.toRadians(90))
                             .splineTo(blueNeutralSample1, Math.toRadians(-90));
-                    toNeutral1.build();
+                    Action toNeutral1Action = toNeutral1.build();
+                    Actions.runBlocking(new SequentialAction(toNeutral1Action));
+                    armController.currentArmState = ArmController.ArmState.POINT_BLANK_INTAKE;
+                    queuedState = autoState.BUCKET;
+                    break;
+                case NEUTRAL2:
+                    Pose2d neutralTwoStart = drive.pose;
+                    TrajectoryActionBuilder toNeutral2 = drive.actionBuilder(neutralTwoStart)
+                            .strafeToLinearHeading(blueNeutralSample2, Math.toRadians(90));
+                    Action toNeutralTwoAction = toNeutral2.build();
+                    Actions.runBlocking(new SequentialAction(toNeutralTwoAction));
                     armController.currentArmState = ArmController.ArmState.POINT_BLANK_INTAKE;
                     queuedState = autoState.BUCKET;
                     break;
                 case NEUTRAL3:
+                    Pose2d neutralThreeStart = drive.pose;
                     break;
                 case BUCKET:
                     armController.currentArmState = ArmController.ArmState.TALL_BUCKET_READY;
-                    Pose2d locationEstimation1 = drive.pose;
-                    TrajectoryActionBuilder toBucket = drive.actionBuilder(locationEstimation1)
+                    Pose2d bucketStart;
+                    if (cycleNumber == 0){
+                        bucketStart = startingDrivePose;
+                    }
+                    else {
+                        bucketStart = drive.pose;
+                    }
+                    TrajectoryActionBuilder toBucket = drive.actionBuilder(bucketStart)
                             .strafeToLinearHeading(blueBasket, Math.toRadians(225));
-                    toBucket.build();
-                    queuedState = autoState.NEUTRAL2;
-                    break;
-                case NEUTRAL2:
+                    Action toBucketAction = toBucket.build();
+                    Actions.runBlocking(new SequentialAction(toBucketAction));
+                    if (armController.getSlideHeight() >= 1830 && armController.getSlideHeight() <= 1840){
+                        queuedState = autoState.DROP;
+                    }
+                    cycleNumber += 1;
                     break;
                 case DROP:
+                    armController.currentArmState = ArmController.ArmState.OPEN_CLAW;
+                    if (cycleNumber == AutoConfiguration.maxCycleCount){
+                        queuedState = autoState.PARK;
+                    }
+                    else if (cycleNumber == 1){
+                        queuedState = autoState.NEUTRAL1;
+                    }
+                    else if (cycleNumber == 2){
+                        queuedState = autoState.NEUTRAL2;
+                    }
+                    else if (cycleNumber == 3){
+                        queuedState = autoState.NEUTRAL3;
+                    }
+                    else{
+                        queuedState = autoState.SUBMERSIBLE;
+                    }
                     break;
                 case PARK:
                     break;
                 case STOP:
                     break;
             }
+            telemetry.addData("Queued State", queuedState);
+            telemetry.addData("Cycle Number", cycleNumber);
             telemetry.update();
             drive.updatePoseEstimate();
             armController.updateArmState();

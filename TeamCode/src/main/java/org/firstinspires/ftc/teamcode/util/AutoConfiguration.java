@@ -36,12 +36,12 @@ public class AutoConfiguration {
         RIGHT
     }
     public static boolean submersibleIntake = false;
-    public static boolean specimenOnly = false;
+    public static boolean bucketOnly = false;
 
     public static boolean allianceYellow = false;
 
     public static int delay = 0;
-    public static int cycleCount = 0;
+    public static int maxCycleCount = 3;
 
     String indicatorMarker = "֎";
 
@@ -61,7 +61,7 @@ public class AutoConfiguration {
         this.telemetry = telemetry;
         this.allianceColor = allianceColor;
     }
-    public AutoConfiguration(Telemetry telemetry, AllianceColor allianceColor, ParkSide parkSide, StartPosition startPosition, int delay, boolean submersibleIntake, boolean specimenOnly){
+    public AutoConfiguration(Telemetry telemetry, AllianceColor allianceColor, ParkSide parkSide, StartPosition startPosition, int delay, boolean submersibleIntake, boolean bucketOnly){
         hasInitAuto = true;
         this.telemetry = telemetry;
         this.allianceColor = allianceColor;
@@ -69,7 +69,7 @@ public class AutoConfiguration {
         this.startPosition = startPosition;
         this.delay = delay;
         this.submersibleIntake = submersibleIntake;
-        this.specimenOnly = specimenOnly;
+        this.bucketOnly = bucketOnly;
     }
 
     public boolean isSubmersibleIntake() {
@@ -77,11 +77,11 @@ public class AutoConfiguration {
     }
 
     public int getCycleCount() {
-        return cycleCount;
+        return maxCycleCount;
     }
 
     public boolean isSpecimenOnly(){
-        return specimenOnly;
+        return bucketOnly;
     }
 
     public int getDelay() {
@@ -122,14 +122,14 @@ public class AutoConfiguration {
                     }
                     break;
                 case SPECIMEN_ONLY:
-                    specimenOnly = !specimenOnly;
+                    bucketOnly = !bucketOnly;
                     break;
                 case SUBMERSIBLE_INTAKE:
                     submersibleIntake = !submersibleIntake;
                     break;
                 case CYCLE_COUNT:
-                    if(cycleCount < 5){
-                        cycleCount ++;
+                    if(maxCycleCount < 5){
+                        maxCycleCount++;
                     }
                     break;
                 case PARK_SIDE:
@@ -161,14 +161,14 @@ public class AutoConfiguration {
                     }
                     break;
                 case SPECIMEN_ONLY:
-                    specimenOnly = !specimenOnly;
+                    bucketOnly = !bucketOnly;
                     break;
                 case SUBMERSIBLE_INTAKE:
                     submersibleIntake = !submersibleIntake;
                     break;
                 case CYCLE_COUNT:
-                    if(cycleCount > 0) {
-                        cycleCount --;
+                    if(maxCycleCount > 0) {
+                        maxCycleCount--;
                     }
                 case PARK_SIDE:
                     if(parkSide == ParkSide.FAR){
@@ -187,9 +187,9 @@ public class AutoConfiguration {
         telemetry.addData("Current Color", allianceColor);
         telemetry.addData(((currentVariable == AdjVariables.START_POSITION ? indicatorMarker : "") + "Start Position"), startPosition);
         telemetry.addData(((currentVariable == AdjVariables.DELAY ? indicatorMarker : "") + "Delay"), delay);
-        telemetry.addData(((currentVariable == AdjVariables.SPECIMEN_ONLY ? indicatorMarker : "") + "Purple Pixel Only"), specimenOnly);
+        telemetry.addData(((currentVariable == AdjVariables.SPECIMEN_ONLY ? indicatorMarker : "") + "Purple Pixel Only"), bucketOnly);
         telemetry.addData(((currentVariable == AdjVariables.SUBMERSIBLE_INTAKE ? indicatorMarker : "") + "White Pixel"), submersibleIntake);
-        telemetry.addData(((currentVariable == AdjVariables.CYCLE_COUNT ? indicatorMarker : "") + "Max Cycle Count"), cycleCount);
+        telemetry.addData(((currentVariable == AdjVariables.CYCLE_COUNT ? indicatorMarker : "") + "Max Cycle Count"), maxCycleCount);
         telemetry.addData(((currentVariable == AdjVariables.PARK_SIDE ? indicatorMarker : "") + "Park Side"), parkSide);
         telemetry.addData(((currentVariable == AdjVariables.ALLIANCE_YELLOW ? indicatorMarker : "") + "ALLIANCE_YELLOW"), allianceYellow);
         telemetry.update();
