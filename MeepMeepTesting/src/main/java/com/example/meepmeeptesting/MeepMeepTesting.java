@@ -21,12 +21,13 @@ public class MeepMeepTesting {
         Vector2d redHang = new Vector2d(0,-27); //270
 
         Vector2d blueStartLeft = new Vector2d(16.58, 62.45);
+        Vector2d blueStartRight = new Vector2d(-16.58, 62.45);
         Vector2d blueSubmersible = new Vector2d(0,34); //90
         Vector2d blueSample1 = new Vector2d(-28,-46); //90
         Vector2d blueSample2 = new Vector2d(-58, -26); //90
         Vector2d blueSample3 = new Vector2d(-28, -26); //90
         Vector2d blueHumanPlayer = new Vector2d(-49,-52); //360
-        Vector2d blueBasket = new Vector2d(53,53);//225
+        Vector2d blueBasket = new Vector2d(56,56);//225
         Vector2d blueBasketReturn = new Vector2d(-55,0); //130
         Vector2d blueCollectBackUp = new Vector2d(-35,0); //0
         Vector2d blueHang = new Vector2d(0,27);//270
@@ -86,6 +87,11 @@ public class MeepMeepTesting {
                 .strafeToLinearHeading(new Vector2d(0, 38), Math.toRadians(90))
                 .splineTo(blueNeutralSample1, Math.toRadians(-90))
                 .strafeToLinearHeading(blueBasket, Math.toRadians(225))
+                .strafeToLinearHeading(blueNeutralSample2Approach, Math.toRadians(-90))
+                .strafeToLinearHeading(blueNeutralSample2, Math.toRadians(-90))
+                .strafeToLinearHeading(blueBasket, Math.toRadians(225))
+                .strafeToLinearHeading(blueNeutralSample3Approach, Math.toRadians(0))
+                .strafeToLinearHeading(blueNeutralSample3, Math.toRadians(0))
                 .build());
 
         /*blueBot2.runAction(blueBot2.getDrive().actionBuilder(new Pose2d(-35, 58, Math.toRadians(-90)))

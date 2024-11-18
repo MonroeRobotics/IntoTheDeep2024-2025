@@ -9,11 +9,9 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.driveClasses.MecanumDrive;
 import org.firstinspires.ftc.teamcode.util.ArmController;
@@ -37,15 +35,22 @@ public class blueAuto extends LinearOpMode {
     //endregion
 
     Pose2d startingDrivePose;
-    Pose2d startingDrivePoseLeft = new Pose2d(16.58, 62.45, Math.toRadians(-90));
-    Pose2d startingDrivePoseRight = new Pose2d(-16.58,62.45, Math.toRadians(-90));
+    Pose2d startingDrivePoseLeft = new Pose2d(16.58, 62.45, Math.toRadians(90));
+    Pose2d startingDrivePoseRight = new Pose2d(-16.58,62.45, Math.toRadians(90));
+    Vector2d neutralTarget;
+    Vector2d approachTarget;
+    double headingTarget;
+
     Vector2d blueSubmersible = new Vector2d(0,35);
     Vector2d blueBasket = new Vector2d(53,53); //220
 
     Vector2d blueNeutralSample1 = new Vector2d(48,33); //-90
+    double bNS1AH = -90;
     Vector2d blueNeutralSample2Approach = new Vector2d(58,39); //-90
+    double bNS2AH = -90;
     Vector2d blueNeutralSample2 = new Vector2d(58,33); //-90
     Vector2d blueNeutralSample3Approach = new Vector2d(57,26); //0
+    double bNS3AH = 0;
     Vector2d blueNeutralSample3 = new Vector2d(62,26); //0
 
     int autoCycleCount = 0;
@@ -56,9 +61,7 @@ public class blueAuto extends LinearOpMode {
 
     //region trajectory declerations
     TrajectoryActionBuilder toSubmersible;
-    TrajectoryActionBuilder toNeutralBlue1;
-    TrajectoryActionBuilder toNeutralBlue2;
-    TrajectoryActionBuilder toNeutralBlue3;
+    TrajectoryActionBuilder toNeutral;
     //endregion
 
 
@@ -66,9 +69,7 @@ public class blueAuto extends LinearOpMode {
         START,
         SUBMERSIBLE,
         PLACE,
-        NEUTRAL1,
-        NEUTRAL2,
-        NEUTRAL3,
+        TO_NEUTRAL,
         BUCKET,
         DROP,
         PARK,
@@ -140,35 +141,43 @@ public class blueAuto extends LinearOpMode {
                     armController.currentArmState = ArmController.ArmState.SPECIMEN_PLACE_SEQUENCE;
                     if ((armController.getSlideHeight() >= 360) && (armController.getSlideHeight() <= 370)){
                         armController.currentArmState = ArmController.ArmState.OPEN_CLAW;
-                        queuedState = autoState.NEUTRAL1;
+                        queuedState = autoState.TO_NEUTRAL;
                     }
                     break;
-                case NEUTRAL1:
-                    Pose2d neutralOneStart = drive.pose;
-                    TrajectoryActionBuilder toNeutral1 = drive.actionBuilder(neutralOneStart)
-                            .strafeToLinearHeading(new Vector2d(0, 26), Math.toRadians(90))
-                            .splineTo(blueNeutralSample1, Math.toRadians(-90));
-                    Action toNeutral1Action = toNeutral1.build();
-                    Actions.runBlocking(new SequentialAction(toNeutral1Action));
+                case TO_NEUTRAL:
+                    Pose2d neutralStart = drive.pose;
+                    if (cycleNumber == 1) {
+                        neutralTarget = blueNeutralSample1;
+                        headingTarget = bNS1AH;
+                    }
+                    else if (cycleNumber == 2){
+                        neutralTarget = blueNeutralSample2;
+                        approachTarget = blueNeutralSample2Approach;
+                        headingTarget = bNS2AH;
+                    }
+                    else if (cycleNumber == 3){
+                        neutralTarget = blueNeutralSample3;
+                        approachTarget = blueNeutralSample3Approach;
+                        headingTarget = bNS3AH;
+                    }
+                    if (cycleNumber == 1){
+                        toNeutral = drive.actionBuilder(neutralStart)
+                                .strafeToLinearHeading(neutralTarget, Math.toRadians(bNS1AH));
+                    }
+                    else if (cycleNumber >1) {
+                        toNeutral = drive.actionBuilder(neutralStart)
+                                .strafeToLinearHeading(approachTarget, Math.toRadians(headingTarget))
+                                .strafeToLinearHeading(neutralTarget, Math.toRadians(90));
+                    }
+                    Action toNeutralAction = toNeutral.build();
+                    Actions.runBlocking(new SequentialAction(toNeutralAction));
                     armController.currentArmState = ArmController.ArmState.POINT_BLANK_INTAKE;
                     queuedState = autoState.BUCKET;
-                    break;
-                case NEUTRAL2:
-                    Pose2d neutralTwoStart = drive.pose;
-                    TrajectoryActionBuilder toNeutral2 = drive.actionBuilder(neutralTwoStart)
-                            .strafeToLinearHeading(blueNeutralSample2, Math.toRadians(90));
-                    Action toNeutralTwoAction = toNeutral2.build();
-                    Actions.runBlocking(new SequentialAction(toNeutralTwoAction));
-                    armController.currentArmState = ArmController.ArmState.POINT_BLANK_INTAKE;
-                    queuedState = autoState.BUCKET;
-                    break;
-                case NEUTRAL3:
-                    Pose2d neutralThreeStart = drive.pose;
                     break;
                 case BUCKET:
                     armController.currentArmState = ArmController.ArmState.TALL_BUCKET_READY;
                     Pose2d bucketStart;
-                    if (cycleNumber == 0){
+                    if (cycleNumber == 0 && AutoConfiguration.bucketOnly){
                         bucketStart = startingDrivePose;
                     }
                     else {
@@ -188,14 +197,8 @@ public class blueAuto extends LinearOpMode {
                     if (cycleNumber == AutoConfiguration.maxCycleCount){
                         queuedState = autoState.PARK;
                     }
-                    else if (cycleNumber == 1){
-                        queuedState = autoState.NEUTRAL1;
-                    }
-                    else if (cycleNumber == 2){
-                        queuedState = autoState.NEUTRAL2;
-                    }
-                    else if (cycleNumber == 3){
-                        queuedState = autoState.NEUTRAL3;
+                    else if (cycleNumber <= 2){
+                        queuedState = autoState.TO_NEUTRAL;
                     }
                     else{
                         queuedState = autoState.SUBMERSIBLE;
