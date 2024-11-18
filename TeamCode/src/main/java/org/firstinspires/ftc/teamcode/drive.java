@@ -144,6 +144,7 @@ public class drive extends OpMode {
             else {
                 if (stage == 1) {
                     armController.currentArmState = ArmController.ArmState.HIGH_SPECIMEN_PLACE;
+                    specSequenceRan = false;
                 }
                 /*else if (stage == 2) {
                     armController.currentArmState = ArmController.ArmState.LOW_SPECIMEN_PLACE;
