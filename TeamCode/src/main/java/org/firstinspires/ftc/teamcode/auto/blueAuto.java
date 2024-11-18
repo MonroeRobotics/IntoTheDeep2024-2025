@@ -5,8 +5,10 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -124,8 +126,11 @@ public class blueAuto extends LinearOpMode {
                 case SUBMERSIBLE:
                     TrajectoryActionBuilder specimenPlace = drive.actionBuilder(startingDrivePose)
                             .strafeToLinearHeading(blueSubmersible, Math.toRadians(90));
-                    specimenPlace.build();
+                    Action specimenPlaceAction = specimenPlace.build();
+                    Actions.runBlocking(new SequentialAction(specimenPlaceAction));
                     //queuedState = autoState.NEUTRAL1;
+                    break;
+                case PLACE:
                     break;
                 case NEUTRAL1:
                     Pose2d locationEstimation0 = drive.pose;
@@ -136,6 +141,8 @@ public class blueAuto extends LinearOpMode {
                     armController.currentArmState = ArmController.ArmState.POINT_BLANK_INTAKE;
                     queuedState = autoState.BUCKET;
                     break;
+                case NEUTRAL3:
+                    break;
                 case BUCKET:
                     armController.currentArmState = ArmController.ArmState.TALL_BUCKET_READY;
                     Pose2d locationEstimation1 = drive.pose;
@@ -145,6 +152,12 @@ public class blueAuto extends LinearOpMode {
                     queuedState = autoState.NEUTRAL2;
                     break;
                 case NEUTRAL2:
+                    break;
+                case DROP:
+                    break;
+                case PARK:
+                    break;
+                case STOP:
                     break;
             }
             telemetry.update();
