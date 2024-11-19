@@ -82,10 +82,11 @@ public class MeepMeepTesting {
                 .setConstraints(60,60,Math.toRadians(180), Math.toRadians(180), 12.673259843)
                 .build();
 
-        jacobsBot.runAction(jacobsBot.getDrive().actionBuilder(new Pose2d(blueStartLeft, Math.toRadians(90)))
-                .strafeToLinearHeading(blueSubmersible, Math.toRadians(90))
-                .strafeToLinearHeading(new Vector2d(0, 38), Math.toRadians(90))
-                .splineTo(blueNeutralSample1, Math.toRadians(-90))
+        jacobsBot.runAction(jacobsBot.getDrive().actionBuilder(new Pose2d(blueStartLeft, Math.toRadians(-90)))
+                .strafeToLinearHeading(blueBasket, Math.toRadians(225))
+                //.strafeToLinearHeading(blueSubmersible, Math.toRadians(90))
+                //.strafeToLinearHeading(new Vector2d(0, 38), Math.toRadians(90))
+                .strafeToLinearHeading(blueNeutralSample1, Math.toRadians(-90))
                 .strafeToLinearHeading(blueBasket, Math.toRadians(225))
                 .strafeToLinearHeading(blueNeutralSample2Approach, Math.toRadians(-90))
                 .strafeToLinearHeading(blueNeutralSample2, Math.toRadians(-90))
