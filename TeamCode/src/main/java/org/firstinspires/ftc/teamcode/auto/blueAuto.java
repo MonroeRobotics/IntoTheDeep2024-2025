@@ -30,29 +30,32 @@ public class blueAuto extends LinearOpMode {
     public static double HUMAN_PLAYER_WAIT_TIME;
     public static double ERROR_THRESHOLD = 10;
 
-    public static double TO_BUCKET_TIME;
-    public static double TO_NEUTRAL_TIME;
+    public static double TO_BUCKET_TIME = 10000; //ms
+    public static double TO_NEUTRAL_TIME = 6000; //ms
     public  static  double TO_SUBMERSIBLE_TIME;
     double waitTimer;
+    boolean startTimerStarted = false;
+    boolean lowerArmTimerStarted = false;
     int cycleNumber;
 
     //endregion
 
     Pose2d startingDrivePose;
-    Pose2d startingDrivePoseLeft = new Pose2d(16.58, 62.45, Math.toRadians(90));
-    Pose2d startingDrivePoseRight = new Pose2d(-16.58,62.45, Math.toRadians(90));
+    Pose2d startingDrivePoseLeft = new Pose2d(16.58, 62.45, Math.toRadians(-90));
+    Vector2d startingDrivePoseLeftAway = new Vector2d(16.58, 52.45);// -90
+    Pose2d startingDrivePoseRight = new Pose2d(-16.58,62.45, Math.toRadians(-90));
     Vector2d neutralTarget;
     Vector2d approachTarget;
     double headingTarget;
 
     Vector2d blueSubmersible = new Vector2d(0,35);
-    Vector2d blueBasket = new Vector2d(53,53); //220
+    Vector2d blueBasket = new Vector2d(63,63); //220
 
-    Vector2d blueNeutralSample1 = new Vector2d(48,33); //-90
+    Vector2d blueNeutralSample1 = new Vector2d(60,60); //35, 33, -90
     double bNS1AH = -90;
-    Vector2d blueNeutralSample2Approach = new Vector2d(58,39); //-90
+    Vector2d blueNeutralSample2Approach = new Vector2d(58-13,39); //-90
     double bNS2AH = -90;
-    Vector2d blueNeutralSample2 = new Vector2d(58,33); //-90
+    Vector2d blueNeutralSample2 = new Vector2d(58-13,33); //-90
     Vector2d blueNeutralSample3Approach = new Vector2d(57,26); //0
     double bNS3AH = 0;
     Vector2d blueNeutralSample3 = new Vector2d(62,26); //0
@@ -87,7 +90,7 @@ public class blueAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        drive = new MecanumDrive(hardwareMap, startingDrivePose);
+        drive = new MecanumDrive(hardwareMap, startingDrivePoseLeft);
 
         armController = new ArmController(hardwareMap);
         armController.initArm();
@@ -127,11 +130,26 @@ public class blueAuto extends LinearOpMode {
                 case START:
                     //add anything that affects which path you'll take
                     //Like scoring neutral samples or shoving specimens
+                    /*
                     if (AutoConfiguration.bucketOnly){
                         queuedState = autoState.BUCKET;
                     }
                     else {
                         queuedState = autoState.SUBMERSIBLE;
+                    }
+                    */
+                    if (!startTimerStarted){
+                        waitTimer = System.currentTimeMillis() + 500;
+                        startTimerStarted = true;
+                    }
+                    armController.currentArmState = ArmController.ArmState.CLOSE_CLAW;
+                    if (waitTimer <= System.currentTimeMillis()){
+                        armController.currentArmState = ArmController.ArmState.TALL_BUCKET_READY;
+                        queuedState = autoState.BUCKET;
+                    }
+                    else {
+                        armController.currentArmState = ArmController.ArmState.CLOSE_CLAW;
+                        queuedState = autoState.START;
                     }
                     break;
                 case SUBMERSIBLE:
@@ -149,12 +167,13 @@ public class blueAuto extends LinearOpMode {
                     }
                     break;
                 case TO_NEUTRAL:
+                    armController.currentArmState = ArmController.ArmState.EXTEND;
                     Pose2d neutralStart = drive.pose;
                     if (cycleNumber == 1) {
                         neutralTarget = blueNeutralSample1;
                         headingTarget = bNS1AH;
                     }
-                    else if (cycleNumber == 2){
+                    /*else if (cycleNumber == 2){
                         neutralTarget = blueNeutralSample2;
                         approachTarget = blueNeutralSample2Approach;
                         headingTarget = bNS2AH;
@@ -163,49 +182,65 @@ public class blueAuto extends LinearOpMode {
                         neutralTarget = blueNeutralSample3;
                         approachTarget = blueNeutralSample3Approach;
                         headingTarget = bNS3AH;
-                    }
-                    if (cycleNumber == 1){
+                    }*/
+                    //if (cycleNumber == 1){
                         toNeutral = drive.actionBuilder(neutralStart)
-                                .strafeToLinearHeading(neutralTarget, Math.toRadians(bNS1AH));
-                    }
-                    else if (cycleNumber >1) {
+                                .strafeToLinearHeading(blueNeutralSample1, Math.toRadians(-90));
+                    //}
+                    /*else if (cycleNumber >1) {
                         toNeutral = drive.actionBuilder(neutralStart)
                                 .strafeToLinearHeading(approachTarget, Math.toRadians(headingTarget))
                                 .strafeToLinearHeading(neutralTarget, Math.toRadians(90));
-                    }
+                    }*/
                     Action toNeutralAction = toNeutral.build();
-                    Actions.runBlocking(new SequentialAction(toNeutralAction));
-                    armController.currentArmState = ArmController.ArmState.POINT_BLANK_INTAKE;
-                    queuedState = autoState.BUCKET;
+                    //Actions.runBlocking(new SequentialAction(toNeutralAction));
+                    //waitTimer = System.currentTimeMillis() + TO_BUCKET_TIME;
+                    //queuedState = autoState.BUCKET;
                     break;
                 case BUCKET:
-                    armController.currentArmState = ArmController.ArmState.TALL_BUCKET_READY;
-                    Pose2d bucketStart;
-                    if (cycleNumber == 0 && AutoConfiguration.bucketOnly){
-                        bucketStart = startingDrivePose;
+                    if(System.currentTimeMillis() > waitTimer) {
+                        armController.currentArmState = ArmController.ArmState.TALL_BUCKET_READY;
+                        Pose2d bucketStart;
+                        if (cycleNumber == 0) {
+                            bucketStart = startingDrivePose;
+                            TrajectoryActionBuilder toBucketStart = drive.actionBuilder(bucketStart)
+                                    .strafeToLinearHeading(startingDrivePoseLeftAway, Math.toRadians(-90))
+                                    .strafeToLinearHeading(blueBasket, Math.toRadians(225));
+                            Action toBucketStartAction = toBucketStart.build();
+                            Actions.runBlocking(new SequentialAction( toBucketStartAction));
+                        } else {
+                            bucketStart = drive.pose;
+                            TrajectoryActionBuilder toBucket = drive.actionBuilder(bucketStart)
+                                    .strafeToLinearHeading(blueBasket, Math.toRadians(225));
+                            Action toBucketAction = toBucket.build();
+                            //Actions.runBlocking(new SequentialAction(toBucketAction));
+                        }
+                        cycleNumber += 1;
+                        if (armController.getSlideHeight() >= 1830 && armController.getSlideHeight() <= 1840) {
+                            queuedState = autoState.DROP;
+                        }
+                        break;
                     }
-                    else {
-                        bucketStart = drive.pose;
-                    }
-                    TrajectoryActionBuilder toBucket = drive.actionBuilder(bucketStart)
-                            .strafeToLinearHeading(blueBasket, Math.toRadians(225));
-                    Action toBucketAction = toBucket.build();
-                    Actions.runBlocking(new SequentialAction(toBucketAction));
-                    if (armController.getSlideHeight() >= 1830 && armController.getSlideHeight() <= 1840){
-                        queuedState = autoState.DROP;
-                    }
-                    cycleNumber += 1;
-                    break;
                 case DROP:
                     armController.currentArmState = ArmController.ArmState.OPEN_CLAW;
-                    if (cycleNumber == AutoConfiguration.maxCycleCount){
-                        queuedState = autoState.PARK;
+                    if (!lowerArmTimerStarted){
+                        waitTimer = System.currentTimeMillis() + 250;
+                        lowerArmTimerStarted = true;
                     }
-                    else if (cycleNumber <= 2){
-                        queuedState = autoState.TO_NEUTRAL;
+                    if (waitTimer <= System.currentTimeMillis()){
+                        armController.currentArmState = ArmController.ArmState.RETRACT;
+                        if (cycleNumber == AutoConfiguration.maxCycleCount){
+                            queuedState = autoState.PARK;
+                        }
+                        else if (cycleNumber <= 2){
+                            //queuedState = autoState.TO_NEUTRAL;
+                        }
+                        else{
+                            //queuedState = autoState.SUBMERSIBLE;
+                        }
                     }
                     else{
-                        queuedState = autoState.SUBMERSIBLE;
+                        queuedState = autoState.DROP;
                     }
                     break;
                 case PARK:
@@ -213,8 +248,12 @@ public class blueAuto extends LinearOpMode {
                 case STOP:
                     break;
             }
+            telemetry.addData("System Time", System.currentTimeMillis());
+            telemetry.addData("Wait Timer", waitTimer);
             telemetry.addData("Queued State", queuedState);
             telemetry.addData("Cycle Number", cycleNumber);
+            telemetry.addData("Target Pose", neutralTarget);
+            telemetry.addData("Current Pose", drive.pose);
             telemetry.update();
             drive.updatePoseEstimate();
             armController.updateArmState();

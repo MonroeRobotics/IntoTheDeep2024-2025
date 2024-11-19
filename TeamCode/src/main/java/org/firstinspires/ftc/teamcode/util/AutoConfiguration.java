@@ -24,7 +24,7 @@ public class AutoConfiguration {
     public enum AdjVariables{
         START_POSITION,
         DELAY,
-        SPECIMEN_ONLY,
+        bucketOnly,
         SUBMERSIBLE_INTAKE,
         CYCLE_COUNT,
         PARK_SIDE,
@@ -36,7 +36,7 @@ public class AutoConfiguration {
         RIGHT
     }
     public static boolean submersibleIntake = false;
-    public static boolean bucketOnly = false;
+    public static boolean bucketOnly = true;
 
     public static boolean allianceYellow = false;
 
@@ -80,7 +80,7 @@ public class AutoConfiguration {
         return maxCycleCount;
     }
 
-    public boolean isSpecimenOnly(){
+    public boolean isBucketOnly(){
         return bucketOnly;
     }
 
@@ -121,7 +121,7 @@ public class AutoConfiguration {
                         delay ++;
                     }
                     break;
-                case SPECIMEN_ONLY:
+                case bucketOnly:
                     bucketOnly = !bucketOnly;
                     break;
                 case SUBMERSIBLE_INTAKE:
@@ -160,8 +160,13 @@ public class AutoConfiguration {
                         delay --;
                     }
                     break;
-                case SPECIMEN_ONLY:
-                    bucketOnly = !bucketOnly;
+                case bucketOnly:
+                    if(bucketOnly){
+                        bucketOnly = false;
+                    }
+                    else {
+                        bucketOnly = true;
+                    }
                     break;
                 case SUBMERSIBLE_INTAKE:
                     submersibleIntake = !submersibleIntake;
@@ -187,8 +192,8 @@ public class AutoConfiguration {
         telemetry.addData("Current Color", allianceColor);
         telemetry.addData(((currentVariable == AdjVariables.START_POSITION ? indicatorMarker : "") + "Start Position"), startPosition);
         telemetry.addData(((currentVariable == AdjVariables.DELAY ? indicatorMarker : "") + "Delay"), delay);
-        telemetry.addData(((currentVariable == AdjVariables.SPECIMEN_ONLY ? indicatorMarker : "") + "Purple Pixel Only"), bucketOnly);
-        telemetry.addData(((currentVariable == AdjVariables.SUBMERSIBLE_INTAKE ? indicatorMarker : "") + "White Pixel"), submersibleIntake);
+        telemetry.addData(((currentVariable == AdjVariables.bucketOnly ? indicatorMarker : "") + "Blue Bucket Only"), bucketOnly);
+        telemetry.addData(((currentVariable == AdjVariables.SUBMERSIBLE_INTAKE ? indicatorMarker : "") + "Submersible Intake"), submersibleIntake);
         telemetry.addData(((currentVariable == AdjVariables.CYCLE_COUNT ? indicatorMarker : "") + "Max Cycle Count"), maxCycleCount);
         telemetry.addData(((currentVariable == AdjVariables.PARK_SIDE ? indicatorMarker : "") + "Park Side"), parkSide);
         telemetry.addData(((currentVariable == AdjVariables.ALLIANCE_YELLOW ? indicatorMarker : "") + "ALLIANCE_YELLOW"), allianceYellow);

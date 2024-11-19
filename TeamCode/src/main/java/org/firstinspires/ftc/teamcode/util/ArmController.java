@@ -36,7 +36,6 @@ public class ArmController {
         TALL_BUCKET_READY,
         OPEN_CLAW, //open claw
         SPECIMEN_PLACE_SEQUENCE,
-        POINT_BLANK_INTAKE
     }
 
     public ArmState currentArmState = ArmState.EXTEND; //Creates a variables to store current Arm State
