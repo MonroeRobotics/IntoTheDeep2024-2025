@@ -122,7 +122,12 @@ public class AutoConfiguration {
                     }
                     break;
                 case bucketOnly:
-                    bucketOnly = !bucketOnly;
+                    if (bucketOnly){
+                        bucketOnly = false;
+                    }
+                    else{
+                        bucketOnly = true;
+                    }
                     break;
                 case SUBMERSIBLE_INTAKE:
                     submersibleIntake = !submersibleIntake;
@@ -192,7 +197,7 @@ public class AutoConfiguration {
         telemetry.addData("Current Color", allianceColor);
         telemetry.addData(((currentVariable == AdjVariables.START_POSITION ? indicatorMarker : "") + "Start Position"), startPosition);
         telemetry.addData(((currentVariable == AdjVariables.DELAY ? indicatorMarker : "") + "Delay"), delay);
-        telemetry.addData(((currentVariable == AdjVariables.bucketOnly ? indicatorMarker : "") + "Blue Bucket Only"), bucketOnly);
+        telemetry.addData(((currentVariable == AdjVariables.bucketOnly ? indicatorMarker : "") + "Bucket Bucket Only"), bucketOnly);
         telemetry.addData(((currentVariable == AdjVariables.SUBMERSIBLE_INTAKE ? indicatorMarker : "") + "Submersible Intake"), submersibleIntake);
         telemetry.addData(((currentVariable == AdjVariables.CYCLE_COUNT ? indicatorMarker : "") + "Max Cycle Count"), maxCycleCount);
         telemetry.addData(((currentVariable == AdjVariables.PARK_SIDE ? indicatorMarker : "") + "Park Side"), parkSide);

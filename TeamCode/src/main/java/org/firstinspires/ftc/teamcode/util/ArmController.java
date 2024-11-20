@@ -81,10 +81,10 @@ public class ArmController {
     public static int SLIDE_HEIGHT_LOW_SPECIMEN_DROP; //get value, Low specimen place -100
 
     double edjectTimer = 0; //Timer to control outtake
-    public static double EDJECT_TIME = 1500; //How Long edject runs for (ms)
+    public static double EDJECT_TIME = 750; //How Long edject runs for (ms)
 
     double intakeTimer = 0; //timer to control intake drop delay
-    public static double INTAKE_TIMER = 500;//how long intake waits to drop (ms)
+    public static double INTAKE_TIMER = 50;//how long intake waits to drop (ms)
     //endregion
 
     //region Arm Objects

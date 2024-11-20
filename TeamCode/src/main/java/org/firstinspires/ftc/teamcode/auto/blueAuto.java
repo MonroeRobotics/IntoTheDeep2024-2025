@@ -36,6 +36,7 @@ public class blueAuto extends LinearOpMode {
     double waitTimer;
     boolean startTimerStarted = false;
     boolean lowerArmTimerStarted = false;
+    boolean intakeTimerStarted;
     int cycleNumber;
 
     //endregion
@@ -49,16 +50,18 @@ public class blueAuto extends LinearOpMode {
     double headingTarget;
 
     Vector2d blueSubmersible = new Vector2d(0,35);
-    Vector2d blueBasket = new Vector2d(63,63); //220
+    Vector2d blueBasket = new Vector2d(56,56); //220
 
-    Vector2d blueNeutralSample1 = new Vector2d(60,60); //35, 33, -90
+    Vector2d blueNeutralSample1 = new Vector2d(48,43); //35, 33, -90
     double bNS1AH = -90;
-    Vector2d blueNeutralSample2Approach = new Vector2d(58-13,39); //-90
+    Vector2d blueNeutralSample2Approach = new Vector2d(45,39); //-90
     double bNS2AH = -90;
-    Vector2d blueNeutralSample2 = new Vector2d(58-13,33); //-90
+    Vector2d blueNeutralSample2 = new Vector2d(45,33); //-90
     Vector2d blueNeutralSample3Approach = new Vector2d(57,26); //0
     double bNS3AH = 0;
     Vector2d blueNeutralSample3 = new Vector2d(62,26); //0
+
+    Vector2d wall = new Vector2d(-56, 56);
 
     int autoCycleCount = 0;
 
@@ -76,6 +79,7 @@ public class blueAuto extends LinearOpMode {
         START,
         SUBMERSIBLE,
         PLACE,
+        TO_WALL,
         TO_NEUTRAL,
         BUCKET,
         DROP,
@@ -95,8 +99,6 @@ public class blueAuto extends LinearOpMode {
         armController = new ArmController(hardwareMap);
         armController.initArm();
 
-        Pose2d initialPosition = new Pose2d(35,58, Math.toRadians(90));
-        drive = new MecanumDrive(hardwareMap,initialPosition);
 
         currentGamepad1 = new Gamepad();
         previousGamepad1 = new Gamepad();
@@ -119,6 +121,8 @@ public class blueAuto extends LinearOpMode {
             else{
                 startingDrivePose = startingDrivePoseRight;
             }
+            Pose2d initialPosition = startingDrivePose;
+            drive = new MecanumDrive(hardwareMap,initialPosition);
             /*
             Pose2d poseEstimate = drive.pose;
             TrajectoryActionBuilder blueNeutral1 = drive.actionBuilder(poseEstimate)
@@ -143,9 +147,13 @@ public class blueAuto extends LinearOpMode {
                         startTimerStarted = true;
                     }
                     armController.currentArmState = ArmController.ArmState.CLOSE_CLAW;
-                    if (waitTimer <= System.currentTimeMillis()){
+                    if (waitTimer <= System.currentTimeMillis() && autoConfiguration.isBucketOnly()){
                         armController.currentArmState = ArmController.ArmState.TALL_BUCKET_READY;
                         queuedState = autoState.BUCKET;
+                    }
+                    else if (waitTimer <= System.currentTimeMillis() && !autoConfiguration.isBucketOnly()){
+                        armController.currentArmState = ArmController.ArmState.HIGH_SPECIMEN_PLACE;
+                        queuedState = autoState.SUBMERSIBLE;
                     }
                     else {
                         armController.currentArmState = ArmController.ArmState.CLOSE_CLAW;
@@ -153,7 +161,14 @@ public class blueAuto extends LinearOpMode {
                     }
                     break;
                 case SUBMERSIBLE:
-                    TrajectoryActionBuilder specimenPlace = drive.actionBuilder(startingDrivePose)
+                    Pose2d submersibleStart;
+                    if (autoConfiguration.isBucketOnly()){
+                        submersibleStart = drive.pose;
+                    }
+                    else{
+                        submersibleStart = drive.pose;
+                    }
+                    TrajectoryActionBuilder specimenPlace = drive.actionBuilder(submersibleStart)
                             .strafeToLinearHeading(blueSubmersible, Math.toRadians(90));
                     Action specimenPlaceAction = specimenPlace.build();
                     Actions.runBlocking(new SequentialAction(specimenPlaceAction));
@@ -161,14 +176,30 @@ public class blueAuto extends LinearOpMode {
                     break;
                 case PLACE:
                     armController.currentArmState = ArmController.ArmState.SPECIMEN_PLACE_SEQUENCE;
-                    if ((armController.getSlideHeight() >= 360) && (armController.getSlideHeight() <= 370)){
+                    waitTimer = 500 + System.currentTimeMillis();
+                    if ((armController.getSlideHeight() >= 360) && (armController.getSlideHeight() <= 370) && waitTimer <= System.currentTimeMillis()){
                         armController.currentArmState = ArmController.ArmState.OPEN_CLAW;
-                        queuedState = autoState.TO_NEUTRAL;
+                        //queuedState = autoState.TO_NEUTRAL;
                     }
                     break;
+                case TO_WALL:
+                    armController.currentArmState = ArmController.ArmState.SPECIMEN_PICK_UP;
+                    Pose2d toWallStart = drive.pose;
+                    TrajectoryActionBuilder toWall = drive.actionBuilder(toWallStart)
+                            .strafeToLinearHeading(wall, Math.toRadians(-90));
+                    break;
                 case TO_NEUTRAL:
-                    armController.currentArmState = ArmController.ArmState.EXTEND;
+                    armController.checkIntakeAngle();
+                    armController.checkIntakeServoPower();
+                    armController.updateArmState();
+                    armController.updateArmABS();
                     Pose2d neutralStart = drive.pose;
+
+                    if (!intakeTimerStarted){
+                        waitTimer = 5000 + System.currentTimeMillis();
+                        intakeTimerStarted = true;
+                        armController.currentArmState = ArmController.ArmState.EXTEND;
+                    }
                     if (cycleNumber == 1) {
                         neutralTarget = blueNeutralSample1;
                         headingTarget = bNS1AH;
@@ -193,9 +224,12 @@ public class blueAuto extends LinearOpMode {
                                 .strafeToLinearHeading(neutralTarget, Math.toRadians(90));
                     }*/
                     Action toNeutralAction = toNeutral.build();
-                    //Actions.runBlocking(new SequentialAction(toNeutralAction));
-                    //waitTimer = System.currentTimeMillis() + TO_BUCKET_TIME;
-                    //queuedState = autoState.BUCKET;
+                    Actions.runBlocking(new SequentialAction(toNeutralAction));
+
+                    if (waitTimer <= System.currentTimeMillis()) {
+                        armController.currentArmState = ArmController.ArmState.RETRACT;
+                        //queuedState = autoState.BUCKET;
+                    }
                     break;
                 case BUCKET:
                     if(System.currentTimeMillis() > waitTimer) {
@@ -213,7 +247,7 @@ public class blueAuto extends LinearOpMode {
                             TrajectoryActionBuilder toBucket = drive.actionBuilder(bucketStart)
                                     .strafeToLinearHeading(blueBasket, Math.toRadians(225));
                             Action toBucketAction = toBucket.build();
-                            //Actions.runBlocking(new SequentialAction(toBucketAction));
+                            Actions.runBlocking(new SequentialAction(toBucketAction));
                         }
                         cycleNumber += 1;
                         if (armController.getSlideHeight() >= 1830 && armController.getSlideHeight() <= 1840) {
@@ -233,7 +267,8 @@ public class blueAuto extends LinearOpMode {
                             queuedState = autoState.PARK;
                         }
                         else if (cycleNumber <= 2){
-                            //queuedState = autoState.TO_NEUTRAL;
+                            queuedState = autoState.TO_NEUTRAL;
+                            intakeTimerStarted = false;
                         }
                         else{
                             //queuedState = autoState.SUBMERSIBLE;
@@ -254,12 +289,11 @@ public class blueAuto extends LinearOpMode {
             telemetry.addData("Cycle Number", cycleNumber);
             telemetry.addData("Target Pose", neutralTarget);
             telemetry.addData("Current Pose", drive.pose);
-            telemetry.update();
-            drive.updatePoseEstimate();
+            //drive.updatePoseEstimate();
             armController.updateArmState();
             armController.updateArmABS();
-            armController.checkIntakeAngle();
-            armController.checkIntakeServoPower();
+
+            telemetry.update();
         }
     }
 }

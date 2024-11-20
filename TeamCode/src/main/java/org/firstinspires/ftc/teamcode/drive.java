@@ -11,10 +11,13 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.driveClasses.MecanumDrive;
 import org.firstinspires.ftc.teamcode.util.ArmController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @TeleOp(name = "drive", group = "main")
 public class drive extends OpMode {
 
+    private static final Logger log = LoggerFactory.getLogger(drive.class);
     //region Gamepads
     Gamepad currentGamepad1;
     Gamepad previousGamepad1;
@@ -106,6 +109,7 @@ public class drive extends OpMode {
             sample = true;
             if(!intakeExtended){
                 armController.currentArmState = ArmController.ArmState.EXTEND;
+                armController.startIntake();
                 intakeExtended = true;
             }
             else {
@@ -203,9 +207,13 @@ public class drive extends OpMode {
         if(currentGamepad2.b && !previousGamepad2.b){
             armController.startEdject();
         }
-        /*if(currentGamepad2.y && !previousGamepad2.y){
-            //free button
-        }*/
+        if(currentGamepad2.y && !previousGamepad2.y){
+            if(sample){sample = false;}
+            else{
+                sample = true;
+                armController.setClawPos(ArmController.CLAW_ANGLE_INTAKE);
+            }
+        }
         //endregion
 
         //endregion
