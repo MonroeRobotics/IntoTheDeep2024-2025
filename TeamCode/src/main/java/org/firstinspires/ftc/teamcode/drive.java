@@ -54,7 +54,7 @@ public class drive extends OpMode {
         previousGamepad2 = new Gamepad();
 
         armController = new ArmController(hardwareMap);
-        armController.initArm();
+        armController.initArm(true);
         stage = 0;
     }
 

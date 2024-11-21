@@ -17,9 +17,9 @@ import org.firstinspires.ftc.teamcode.driveClasses.MecanumDrive;
 import org.firstinspires.ftc.teamcode.util.ArmController;
 import org.firstinspires.ftc.teamcode.util.AutoConfiguration;
 
-@Autonomous(name = "Blue Auto", group = "Main")
+@Autonomous(name = "Bucket Auto", group = "Main")
 @Config
-public class blueAuto extends LinearOpMode {
+public class BucketAuto extends LinearOpMode {
 
     //region Dashboard Variables
 
@@ -78,8 +78,8 @@ public class blueAuto extends LinearOpMode {
     enum autoState {
         START,
         SUBMERSIBLE,
-        PLACE,
-        TO_WALL,
+        //PLACE,
+        //TO_WALL,
         TO_NEUTRAL,
         BUCKET,
         DROP,
@@ -94,10 +94,9 @@ public class blueAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        drive = new MecanumDrive(hardwareMap, startingDrivePoseLeft);
 
         armController = new ArmController(hardwareMap);
-        armController.initArm();
+        armController.initArm(true);
 
 
         currentGamepad1 = new Gamepad();
@@ -151,30 +150,24 @@ public class blueAuto extends LinearOpMode {
                         armController.currentArmState = ArmController.ArmState.TALL_BUCKET_READY;
                         queuedState = autoState.BUCKET;
                     }
-                    else if (waitTimer <= System.currentTimeMillis() && !autoConfiguration.isBucketOnly()){
+                    /*else if (waitTimer <= System.currentTimeMillis() && !autoConfiguration.isBucketOnly()){
                         armController.currentArmState = ArmController.ArmState.HIGH_SPECIMEN_PLACE;
                         queuedState = autoState.SUBMERSIBLE;
-                    }
+                    }*/
                     else {
                         armController.currentArmState = ArmController.ArmState.CLOSE_CLAW;
                         queuedState = autoState.START;
                     }
                     break;
                 case SUBMERSIBLE:
-                    Pose2d submersibleStart;
-                    if (autoConfiguration.isBucketOnly()){
-                        submersibleStart = drive.pose;
-                    }
-                    else{
-                        submersibleStart = drive.pose;
-                    }
-                    TrajectoryActionBuilder specimenPlace = drive.actionBuilder(submersibleStart)
+                    Pose2d submersibleStart = drive.pose;
+                    TrajectoryActionBuilder subIntake = drive.actionBuilder(submersibleStart)
                             .strafeToLinearHeading(blueSubmersible, Math.toRadians(90));
-                    Action specimenPlaceAction = specimenPlace.build();
-                    Actions.runBlocking(new SequentialAction(specimenPlaceAction));
-                    queuedState = autoState.PLACE;
+                    Action subIntakeAction = subIntake.build();
+                    Actions.runBlocking(new SequentialAction(subIntakeAction));
+                    queuedState = autoState.BUCKET;
                     break;
-                case PLACE:
+                /*case PLACE:
                     armController.currentArmState = ArmController.ArmState.SPECIMEN_PLACE_SEQUENCE;
                     waitTimer = 500 + System.currentTimeMillis();
                     if ((armController.getSlideHeight() >= 360) && (armController.getSlideHeight() <= 370) && waitTimer <= System.currentTimeMillis()){
@@ -187,7 +180,7 @@ public class blueAuto extends LinearOpMode {
                     Pose2d toWallStart = drive.pose;
                     TrajectoryActionBuilder toWall = drive.actionBuilder(toWallStart)
                             .strafeToLinearHeading(wall, Math.toRadians(-90));
-                    break;
+                    break;*/
                 case TO_NEUTRAL:
                     armController.checkIntakeAngle();
                     armController.checkIntakeServoPower();

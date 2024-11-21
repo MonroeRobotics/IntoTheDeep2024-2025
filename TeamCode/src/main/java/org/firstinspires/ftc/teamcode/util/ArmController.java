@@ -45,6 +45,7 @@ public class ArmController {
     public static double ARM_ANGLE_SPECIMEN_PICK_UP = .67; //get value, likely opposite of normal outtake
     public static double ARM_ANGLE_SPECIMEN_DROP = .41;//Stores value of arm outtake position for specimen
     public static double ARM_ANGLE_BUCKET_OUTTAKE = .56;//Stores Value of Arm outtake Position
+    public static double ARM_ANGLE_SPECIMEN_START; // get value
 
     double CLAW_POSITION = .5; //Live Updating Arm Position (.5 is open)
     public static double CLAW_CLOSED = .3; //Stores Value of Claw closed Position
@@ -56,6 +57,7 @@ public class ArmController {
     public static double CLAW_ANGLE_SPECIMEN_PICK_UP = .55; //
     public static double CLAW_ANGLE_OUTTAKE = .55; //stores value of the claw angle when dropping stuff
     public static double CLAW_ANGLE_SPECIMEN_OUTTAKE = 1;//stuff
+    public static double CLAW_ANGLE_SPECIMEN_START; //get value
 
     public static double INTAKE_SERVO_POWER = 0.0; //Stores value of intake servos
     public static double INTAKE_SERVO_POWER_OFF = 0.0; //stores value of intake cr servos not spinning
@@ -113,7 +115,7 @@ public class ArmController {
         this.hardwareMap = hardwareMap;
     }
 
-    public void initArm(){
+    public void initArm(boolean bucketOnly){
         //region Arm Init
         //region Arm Hardware Map
 
@@ -154,8 +156,15 @@ public class ArmController {
         //makes sure stuff is in the right spot to start
         SLIDE_HEIGHT = SLIDE_HEIGHT_LOWERED;
         INTAKE_ANGLE = INTAKE_ANGLE_RETRACT;
-        CLAW_ANGLE_POSITION = CLAW_ANGLE_INTAKE;
         EXTENDO_ANGLE = EXTENDO_RETRACT;
+        if (bucketOnly = true){
+            CLAW_ANGLE_POSITION = CLAW_ANGLE_INTAKE;
+            ARM_ANGLE_POSITION = ARM_ANGLE_INTAKE;
+        }
+        else{
+            CLAW_ANGLE_POSITION = CLAW_ANGLE_SPECIMEN_START;
+            ARM_ANGLE_POSITION = ARM_ANGLE_SPECIMEN_START;
+        }
 
         leftSlide.setTargetPosition(SLIDE_HEIGHT);
         rightSlide.setTargetPosition(SLIDE_HEIGHT);
