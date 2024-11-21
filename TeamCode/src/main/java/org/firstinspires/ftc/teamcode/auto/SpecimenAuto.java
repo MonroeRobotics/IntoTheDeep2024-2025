@@ -53,6 +53,7 @@ public class SpecimenAuto extends LinearOpMode {
     //region messy variable stuff
     double waitTimer;
     int cycleCount = 0;
+    int maxCycleCount;
 
     boolean startTimerStarted;
     boolean placeTimerStarted;
@@ -88,6 +89,7 @@ public class SpecimenAuto extends LinearOpMode {
                 startingDrivePose = startingDrivePoseRight;
             }
             drive = new MecanumDrive(hardwareMap,startingDrivePose);
+            maxCycleCount = autoConfiguration.getCycleCount();
         }
 
         while (opModeIsActive()){
@@ -138,7 +140,7 @@ public class SpecimenAuto extends LinearOpMode {
                     }
                     break;
                 case TO_WALL:
-                    if (cycleCount < 3) {
+                    if (cycleCount <= maxCycleCount) {
                         armController.currentArmState = ArmController.ArmState.SPECIMEN_PICK_UP;
                         Pose2d toWallStart = drive.pose;
                         TrajectoryActionBuilder toWall = drive.actionBuilder(toWallStart)

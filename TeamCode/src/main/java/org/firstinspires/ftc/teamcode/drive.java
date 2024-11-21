@@ -216,7 +216,7 @@ public class drive extends OpMode {
         }
 
         if (currentGamepad2.options && !previousGamepad2.options){
-            armController.currentArmState = ArmController.ArmSTate.ASCENT;
+            armController.currentArmState = ArmController.ArmState.ASCENT;
         }
         //endregion
 

@@ -272,6 +272,7 @@ public class BucketAuto extends LinearOpMode {
                     }
                     break;
                 case PARK:
+                    armController.currentArmState = ArmController.ArmState.ASCENT;
                     break;
                 case STOP:
                     break;
