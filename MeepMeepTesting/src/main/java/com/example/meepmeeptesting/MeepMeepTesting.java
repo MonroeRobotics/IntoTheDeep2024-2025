@@ -46,7 +46,8 @@ public class MeepMeepTesting {
 
         Vector2d startPos1 = new Vector2d(35, 58);
 
-
+        Vector2d wallApproach = new Vector2d(-48,50);
+        Vector2d wallGrab = new Vector2d(-48, 57);
 
 
 
@@ -78,11 +79,11 @@ public class MeepMeepTesting {
                 .build());
 
 
-        RoadRunnerBotEntity jacobsBot = new DefaultBotBuilder(meepMeep)
+        RoadRunnerBotEntity bucketBot = new DefaultBotBuilder(meepMeep)
                 .setConstraints(60,60,Math.toRadians(180), Math.toRadians(180), 12.673259843)
                 .build();
 
-        jacobsBot.runAction(jacobsBot.getDrive().actionBuilder(new Pose2d(blueStartLeft, Math.toRadians(-90)))
+        bucketBot.runAction(bucketBot.getDrive().actionBuilder(new Pose2d(blueStartLeft, Math.toRadians(-90)))
                 .strafeToLinearHeading(blueBasket, Math.toRadians(225))
                 //.strafeToLinearHeading(blueSubmersible, Math.toRadians(90))
                 //.strafeToLinearHeading(new Vector2d(0, 38), Math.toRadians(90))
@@ -93,6 +94,17 @@ public class MeepMeepTesting {
                 .strafeToLinearHeading(blueBasket, Math.toRadians(225))
                 .strafeToLinearHeading(blueNeutralSample3Approach, Math.toRadians(0))
                 .strafeToLinearHeading(blueNeutralSample3, Math.toRadians(0))
+                .build());
+
+        RoadRunnerBotEntity specimenBot = new DefaultBotBuilder(meepMeep)
+                .setConstraints(60,60,Math.toRadians(180),Math.toRadians(180),12.673259843)
+                .build();
+
+        specimenBot.runAction(specimenBot.getDrive().actionBuilder(new Pose2d(blueStartRight, Math.toRadians(-90)))
+                        .strafeToLinearHeading(blueSubmersible, Math.toRadians(-90))
+                        .strafeToLinearHeading(wallApproach, Math.toRadians(90))
+                        .strafeToLinearHeading(wallGrab, Math.toRadians(90))
+                        .strafeToLinearHeading(blueSubmersible, Math.toRadians(-90))
                 .build());
 
         /*blueBot2.runAction(blueBot2.getDrive().actionBuilder(new Pose2d(-35, 58, Math.toRadians(-90)))
@@ -129,7 +141,8 @@ public class MeepMeepTesting {
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
                 //.addEntity(blueBot1)
-                .addEntity(jacobsBot)
+                .addEntity(bucketBot)
+                .addEntity(specimenBot)
                 //.addEntity(blueBot1)
                 .start();
 

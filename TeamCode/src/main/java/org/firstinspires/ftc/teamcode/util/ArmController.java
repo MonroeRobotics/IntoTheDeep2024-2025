@@ -36,6 +36,7 @@ public class ArmController {
         TALL_BUCKET_READY,
         OPEN_CLAW, //open claw
         SPECIMEN_PLACE_SEQUENCE,
+        ASCENT
     }
 
     public ArmState currentArmState = ArmState.EXTEND; //Creates a variables to store current Arm State
@@ -285,6 +286,10 @@ public class ArmController {
                 break;
             case SPECIMEN_PLACE_SEQUENCE:
                 SLIDE_HEIGHT = SLIDE_HEIGHT_HIGH_SPECIMEN_DROP; //implement high and low difference
+                break;
+            case ASCENT:
+                ARM_ANGLE_POSITION = ARM_ANGLE_ASCENT;
+                SLIDE_HEIGHT = SLIDE_HEIGHT_ASCENT;
                 break;
         }
     }

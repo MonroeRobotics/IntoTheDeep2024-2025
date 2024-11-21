@@ -214,6 +214,10 @@ public class drive extends OpMode {
                 armController.setClawPos(ArmController.CLAW_ANGLE_INTAKE);
             }
         }
+
+        if (currentGamepad2.options && !previousGamepad2.options){
+            armController.currentArmState = ArmController.ArmSTate.ASCENT;
+        }
         //endregion
 
         //endregion
