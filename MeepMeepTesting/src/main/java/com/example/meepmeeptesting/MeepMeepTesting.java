@@ -87,6 +87,7 @@ public class MeepMeepTesting {
                 .strafeToLinearHeading(blueBasket, Math.toRadians(225))
                 //.strafeToLinearHeading(blueSubmersible, Math.toRadians(90))
                 //.strafeToLinearHeading(new Vector2d(0, 38), Math.toRadians(90))
+                        .strafeToLinearHeading(new Vector2d(48, 40), Math.toRadians(-90))
                 .strafeToLinearHeading(blueNeutralSample1, Math.toRadians(-90))
                 .strafeToLinearHeading(blueBasket, Math.toRadians(225))
                 .strafeToLinearHeading(blueNeutralSample2Approach, Math.toRadians(-90))
@@ -101,11 +102,11 @@ public class MeepMeepTesting {
                 .build();
 
         specimenBot.runAction(specimenBot.getDrive().actionBuilder(new Pose2d(blueStartRight, Math.toRadians(90)))
-                        .strafeToLinearHeading(new Vector2d(0, 48), Math.toRadians(-90))
+                        .strafeToLinearHeading(new Vector2d(0, 48), Math.toRadians(90))
                         .strafeToLinearHeading(blueSubmersible, Math.toRadians(90))
-                        .strafeToLinearHeading(wallApproach, Math.toRadians(90))
-                        .strafeToLinearHeading(wallGrab, Math.toRadians(90))
-                        .strafeToLinearHeading(blueSubmersible, Math.toRadians(-90))
+                        .strafeToLinearHeading(wallApproach, Math.toRadians(-90))
+                        .strafeToLinearHeading(wallGrab, Math.toRadians(-90))
+                        .strafeToLinearHeading(blueSubmersible, Math.toRadians(90))
                 .build());
 
         /*blueBot2.runAction(blueBot2.getDrive().actionBuilder(new Pose2d(-35, 58, Math.toRadians(-90)))

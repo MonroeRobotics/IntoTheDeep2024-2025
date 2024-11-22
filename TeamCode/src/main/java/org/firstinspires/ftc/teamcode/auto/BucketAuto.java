@@ -52,7 +52,7 @@ public class BucketAuto extends LinearOpMode {
     Vector2d blueSubmersible = new Vector2d(0,35);
     Vector2d blueBasket = new Vector2d(56,56); //220
 
-    Vector2d blueNeutralSample1 = new Vector2d(48,43); //35, 33, -90
+    Vector2d blueNeutralSample1 = new Vector2d(48,40); //35, 33, -90
     double bNS1AH = -90;
     Vector2d blueNeutralSample2Approach = new Vector2d(45,39); //-90
     double bNS2AH = -90;
@@ -146,7 +146,7 @@ public class BucketAuto extends LinearOpMode {
                         startTimerStarted = true;
                     }
                     armController.currentArmState = ArmController.ArmState.CLOSE_CLAW;
-                    if (waitTimer <= System.currentTimeMillis() && autoConfiguration.isBucketOnly()){
+                    if (waitTimer <= System.currentTimeMillis()){
                         armController.currentArmState = ArmController.ArmState.TALL_BUCKET_READY;
                         queuedState = autoState.BUCKET;
                     }
@@ -155,7 +155,6 @@ public class BucketAuto extends LinearOpMode {
                         queuedState = autoState.SUBMERSIBLE;
                     }*/
                     else {
-                        armController.currentArmState = ArmController.ArmState.CLOSE_CLAW;
                         queuedState = autoState.START;
                     }
                     break;
@@ -182,22 +181,22 @@ public class BucketAuto extends LinearOpMode {
                             .strafeToLinearHeading(wall, Math.toRadians(-90));
                     break;*/
                 case TO_NEUTRAL:
-                    armController.checkIntakeAngle();
-                    armController.checkIntakeServoPower();
-                    armController.updateArmState();
-                    armController.updateArmABS();
                     Pose2d neutralStart = drive.pose;
 
                     if (!intakeTimerStarted){
                         waitTimer = 5000 + System.currentTimeMillis();
                         intakeTimerStarted = true;
                         armController.currentArmState = ArmController.ArmState.EXTEND;
+                        armController.checkIntakeAngle();
+                        armController.checkIntakeServoPower();
+                        armController.updateArmState();
+                        armController.updateArmABS();
                     }
                     if (cycleNumber == 1) {
                         neutralTarget = blueNeutralSample1;
                         headingTarget = bNS1AH;
                     }
-                    /*else if (cycleNumber == 2){
+                    else if (cycleNumber == 2){
                         neutralTarget = blueNeutralSample2;
                         approachTarget = blueNeutralSample2Approach;
                         headingTarget = bNS2AH;
@@ -206,26 +205,29 @@ public class BucketAuto extends LinearOpMode {
                         neutralTarget = blueNeutralSample3;
                         approachTarget = blueNeutralSample3Approach;
                         headingTarget = bNS3AH;
-                    }*/
-                    //if (cycleNumber == 1){
+                    }
+                    if (cycleNumber == 1){
                         toNeutral = drive.actionBuilder(neutralStart)
+                                .strafeToLinearHeading(new Vector2d(48, 48), Math.toRadians(-90))
                                 .strafeToLinearHeading(blueNeutralSample1, Math.toRadians(-90));
-                    //}
-                    /*else if (cycleNumber >1) {
+                    }
+                    else if (cycleNumber >1) {
                         toNeutral = drive.actionBuilder(neutralStart)
                                 .strafeToLinearHeading(approachTarget, Math.toRadians(headingTarget))
                                 .strafeToLinearHeading(neutralTarget, Math.toRadians(90));
-                    }*/
+                    }
                     Action toNeutralAction = toNeutral.build();
                     Actions.runBlocking(new SequentialAction(toNeutralAction));
 
                     if (waitTimer <= System.currentTimeMillis()) {
                         armController.currentArmState = ArmController.ArmState.RETRACT;
+                        armController.updateArmState();
+                        armController.updateArmABS();
                         //queuedState = autoState.BUCKET;
                     }
                     break;
                 case BUCKET:
-                    if(System.currentTimeMillis() > waitTimer) {
+                    if(waitTimer <= System.currentTimeMillis()) {
                         armController.currentArmState = ArmController.ArmState.TALL_BUCKET_READY;
                         Pose2d bucketStart;
                         if (cycleNumber == 0) {
@@ -244,6 +246,7 @@ public class BucketAuto extends LinearOpMode {
                         }
                         cycleNumber += 1;
                         if (armController.getSlideHeight() >= 1830 && armController.getSlideHeight() <= 1840) {
+                            lowerArmTimerStarted = false;
                             queuedState = autoState.DROP;
                         }
                         break;
