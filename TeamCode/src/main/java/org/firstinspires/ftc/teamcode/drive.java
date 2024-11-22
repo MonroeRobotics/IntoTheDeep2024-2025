@@ -211,7 +211,7 @@ public class drive extends OpMode {
             if(sample){sample = false;}
             else{
                 sample = true;
-                armController.setClawPos(ArmController.CLAW_ANGLE_INTAKE);
+                armController.setClawAnglePos(ArmController.CLAW_ANGLE_INTAKE);
             }
         }
 

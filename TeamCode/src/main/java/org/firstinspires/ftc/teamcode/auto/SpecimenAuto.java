@@ -5,30 +5,29 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.driveClasses.MecanumDrive;
 import org.firstinspires.ftc.teamcode.util.ArmController;
 import org.firstinspires.ftc.teamcode.util.AutoConfiguration;
-import org.opencv.core.Mat;
 
 @Config
 @Autonomous
 public class SpecimenAuto extends LinearOpMode {
 
     Pose2d startingDrivePose;
-    Pose2d startingDrivePoseLeft = new Pose2d(16.58, 62.45, Math.toRadians(-90));
+    Pose2d startingDrivePoseLeft = new Pose2d(16.58, 62.45, Math.toRadians(90));
     Vector2d startingDrivePoseLeftAway = new Vector2d(16.58, 52.45);// -90
-    Pose2d startingDrivePoseRight = new Pose2d(-16.58,62.45, Math.toRadians(-90));
+    Pose2d startingDrivePoseRight = new Pose2d(-16.58,62.45, Math.toRadians(90));
 
-    Vector2d blueSubmersible = new Vector2d(0,35); //90
+    Vector2d blueSubmersible = new Vector2d(0,24); //90
     Vector2d wallApproach = new Vector2d(-48,50);
     Vector2d wallGrab = new Vector2d(-48, 57); //-90
 
@@ -58,6 +57,9 @@ public class SpecimenAuto extends LinearOpMode {
     boolean startTimerStarted;
     boolean placeTimerStarted;
     boolean grabTimerStarted;
+    boolean transitionTimerStarted;
+    boolean anotherTimerStarted;
+    double anotherTimer;
     //endregion
 
     @Override
@@ -65,7 +67,8 @@ public class SpecimenAuto extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         armController = new ArmController(hardwareMap);
-        armController.initArm(true);
+        armController.initArm(false);
+        armController.currentArmState = ArmController.ArmState.CLOSE_CLAW;
 
 
         currentGamepad1 = new Gamepad();
@@ -105,16 +108,20 @@ public class SpecimenAuto extends LinearOpMode {
                         queuedState = autoState.SUBMERSIBLE;
                     }
                     else {
-                        armController.currentArmState = ArmController.ArmState.CLOSE_CLAW;
                         queuedState = autoState.START;
                     }
                     break;
                 case SUBMERSIBLE:
+                    armController.currentArmState = ArmController.ArmState.HIGH_SPECIMEN_PLACE;
+                    armController.updateArmState();
+                    armController.updateArmABS();
                     Pose2d submersibleStart = drive.pose;
                     TrajectoryActionBuilder toSubmersible = drive.actionBuilder(submersibleStart)
+                            .strafeToLinearHeading(new Vector2d(0, 48), Math.toRadians(90))
                             .strafeToLinearHeading(blueSubmersible, Math.toRadians(90));
                     Action toSubmersibleAction = toSubmersible.build();
                     Actions.runBlocking(new SequentialAction(toSubmersibleAction));
+                    drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0,0), 0));
                     placeTimerStarted = false;
                     queuedState = autoState.PLACE;
                     break;
@@ -123,8 +130,8 @@ public class SpecimenAuto extends LinearOpMode {
                     armController.updateArmState();
                     armController.updateArmABS();
 
-                    if(placeTimerStarted = false) {
-                        waitTimer = 500 + System.currentTimeMillis();
+                    if(!placeTimerStarted) {
+                        waitTimer = 750 + System.currentTimeMillis();
                         placeTimerStarted = true;
                     }
 
@@ -133,6 +140,7 @@ public class SpecimenAuto extends LinearOpMode {
                         armController.updateArmState();
                         armController.updateArmABS();
                         cycleCount +=1;
+                        transitionTimerStarted = false;
                         queuedState = autoState.TO_WALL;
                     }
                     else {
@@ -141,13 +149,14 @@ public class SpecimenAuto extends LinearOpMode {
                     break;
                 case TO_WALL:
                     if (cycleCount <= maxCycleCount) {
-                        armController.currentArmState = ArmController.ArmState.SPECIMEN_PICK_UP;
                         Pose2d toWallStart = drive.pose;
                         TrajectoryActionBuilder toWall = drive.actionBuilder(toWallStart)
-                                .strafeToLinearHeading(wallApproach, Math.toRadians(-90))
-                                .strafeToLinearHeading(wallGrab, Math.toRadians(-90));
+                                .strafeToLinearHeading(wallApproach, Math.toRadians(-90));
                         Action toWallAction = toWall.build();
                         Actions.runBlocking(new SequentialAction(toWallAction));
+                        armController.currentArmState = ArmController.ArmState.SPECIMEN_PICK_UP;
+                        armController.updateArmState();
+                        armController.updateArmABS();
                         grabTimerStarted = false;
                         queuedState = autoState.GRAB;
                     }
@@ -159,17 +168,31 @@ public class SpecimenAuto extends LinearOpMode {
                     //if distance sensor <=.5, grab
                     armController.updateArmState();
                     armController.updateArmABS();
-
-                    if(grabTimerStarted = false){
-                        waitTimer = 500 + System.currentTimeMillis();
+                    Pose2d grabStart = drive.pose;
+                    if(!grabTimerStarted){
+                        TrajectoryActionBuilder grabWall = drive.actionBuilder(grabStart)
+                                .strafeToLinearHeading(wallGrab, Math.toRadians(-90));
+                        Action grabWallAction = grabWall.build();
+                        Actions.runBlocking(new SequentialAction(grabWallAction));
+                        waitTimer = 50 + System.currentTimeMillis();
+                        grabTimerStarted = true;
+                        anotherTimerStarted = false;
                     }
+                    if(!anotherTimerStarted){
+                        anotherTimer = 150 + System.currentTimeMillis();
+                        anotherTimerStarted = true;
+                    }
+                    //drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0,0), 0));
 
                     if (waitTimer <= System.currentTimeMillis()){
                         armController.currentArmState = ArmController.ArmState.CLOSE_CLAW;
-                        queuedState = autoState.SUBMERSIBLE;
                     }
                     else{
                         queuedState = autoState.GRAB;
+                    }
+
+                    if (anotherTimer <= System.currentTimeMillis()){
+                        queuedState = autoState.SUBMERSIBLE;
                     }
                     break;
                 case PARK:

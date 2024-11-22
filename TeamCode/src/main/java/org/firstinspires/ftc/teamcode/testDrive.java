@@ -124,7 +124,7 @@ public class testDrive extends OpMode{
         leftSlide.setPower(drivePower);
         rightSlide.setPower(drivePower);
 
-        slideTarget = 5;
+        slideTarget = 0;
         leftSlide.setTargetPosition(slideTarget);
         rightSlide.setTargetPosition(slideTarget);
 
@@ -213,19 +213,19 @@ public class testDrive extends OpMode{
         if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
             slideTarget +=10;
             if (slideTarget > 1840){
-                slideTarget = 1835;
+                slideTarget = 1840;
             }
         }
         if(currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
             slideTarget -=10;
-            if (slideTarget < 5){
-                slideTarget = 5;
+            if (slideTarget < 0){
+                slideTarget = 0;
             }
         }
         //endregion
 
         //region extendo for testing
-
+        /*
         if(currentGamepad2.a && !previousGamepad2.a) {
             extendoTarget += .01;
             extendoL.setPosition(extendoTarget);
@@ -242,11 +242,11 @@ public class testDrive extends OpMode{
                 extendoTarget=0;
             }
         }
-
+        */
         //endregion
 
         //region intakeAngle for testing
-
+        /*
         if(currentGamepad2.y && !previousGamepad2.y){
             intakeAngleTarget -=.01;
             if(intakeAngleTarget<0.0){
@@ -263,7 +263,7 @@ public class testDrive extends OpMode{
             intakeAngleL.setPosition(intakeAngleTarget);
             intakeAngleR.setPosition(intakeAngleTarget);
         }
-
+        */
         //endregion
 
         //region CRServos for testing
@@ -285,7 +285,7 @@ public class testDrive extends OpMode{
         //endregion
 
         //region armAngle for testing
-        /*
+
         if(currentGamepad2.a && !previousGamepad2.a){
             armAngleTarget -= .01;
             if(armAngleTarget>1.0){
@@ -302,7 +302,7 @@ public class testDrive extends OpMode{
             armAngleL.setPosition(armAngleTarget);
             armAngleR.setPosition(armAngleTarget);
         }
-        */
+
         //endregion
 
         //region Full intake motion

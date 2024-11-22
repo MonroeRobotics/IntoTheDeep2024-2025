@@ -44,10 +44,10 @@ public class ArmController {
     double ARM_ANGLE_POSITION = 0.12; //Live Updating Arm Angle Position (0 is intake position) should normally be .11
     public static double ARM_ANGLE_INTAKE = 0.12;//Stores Value of Arm intake Position should normally be .11
     public static double ARM_ANGLE_SPECIMEN_PICK_UP = .67; //get value, likely opposite of normal outtake
-    public static double ARM_ANGLE_SPECIMEN_DROP = .41;//Stores value of arm outtake position for specimen
+    public static double ARM_ANGLE_SPECIMEN_DROP = .42;//Stores value of arm outtake position for specimen
     public static double ARM_ANGLE_BUCKET_OUTTAKE = .56;//Stores Value of Arm outtake Position
-    public static double ARM_ANGLE_SPECIMEN_START; //TODO get value
-    public static double ARM_ANGLE_ASCENT; //TODO get value
+    public static double ARM_ANGLE_SPECIMEN_START = .18; //TODO get value
+    public static double ARM_ANGLE_ASCENT = .51; //TODO get value
 
     double CLAW_POSITION = .5; //Live Updating Arm Position (.5 is open)
     public static double CLAW_CLOSED = .3; //Stores Value of Claw closed Position
@@ -59,8 +59,8 @@ public class ArmController {
     public static double CLAW_ANGLE_SPECIMEN_PICK_UP = .55; //
     public static double CLAW_ANGLE_OUTTAKE = .55; //stores value of the claw angle when dropping stuff
     public static double CLAW_ANGLE_SPECIMEN_OUTTAKE = 1;//stuff
-    public static double CLAW_ANGLE_SPECIMEN_START; //TODO get value
-    public static double CLAW_ANGLE_ASCENT; //TODO get value
+    public static double CLAW_ANGLE_SPECIMEN_START = .24; //TODO get value
+    public static double CLAW_ANGLE_ASCENT = .92; //TODO get value
 
     public static double INTAKE_SERVO_POWER = 0.0; //Stores value of intake servos
     public static double INTAKE_SERVO_POWER_OFF = 0.0; //stores value of intake cr servos not spinning
@@ -84,7 +84,7 @@ public class ArmController {
     public static int SLIDE_HEIGHT_HIGH_BUCKET_DROP = 1835;
     public static int SLIDE_HEIGHT_HIGH_SPECIMEN_DROP = 365;
     public static int SLIDE_HEIGHT_LOW_SPECIMEN_DROP; //get value, Low specimen place -100
-    public static int SLIDE_HEIGHT_ASCENT; //todo get value
+    public static int SLIDE_HEIGHT_ASCENT = 395; //todo get value
 
     double edjectTimer = 0; //Timer to control outtake
     public static double EDJECT_TIME = 750; //How Long edject runs for (ms)
@@ -161,7 +161,7 @@ public class ArmController {
         SLIDE_HEIGHT = SLIDE_HEIGHT_LOWERED;
         INTAKE_ANGLE = INTAKE_ANGLE_RETRACT;
         EXTENDO_ANGLE = EXTENDO_RETRACT;
-        if (bucketOnly = true){
+        if (bucketOnly){
             CLAW_ANGLE_POSITION = CLAW_ANGLE_INTAKE;
             ARM_ANGLE_POSITION = ARM_ANGLE_INTAKE;
         }
@@ -331,9 +331,8 @@ public class ArmController {
         ARM_ANGLE_POSITION = armPos;
     }
 
-    public void setClawPos(double clawPos){
-        CLAW_POSITION = clawPos;
-
+    public void setClawAnglePos(double clawAnglePos){
+        CLAW_ANGLE_POSITION = clawAnglePos;
     }
 
     public void startEdject(){
