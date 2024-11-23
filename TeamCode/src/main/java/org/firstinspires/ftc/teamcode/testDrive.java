@@ -340,7 +340,7 @@ public class testDrive extends OpMode{
         //endregion
 
         //region claw for testing
-        /*
+
         if(currentGamepad2.x){
             claw.setPosition(.3);
             intakeL.setPower(0);
@@ -349,7 +349,7 @@ public class testDrive extends OpMode{
         if(currentGamepad2.y){
             claw.setPosition(.5);
         }
-        */
+
         if(currentGamepad2.dpad_left && !previousGamepad2.dpad_left){
             clawAngleTarget +=.01;
             if (clawAngleTarget>1.0){

@@ -41,7 +41,7 @@ public class AutoConfiguration {
     public static boolean allianceYellow = false;
 
     public static int delay = 0;
-    public static int maxCycleCount = 3;
+    public static int maxCycleCount = 4;
 
     String indicatorMarker = "֎";
 

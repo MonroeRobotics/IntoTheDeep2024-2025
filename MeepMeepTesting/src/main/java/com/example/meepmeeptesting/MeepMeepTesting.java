@@ -93,8 +93,8 @@ public class MeepMeepTesting {
                 .strafeToLinearHeading(blueNeutralSample2Approach, Math.toRadians(-90))
                 .strafeToLinearHeading(blueNeutralSample2, Math.toRadians(-90))
                 .strafeToLinearHeading(blueBasket, Math.toRadians(225))
-                .strafeToLinearHeading(blueNeutralSample3Approach, Math.toRadians(0))
-                .strafeToLinearHeading(blueNeutralSample3, Math.toRadians(0))
+                .strafeToLinearHeading(new Vector2d( 62, 54), Math.toRadians(-75))
+                .strafeToLinearHeading(new Vector2d( 62, 40), Math.toRadians(-75))
                 .build());
 
         RoadRunnerBotEntity specimenBot = new DefaultBotBuilder(meepMeep)

@@ -27,7 +27,7 @@ public class SpecimenAuto extends LinearOpMode {
     Vector2d startingDrivePoseLeftAway = new Vector2d(16.58, 52.45);// -90
     Pose2d startingDrivePoseRight = new Pose2d(-16.58,62.45, Math.toRadians(90));
 
-    Vector2d blueSubmersible = new Vector2d(0,24); //90
+    Vector2d blueSubmersible = new Vector2d(0,(24+9.5)); //90
     Vector2d wallApproach = new Vector2d(-48,50);
     Vector2d wallGrab = new Vector2d(-48, 57); //-90
 
@@ -91,7 +91,7 @@ public class SpecimenAuto extends LinearOpMode {
             else{
                 startingDrivePose = startingDrivePoseRight;
             }
-            drive = new MecanumDrive(hardwareMap,startingDrivePose);
+            drive = new MecanumDrive(hardwareMap,startingDrivePoseRight);
             maxCycleCount = autoConfiguration.getCycleCount();
         }
 

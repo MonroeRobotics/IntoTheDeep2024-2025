@@ -34,9 +34,13 @@ public class BucketAuto extends LinearOpMode {
     public static double TO_NEUTRAL_TIME = 6000; //ms
     public  static  double TO_SUBMERSIBLE_TIME;
     double waitTimer;
+    double anotherTimer;
+    boolean anotherTimerStarted = false;
     boolean startTimerStarted = false;
     boolean lowerArmTimerStarted = false;
     boolean intakeTimerStarted;
+    boolean bucketTransitionTimerStarted;
+    double bucketTransitionTimer;
     int cycleNumber;
 
     //endregion
@@ -50,14 +54,14 @@ public class BucketAuto extends LinearOpMode {
     double headingTarget;
 
     Vector2d blueSubmersible = new Vector2d(0,35);
-    Vector2d blueBasket = new Vector2d(56,56); //220
+    Vector2d blueBasket = new Vector2d(61,55); //225
 
-    Vector2d blueNeutralSample1 = new Vector2d(48,40); //35, 33, -90
+    Vector2d blueNeutralSample1 = new Vector2d(51,40); //35, 33, -90
     double bNS1AH = -90;
-    Vector2d blueNeutralSample2Approach = new Vector2d(45,39); //-90
+    Vector2d blueNeutralSample2Approach = new Vector2d(57,54); //-90
     double bNS2AH = -90;
-    Vector2d blueNeutralSample2 = new Vector2d(45,33); //-90
-    Vector2d blueNeutralSample3Approach = new Vector2d(57,26); //0
+    Vector2d blueNeutralSample2 = new Vector2d(62,40); //-90
+    Vector2d blueNeutralSample3Approach = new Vector2d(62,26); //0
     double bNS3AH = 0;
     Vector2d blueNeutralSample3 = new Vector2d(62,26); //0
 
@@ -71,7 +75,9 @@ public class BucketAuto extends LinearOpMode {
 
     //region trajectory declerations
     TrajectoryActionBuilder toSubmersible;
-    TrajectoryActionBuilder toNeutral;
+    TrajectoryActionBuilder toNeutral1;
+    TrajectoryActionBuilder toNeutral2;
+    TrajectoryActionBuilder toNeutral3;
     //endregion
 
 
@@ -182,75 +188,122 @@ public class BucketAuto extends LinearOpMode {
                     break;*/
                 case TO_NEUTRAL:
                     Pose2d neutralStart = drive.pose;
-
+                    if (cycleNumber == 1){
+                        toNeutral1 = drive.actionBuilder(neutralStart)
+                                .strafeToLinearHeading(new Vector2d(51, 48), Math.toRadians(-100))
+                                .strafeToLinearHeading(blueNeutralSample1, Math.toRadians(-100));
+                    }
+                    else if (cycleNumber == 2) {
+                        toNeutral2 = drive.actionBuilder(neutralStart)
+                                .strafeToLinearHeading(blueNeutralSample2Approach, Math.toRadians(-100))
+                                .strafeToLinearHeading(blueNeutralSample2, Math.toRadians(-100));
+                    }
+                    else if (cycleNumber == 3){
+                        toNeutral3 = drive.actionBuilder(neutralStart)
+                                .strafeToLinearHeading(new Vector2d( 59, 54), Math.toRadians(-90))
+                                .strafeToLinearHeading(new Vector2d( 63, 40), Math.toRadians(-90));
+                    }
                     if (!intakeTimerStarted){
-                        waitTimer = 5000 + System.currentTimeMillis();
+                        waitTimer = 2000 + System.currentTimeMillis();
                         intakeTimerStarted = true;
                         armController.currentArmState = ArmController.ArmState.EXTEND;
                         armController.checkIntakeAngle();
                         armController.checkIntakeServoPower();
                         armController.updateArmState();
                         armController.updateArmABS();
+                        if(cycleNumber == 1){
+                            Action toNeutral1Action = toNeutral1.build();
+                            Actions.runBlocking(new SequentialAction(toNeutral1Action));
+                        }
+                        else if (cycleNumber == 2){
+                            Action toNeutral2Action = toNeutral2.build();
+                            Actions.runBlocking(new SequentialAction(toNeutral2Action));
+                        }
+                        else if (cycleNumber == 3){
+                            Action toNeutral3Action = toNeutral3.build();
+                            Actions.runBlocking(new SequentialAction(toNeutral3Action));
+                        }
+                        else {
+                            queuedState = autoState.PARK;
+                        }
                     }
-                    if (cycleNumber == 1) {
-                        neutralTarget = blueNeutralSample1;
-                        headingTarget = bNS1AH;
-                    }
-                    else if (cycleNumber == 2){
-                        neutralTarget = blueNeutralSample2;
-                        approachTarget = blueNeutralSample2Approach;
-                        headingTarget = bNS2AH;
-                    }
-                    else if (cycleNumber == 3){
-                        neutralTarget = blueNeutralSample3;
-                        approachTarget = blueNeutralSample3Approach;
-                        headingTarget = bNS3AH;
-                    }
-                    if (cycleNumber == 1){
-                        toNeutral = drive.actionBuilder(neutralStart)
-                                .strafeToLinearHeading(new Vector2d(48, 48), Math.toRadians(-90))
-                                .strafeToLinearHeading(blueNeutralSample1, Math.toRadians(-90));
-                    }
-                    else if (cycleNumber >1) {
-                        toNeutral = drive.actionBuilder(neutralStart)
-                                .strafeToLinearHeading(approachTarget, Math.toRadians(headingTarget))
-                                .strafeToLinearHeading(neutralTarget, Math.toRadians(90));
-                    }
-                    Action toNeutralAction = toNeutral.build();
-                    Actions.runBlocking(new SequentialAction(toNeutralAction));
+
+                    Pose2d reverseStart = drive.pose;
+                    /*TrajectoryActionBuilder reverse = drive.actionBuilder(reverseStart) //bug at cycle 3 run to last sample
+                            .strafeToLinearHeading(new Vector2d( 48,48), Math.toRadians(-90));
+                    Action reverseAction = reverse.build();*/
 
                     if (waitTimer <= System.currentTimeMillis()) {
                         armController.currentArmState = ArmController.ArmState.RETRACT;
                         armController.updateArmState();
                         armController.updateArmABS();
-                        //queuedState = autoState.BUCKET;
+                        if(!anotherTimerStarted) {
+                            anotherTimer = 500 + System.currentTimeMillis();
+                            anotherTimerStarted = true;
+                            //Actions.runBlocking(new SequentialAction(reverseAction));
+                        }
+                    }
+
+                    if (anotherTimer <= System.currentTimeMillis()){
+                        armController.currentArmState = ArmController.ArmState.CLOSE_CLAW;
+                        armController.updateArmState();
+                        armController.updateArmABS();
+
+                        if(!bucketTransitionTimerStarted){
+                            bucketTransitionTimer = 750 + System.currentTimeMillis();
+                            bucketTransitionTimerStarted = true;
+                        }
+                        if(bucketTransitionTimer <= System.currentTimeMillis()){
+                            queuedState = autoState.BUCKET;
+                        }
                     }
                     break;
                 case BUCKET:
-                    if(waitTimer <= System.currentTimeMillis()) {
-                        armController.currentArmState = ArmController.ArmState.TALL_BUCKET_READY;
-                        Pose2d bucketStart;
-                        if (cycleNumber == 0) {
-                            bucketStart = startingDrivePose;
-                            TrajectoryActionBuilder toBucketStart = drive.actionBuilder(bucketStart)
-                                    .strafeToLinearHeading(startingDrivePoseLeftAway, Math.toRadians(-90))
-                                    .strafeToLinearHeading(blueBasket, Math.toRadians(225));
-                            Action toBucketStartAction = toBucketStart.build();
-                            Actions.runBlocking(new SequentialAction( toBucketStartAction));
-                        } else {
-                            bucketStart = drive.pose;
-                            TrajectoryActionBuilder toBucket = drive.actionBuilder(bucketStart)
-                                    .strafeToLinearHeading(blueBasket, Math.toRadians(225));
-                            Action toBucketAction = toBucket.build();
-                            Actions.runBlocking(new SequentialAction(toBucketAction));
-                        }
-                        cycleNumber += 1;
-                        if (armController.getSlideHeight() >= 1830 && armController.getSlideHeight() <= 1840) {
-                            lowerArmTimerStarted = false;
-                            queuedState = autoState.DROP;
-                        }
-                        break;
+                    armController.currentArmState = ArmController.ArmState.TALL_BUCKET_READY;
+                    armController.updateArmState();
+                    armController.updateArmABS();
+                    Pose2d bucketStart;
+                    if (cycleNumber == 0) {
+                        bucketStart = startingDrivePose;
+                        TrajectoryActionBuilder toBucketStart = drive.actionBuilder(bucketStart)
+                                .strafeToLinearHeading(startingDrivePoseLeftAway, Math.toRadians(-90))
+                                .strafeToLinearHeading(blueBasket, Math.toRadians(225));
+                        Action toBucketStartAction = toBucketStart.build();
+                        Actions.runBlocking(new SequentialAction( toBucketStartAction));
                     }
+                    else if (cycleNumber == 1){
+                        bucketStart = drive.pose;
+                        TrajectoryActionBuilder toBucket = drive.actionBuilder(bucketStart)
+                                .strafeToLinearHeading(new Vector2d(56, 48), Math.toRadians(225))
+                                .strafeToLinearHeading(new Vector2d(62, 56), Math.toRadians(225));
+                        Action toBucketAction = toBucket.build();
+                        Actions.runBlocking(new SequentialAction(toBucketAction));
+                    }
+                    else if (cycleNumber == 2){
+                        bucketStart = drive.pose;
+                        TrajectoryActionBuilder toBucket = drive.actionBuilder(bucketStart)
+                                .strafeToLinearHeading(new Vector2d(61, 48), Math.toRadians(225-10))
+                                .strafeToLinearHeading(new Vector2d(61, 56), Math.toRadians(225-10));
+                        Action toBucketAction = toBucket.build();
+                        Actions.runBlocking(new SequentialAction(toBucketAction));
+                    }
+                    else if (cycleNumber == 3){
+                        bucketStart = drive.pose;
+                        TrajectoryActionBuilder toBucket = drive.actionBuilder(bucketStart)
+                                .strafeToLinearHeading(new Vector2d(56, 48), Math.toRadians(225-10))
+                                .strafeToLinearHeading(new Vector2d(62, 56), Math.toRadians(225-10));
+                        Action toBucketAction = toBucket.build();
+                        Actions.runBlocking(new SequentialAction(toBucketAction));
+                    }
+                    cycleNumber += 1;
+                    if (armController.getSlideHeight() >= 1830 && armController.getSlideHeight() <= 1840) {
+                        lowerArmTimerStarted = false;
+                        queuedState = autoState.DROP;
+                    }
+                    intakeTimerStarted = false;
+                    anotherTimerStarted = false;
+                    bucketTransitionTimerStarted = false;
+                    break;
                 case DROP:
                     armController.currentArmState = ArmController.ArmState.OPEN_CLAW;
                     if (!lowerArmTimerStarted){
@@ -262,7 +315,7 @@ public class BucketAuto extends LinearOpMode {
                         if (cycleNumber == AutoConfiguration.maxCycleCount){
                             queuedState = autoState.PARK;
                         }
-                        else if (cycleNumber <= 2){
+                        else if (cycleNumber <= 4){
                             queuedState = autoState.TO_NEUTRAL;
                             intakeTimerStarted = false;
                         }
@@ -275,7 +328,9 @@ public class BucketAuto extends LinearOpMode {
                     }
                     break;
                 case PARK:
-                    armController.currentArmState = ArmController.ArmState.ASCENT;
+                    armController.currentArmState = ArmController.ArmState.RETRACT;
+                    armController.updateArmState();
+                    armController.updateArmABS();
                     break;
                 case STOP:
                     break;
