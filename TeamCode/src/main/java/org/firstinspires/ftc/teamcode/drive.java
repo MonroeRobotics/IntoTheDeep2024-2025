@@ -231,7 +231,7 @@ public class drive extends OpMode {
 
         armController.checkIntakeServoPower();
         armController.checkIntakeAngle();
-        armController.checkSlidePower();
+        //armController.checkSlidePower();
 
         previousGamepad1.copy(currentGamepad1);
         previousGamepad2.copy(currentGamepad2);

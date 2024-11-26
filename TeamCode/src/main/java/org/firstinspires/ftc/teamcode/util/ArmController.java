@@ -75,7 +75,7 @@ public class ArmController {
     public static double EXTENDO_EXTEND = .75; //stores value of extendo extending
     public static double EXTENDO_RETRACT = .95; //stores value of extendo retracting
 
-    public static int SLIDE_HEIGHT_LOWERED = 0;
+    public static int SLIDE_HEIGHT_LOWERED = -1;
     public static int SLIDE_HEIGHT_SERVO_TRANSITION = 100;
     public static int SLIDE_HEIGHT_SPECIMEN_PICK_UP = 0; //get value
     public static int SLIDE_HEIGHT_LOW_SPECIMEN_PLACE; //get value
