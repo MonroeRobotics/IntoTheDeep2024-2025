@@ -36,7 +36,7 @@ public class drive extends OpMode {
     double headingPower;
 
     public boolean intakeExtended = false;
-    public boolean sample = true;
+    public boolean sampleMode = true;
     public boolean clawOpen = true;
     public boolean specSequenceRan;
 
@@ -61,6 +61,7 @@ public class drive extends OpMode {
     @Override
     public void loop() {
         //region drive
+        //Stick controls
         if(currentGamepad1.left_stick_y >= .05 || currentGamepad1.left_stick_y <= -.05){
             xPower = -currentGamepad1.left_stick_y;
         }
@@ -71,10 +72,12 @@ public class drive extends OpMode {
             headingPower = -currentGamepad1.right_stick_x;
         }
 
+        //Multiplier
         xPower *= drivePower;
         yPower *= drivePower;
         headingPower *= drivePower;
 
+        //Cardinal dpad movements
         if (currentGamepad1.dpad_up) {
             xPower = drivePower;
             yPower = 0;
@@ -93,6 +96,7 @@ public class drive extends OpMode {
             headingPower = 0;
         }
 
+        //Speed controls
         if (currentGamepad1.right_bumper){
             drivePower = 1;
         } else if(currentGamepad1.left_bumper){
@@ -104,9 +108,9 @@ public class drive extends OpMode {
 
         //region gamepad2
 
-        //region bumpers
+        //region bumpers/Intake actions
         if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
-            sample = true;
+            sampleMode = true;
             if(!intakeExtended){
                 armController.currentArmState = ArmController.ArmState.EXTEND;
                 armController.startIntake();
@@ -119,25 +123,28 @@ public class drive extends OpMode {
         }
 
         if(currentGamepad2.left_bumper && !previousGamepad2.right_bumper){
-            sample = false;
+            sampleMode = false;
             if(!intakeExtended){
                 armController.currentArmState = ArmController.ArmState.SPECIMEN_PICK_UP;
                 intakeExtended = true;
             }
             else {
                 intakeExtended = false;
+                //todo add something to retract if this happens
             }
         }
         //endregion
 
-        //region dpad
+        //region dpad/slide height
+
+        //up
         if(currentGamepad2.dpad_up && !previousGamepad2.dpad_up){
             stage += 1;
             if (stage > 1){
                 stage = 1;
             }
 
-            if(sample) {
+            if(sampleMode) {
                 if (stage == 1) {
                     armController.currentArmState = ArmController.ArmState.TALL_BUCKET_READY;
                 }
@@ -156,13 +163,14 @@ public class drive extends OpMode {
             }
         }
 
+        //down
         if(currentGamepad2.dpad_down & !previousGamepad2.dpad_down){
             stage -= 1;
             if (stage <0 ){
                 stage = 0;
             }
 
-            if(sample){
+            if(sampleMode){
                 /*if (stage == 1) {
                     armController.currentArmState = ArmController.ArmState.SHORT_BUCKET_READY;
                 }*/
@@ -182,20 +190,26 @@ public class drive extends OpMode {
         //endregion
 
         //region buttons
+
+        //Claw
         if(currentGamepad2.x && !previousGamepad2.x){
+            //Default close (used in sample mode)
             if(clawOpen){
                 armController.currentArmState = ArmController.ArmState.CLOSE_CLAW;
                 clawOpen = false;
             }
-            else if (!clawOpen && !sample && !specSequenceRan){
+            //Press for specimen place sequence
+            else if (!clawOpen && !sampleMode && !specSequenceRan){
                 armController.currentArmState = ArmController.ArmState.SPECIMEN_PLACE_SEQUENCE;
                 specSequenceRan = true;
             }
-            else if(!clawOpen && !sample && specSequenceRan){
+            //open after specimen place sequence
+            else if(!clawOpen && !sampleMode && specSequenceRan){
                 armController.currentArmState = ArmController.ArmState.OPEN_CLAW;
                 specSequenceRan = false;
                 clawOpen = true;
             }
+            //default open (used in sample mode)
             else{
                 armController.currentArmState = ArmController.ArmState.OPEN_CLAW;
                 clawOpen = true;
@@ -204,17 +218,23 @@ public class drive extends OpMode {
         /*if(currentGamepad2.a && !previousGamepad2.a){
             //point blank intake
         }*/
+
+        //eject
         if(currentGamepad2.b && !previousGamepad2.b){
-            armController.startEdject();
+            armController.startEject();
         }
+
+        //Mode switch
         if(currentGamepad2.y && !previousGamepad2.y){
-            if(sample){sample = false;}
+            if(sampleMode){
+                sampleMode = false;}
             else{
-                sample = true;
+                sampleMode = true;
                 armController.setClawAnglePos(ArmController.CLAW_ANGLE_INTAKE);
             }
         }
 
+        //Weird buttons/Specific one time actions
         if (currentGamepad2.options && !previousGamepad2.options){
             armController.currentArmState = ArmController.ArmState.ASCENT;
         }

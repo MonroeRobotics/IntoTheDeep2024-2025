@@ -72,7 +72,7 @@ public class ArmController {
     public static double INTAKE_SERVO_POWER = 0.0; //Stores value of intake servos
     public static double INTAKE_SERVO_POWER_OFF = 0.0; //stores value of intake cr servos not spinning
     public static double INTAKE_SERVO_INTAKE = -1; //stores value of intake CR servos intaking
-    public static double INTAKE_SERVO_EDJECT = 1; //stores value of intake cr servos ejecting something
+    public static double INTAKE_SERVO_EJECT = 1; //stores value of intake cr servos ejecting something
     //endregion
 
     //region Intake Angle
@@ -101,8 +101,8 @@ public class ArmController {
     //endregion
 
     //region Timers
-    double edjectTimer = 0; //Timer to control outtake
-    public static double EDJECT_TIME = 750; //How Long edject runs for (ms)
+    double ejectTimer = 0; //Timer to control outtake
+    public static double EJECT_TIME = 750; //How Long eject runs for (ms)
 
     double intakeTimer = 0; //timer to control intake drop delay
     public static double INTAKE_TIMER = 50;//how long intake waits to drop (ms)
@@ -129,7 +129,7 @@ public class ArmController {
     DcMotorEx leftSlide;
     //endregion
 
-    boolean edject;
+    boolean eject;
 
     public ArmController (HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
@@ -346,21 +346,21 @@ public class ArmController {
     //endregion
 
     //region Time and State regulated systems
-    public void startEdject(){
-        edjectTimer = System.currentTimeMillis() + EDJECT_TIME;
-        INTAKE_SERVO_POWER = INTAKE_SERVO_EDJECT;
-        edject = true;
+    public void startEject(){
+        ejectTimer = System.currentTimeMillis() + EJECT_TIME;
+        INTAKE_SERVO_POWER = INTAKE_SERVO_EJECT;
+        eject = true;
     }
 
     public void checkIntakeServoPower(){
-        if (edjectTimer <= System.currentTimeMillis() && edject) {
+        if (ejectTimer <= System.currentTimeMillis() && eject) {
             INTAKE_SERVO_POWER = INTAKE_SERVO_POWER_OFF;
-            edject = false;
+            eject = false;
         }
-        else if (currentArmState == ArmState.EXTEND && !edject){
+        else if (currentArmState == ArmState.EXTEND && !eject){
             INTAKE_SERVO_POWER = INTAKE_SERVO_INTAKE;
         }
-        else if (currentArmState == ArmState.RETRACT && !edject){
+        else if (currentArmState == ArmState.RETRACT && !eject){
             INTAKE_SERVO_POWER = INTAKE_SERVO_POWER_OFF;
         }
     }
