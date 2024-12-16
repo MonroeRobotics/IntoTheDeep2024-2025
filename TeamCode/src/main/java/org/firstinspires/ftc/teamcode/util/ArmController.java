@@ -82,7 +82,7 @@ public class ArmController {
     //endregion
 
     //region Extendo
-    public static double EXTENDO_ANGLE = .95; //stores value fo current extendo
+    public static double EXTENDO_ANGLE = .95; //stores value for current extendo
     public static double EXTENDO_EXTEND = .75; //stores value of extendo extending
     public static double EXTENDO_RETRACT = .95; //stores value of extendo retracting
     //endregion
