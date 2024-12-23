@@ -123,7 +123,6 @@ public class drive extends OpMode {
             sampleMode = true;
             if(!intakeExtended){
                 armController.currentArmState = ArmController.ArmState.EXTEND;
-                armController.startIntake();
                 intakeExtended = true;
             }
             else {
@@ -132,7 +131,7 @@ public class drive extends OpMode {
             }
         }
 
-        if(currentGamepad2.left_bumper && !previousGamepad2.right_bumper){
+        if(currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
             sampleMode = false;
             if(!intakeExtended){
                 armController.currentArmState = ArmController.ArmState.SPECIMEN_PICK_UP;
@@ -225,9 +224,9 @@ public class drive extends OpMode {
                 clawOpen = true;
             }
         }
-        /*if(currentGamepad2.a && !previousGamepad2.a){
-            //point blank intake
-        }*/
+        if(currentGamepad2.a && !previousGamepad2.a){
+            armController.lowerIntake = !armController.lowerIntake;
+        }
 
         //eject
         if(currentGamepad2.b && !previousGamepad2.b){
@@ -263,7 +262,7 @@ public class drive extends OpMode {
 
         armController.checkIntakeServoPower();
         armController.checkIntakeAngle();
-        armController.checkSlidePower();
+        //armController.checkSlidePower();
 
         previousGamepad1.copy(currentGamepad1);
         previousGamepad2.copy(currentGamepad2);

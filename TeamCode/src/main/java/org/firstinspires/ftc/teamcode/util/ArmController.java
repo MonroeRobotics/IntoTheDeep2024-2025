@@ -24,6 +24,8 @@ public class ArmController {
     public static double SLIDE_MAX_VELO = 2000; //Max Linear Slide Velocity
     //endregion
 
+    public boolean lowerIntake;
+
     public enum ArmState { //Creates States that arm could be in for logic use
         EXTEND,
         RETRACT,
@@ -244,6 +246,7 @@ public class ArmController {
                 //retracts intake and prepares arm for grabbing samples
                 EXTENDO_ANGLE = EXTENDO_RETRACT;
                 INTAKE_ANGLE = INTAKE_ANGLE_RETRACT;
+                lowerIntake = false;
                 ARM_ANGLE_POSITION = ARM_ANGLE_INTAKE;
                 CLAW_ANGLE_POSITION = CLAW_ANGLE_INTAKE;
                 SLIDE_HEIGHT = SLIDE_HEIGHT_LOWERED;
@@ -369,8 +372,11 @@ public class ArmController {
         intakeTimer = System.currentTimeMillis() + INTAKE_TIMER;
     }
     public void checkIntakeAngle(){
-        if (currentArmState == ArmState.EXTEND && intakeTimer <= System.currentTimeMillis()){
+        if (currentArmState == ArmState.EXTEND && lowerIntake){
             INTAKE_ANGLE = INTAKE_ANGLE_INTAKE;
+        }
+        else if (currentArmState == ArmState.EXTEND){
+            INTAKE_ANGLE = INTAKE_ANGLE_RETRACT;
         }
     }
 
