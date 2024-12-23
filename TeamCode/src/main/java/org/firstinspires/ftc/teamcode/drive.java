@@ -5,10 +5,13 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.driveClasses.MecanumDrive;
 import org.firstinspires.ftc.teamcode.util.ArmController;
 import org.slf4j.Logger;
@@ -35,18 +38,24 @@ public class drive extends OpMode {
     double yPower;
     double headingPower;
 
+    double distance;
+
     public boolean intakeExtended = false;
-    public boolean sample = true;
+    public boolean sampleMode = true;
     public boolean clawOpen = true;
     public boolean specSequenceRan;
 
     ArmController armController;
     int stage;
 
+    DistanceSensor distanceSensor;
+
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         drive = new MecanumDrive(hardwareMap,pose);
+
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
 
         currentGamepad1 = new Gamepad();
         previousGamepad1 = new Gamepad();
@@ -61,6 +70,8 @@ public class drive extends OpMode {
     @Override
     public void loop() {
         //region drive
+        //Stick controls
+        distance = distanceSensor.getDistance(DistanceUnit.MM);
         if(currentGamepad1.left_stick_y >= .05 || currentGamepad1.left_stick_y <= -.05){
             xPower = -currentGamepad1.left_stick_y;
         }
@@ -71,10 +82,12 @@ public class drive extends OpMode {
             headingPower = -currentGamepad1.right_stick_x;
         }
 
+        //Multiplier
         xPower *= drivePower;
         yPower *= drivePower;
         headingPower *= drivePower;
 
+        //Cardinal dpad movements
         if (currentGamepad1.dpad_up) {
             xPower = drivePower;
             yPower = 0;
@@ -93,6 +106,7 @@ public class drive extends OpMode {
             headingPower = 0;
         }
 
+        //Speed controls
         if (currentGamepad1.right_bumper){
             drivePower = 1;
         } else if(currentGamepad1.left_bumper){
@@ -104,12 +118,11 @@ public class drive extends OpMode {
 
         //region gamepad2
 
-        //region bumpers
+        //region bumpers/Intake actions
         if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
-            sample = true;
+            sampleMode = true;
             if(!intakeExtended){
                 armController.currentArmState = ArmController.ArmState.EXTEND;
-                armController.startIntake();
                 intakeExtended = true;
             }
             else {
@@ -118,26 +131,29 @@ public class drive extends OpMode {
             }
         }
 
-        if(currentGamepad2.left_bumper && !previousGamepad2.right_bumper){
-            sample = false;
+        if(currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
+            sampleMode = false;
             if(!intakeExtended){
                 armController.currentArmState = ArmController.ArmState.SPECIMEN_PICK_UP;
                 intakeExtended = true;
             }
             else {
                 intakeExtended = false;
+                //todo add something to retract if this happens
             }
         }
         //endregion
 
-        //region dpad
+        //region dpad/slide height
+
+        //up
         if(currentGamepad2.dpad_up && !previousGamepad2.dpad_up){
             stage += 1;
             if (stage > 1){
                 stage = 1;
             }
 
-            if(sample) {
+            if(sampleMode) {
                 if (stage == 1) {
                     armController.currentArmState = ArmController.ArmState.TALL_BUCKET_READY;
                 }
@@ -156,13 +172,14 @@ public class drive extends OpMode {
             }
         }
 
+        //down
         if(currentGamepad2.dpad_down & !previousGamepad2.dpad_down){
             stage -= 1;
             if (stage <0 ){
                 stage = 0;
             }
 
-            if(sample){
+            if(sampleMode){
                 /*if (stage == 1) {
                     armController.currentArmState = ArmController.ArmState.SHORT_BUCKET_READY;
                 }*/
@@ -182,46 +199,60 @@ public class drive extends OpMode {
         //endregion
 
         //region buttons
+
+        //Claw
         if(currentGamepad2.x && !previousGamepad2.x){
+            //Default close (used in sample mode)
             if(clawOpen){
                 armController.currentArmState = ArmController.ArmState.CLOSE_CLAW;
                 clawOpen = false;
             }
-            else if (!clawOpen && !sample && !specSequenceRan){
+            //Press for specimen place sequence
+            else if (!clawOpen && !sampleMode && !specSequenceRan){
                 armController.currentArmState = ArmController.ArmState.SPECIMEN_PLACE_SEQUENCE;
                 specSequenceRan = true;
             }
-            else if(!clawOpen && !sample && specSequenceRan){
+            //open after specimen place sequence
+            else if(!clawOpen && !sampleMode && specSequenceRan){
                 armController.currentArmState = ArmController.ArmState.OPEN_CLAW;
                 specSequenceRan = false;
                 clawOpen = true;
             }
+            //default open (used in sample mode)
             else{
                 armController.currentArmState = ArmController.ArmState.OPEN_CLAW;
                 clawOpen = true;
             }
         }
-        /*if(currentGamepad2.a && !previousGamepad2.a){
-            //point blank intake
-        }*/
-        if(currentGamepad2.b && !previousGamepad2.b){
-            armController.startEdject();
+        if(currentGamepad2.a && !previousGamepad2.a){
+            armController.lowerIntake = !armController.lowerIntake;
         }
+
+        //eject
+        if(currentGamepad2.b && !previousGamepad2.b){
+            armController.startEject();
+        }
+
+        //Mode switch
         if(currentGamepad2.y && !previousGamepad2.y){
-            if(sample){sample = false;}
+            if(sampleMode){
+                sampleMode = false;}
             else{
-                sample = true;
+                sampleMode = true;
                 armController.setClawAnglePos(ArmController.CLAW_ANGLE_INTAKE);
             }
         }
 
+        //Weird buttons/Specific one time actions
         if (currentGamepad2.options && !previousGamepad2.options){
             armController.currentArmState = ArmController.ArmState.ASCENT;
         }
         //endregion
 
         //endregion
-
+        if (distance >= 10){
+            armController.currentArmState = ArmController.ArmState.RETRACT;
+        }
         Vector2d gamepadInput = new Vector2d(xPower, yPower);
         PoseVelocity2d poseVelocity2d = new PoseVelocity2d(gamepadInput, headingPower);
         drive.setDrivePowers(poseVelocity2d);
@@ -242,5 +273,6 @@ public class drive extends OpMode {
         telemetry.addData("intakeAngle", String.valueOf(armController.getIntakeAngle()));
         telemetry.addData("currentArmState", armController.getCurrentArmState());
         telemetry.addData("slide height", armController.getSlideHeight());
+        telemetry.addData("distanceSensor", distance);
     }
 }

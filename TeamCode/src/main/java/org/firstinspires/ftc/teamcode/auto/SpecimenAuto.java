@@ -114,7 +114,6 @@ public class SpecimenAuto extends LinearOpMode {
                 case SUBMERSIBLE:
                     armController.currentArmState = ArmController.ArmState.HIGH_SPECIMEN_PLACE;
                     armController.updateArmState();
-                    armController.updateArmABS();
                     Pose2d submersibleStart = drive.pose;
                     TrajectoryActionBuilder toSubmersible = drive.actionBuilder(submersibleStart)
                             .strafeToLinearHeading(new Vector2d(0, 48), Math.toRadians(90))
@@ -128,7 +127,6 @@ public class SpecimenAuto extends LinearOpMode {
                 case PLACE:
                     armController.currentArmState = ArmController.ArmState.SPECIMEN_PLACE_SEQUENCE;
                     armController.updateArmState();
-                    armController.updateArmABS();
 
                     if(!placeTimerStarted) {
                         waitTimer = 750 + System.currentTimeMillis();
@@ -138,7 +136,6 @@ public class SpecimenAuto extends LinearOpMode {
                     if ((armController.getSlideHeight() >= 360) && (armController.getSlideHeight() <= 370) && waitTimer <= System.currentTimeMillis()){
                         armController.currentArmState = ArmController.ArmState.OPEN_CLAW;
                         armController.updateArmState();
-                        armController.updateArmABS();
                         cycleCount +=1;
                         transitionTimerStarted = false;
                         queuedState = autoState.TO_WALL;
@@ -156,7 +153,6 @@ public class SpecimenAuto extends LinearOpMode {
                         Actions.runBlocking(new SequentialAction(toWallAction));
                         armController.currentArmState = ArmController.ArmState.SPECIMEN_PICK_UP;
                         armController.updateArmState();
-                        armController.updateArmABS();
                         grabTimerStarted = false;
                         queuedState = autoState.GRAB;
                     }
@@ -167,7 +163,6 @@ public class SpecimenAuto extends LinearOpMode {
                 case GRAB:
                     //if distance sensor <=.5, grab
                     armController.updateArmState();
-                    armController.updateArmABS();
                     Pose2d grabStart = drive.pose;
                     if(!grabTimerStarted){
                         TrajectoryActionBuilder grabWall = drive.actionBuilder(grabStart)
@@ -204,7 +199,6 @@ public class SpecimenAuto extends LinearOpMode {
             }
 
             armController.updateArmState();
-            armController.updateArmABS();
 
             telemetry.addData("System Time", System.currentTimeMillis());
             telemetry.addData("Wait Timer", waitTimer);
