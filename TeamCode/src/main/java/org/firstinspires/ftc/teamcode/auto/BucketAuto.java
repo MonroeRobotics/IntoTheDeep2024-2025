@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.driveClasses.MecanumDrive;
 import org.firstinspires.ftc.teamcode.util.ArmController;
 import org.firstinspires.ftc.teamcode.util.AutoConfiguration;
@@ -69,7 +70,7 @@ public class BucketAuto extends LinearOpMode {
 
     int autoCycleCount = 0;
 
-    MecanumDrive drive;
+    PinpointDrive drive;
     ArmController armController;
     AutoConfiguration autoConfiguration;
 
@@ -127,7 +128,7 @@ public class BucketAuto extends LinearOpMode {
                 startingDrivePose = startingDrivePoseRight;
             }
             Pose2d initialPosition = startingDrivePose;
-            drive = new MecanumDrive(hardwareMap,initialPosition);
+            drive = new PinpointDrive(hardwareMap,initialPosition);
             /*
             Pose2d poseEstimate = drive.pose;
             TrajectoryActionBuilder blueNeutral1 = drive.actionBuilder(poseEstimate)

@@ -29,7 +29,7 @@ public class drive extends OpMode {
     Gamepad previousGamepad2;
     //endregion
 
-    MecanumDrive drive;
+    PinpointDrive drive;
     Vector2d position = new Vector2d(0,0);
     Pose2d pose = new Pose2d(position, 90);
 
@@ -53,7 +53,7 @@ public class drive extends OpMode {
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        drive = new MecanumDrive(hardwareMap,pose);
+        drive = new PinpointDrive(hardwareMap,pose);
 
         distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
 
