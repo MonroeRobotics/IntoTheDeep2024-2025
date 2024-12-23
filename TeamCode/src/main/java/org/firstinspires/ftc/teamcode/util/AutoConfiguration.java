@@ -13,8 +13,8 @@ public class AutoConfiguration {
     Telemetry telemetry;
 
     public enum ParkSide{
-        MIDDLE,
-        SIDE
+        CLOSE,
+        FAR
     }
     public enum AllianceColor{
         RED,
@@ -24,29 +24,29 @@ public class AutoConfiguration {
     public enum AdjVariables{
         START_POSITION,
         DELAY,
-        PURPLEE_PIXEL_ONLY,
-        WHITE_PIXELS,
+        bucketOnly,
+        SUBMERSIBLE_INTAKE,
         CYCLE_COUNT,
         PARK_SIDE,
         ALLIANCE_YELLOW
     }
 
     public enum StartPosition{
-        BOARD,
-        AWAY
+        LEFT,
+        RIGHT
     }
-    public static boolean whitePixels = false;
-    public static boolean purplePixelOnly = false;
+    public static boolean submersibleIntake = false;
+    public static boolean bucketOnly = true;
 
     public static boolean allianceYellow = false;
 
     public static int delay = 0;
-    public static int cycleCount = 0;
+    public static int maxCycleCount = 4;
 
     String indicatorMarker = "֎";
 
-    public static ParkSide parkSide = ParkSide.SIDE;
-    public static StartPosition startPosition = StartPosition.BOARD;
+    public static ParkSide parkSide = ParkSide.FAR;
+    public static StartPosition startPosition = StartPosition.LEFT;
     public static AllianceColor allianceColor;
 
     AdjVariables[] adjVariables = AdjVariables.values();
@@ -61,27 +61,27 @@ public class AutoConfiguration {
         this.telemetry = telemetry;
         this.allianceColor = allianceColor;
     }
-    public AutoConfiguration(Telemetry telemetry, AllianceColor allianceColor, ParkSide parkSide, StartPosition startPosition, int delay, boolean whitePixels, boolean purplePixelOnly){
+    public AutoConfiguration(Telemetry telemetry, AllianceColor allianceColor, ParkSide parkSide, StartPosition startPosition, int delay, boolean submersibleIntake, boolean bucketOnly){
         hasInitAuto = true;
         this.telemetry = telemetry;
         this.allianceColor = allianceColor;
         this.parkSide = parkSide;
         this.startPosition = startPosition;
         this.delay = delay;
-        this.whitePixels = whitePixels;
-        this.purplePixelOnly = purplePixelOnly;
+        this.submersibleIntake = submersibleIntake;
+        this.bucketOnly = bucketOnly;
     }
 
-    public boolean isWhitePixels() {
-        return whitePixels;
+    public boolean isSubmersibleIntake() {
+        return submersibleIntake;
     }
 
     public int getCycleCount() {
-        return cycleCount;
+        return maxCycleCount;
     }
 
-    public boolean isPurplePixelOnly(){
-        return purplePixelOnly;
+    public boolean isBucketOnly(){
+        return bucketOnly;
     }
 
     public int getDelay() {
@@ -109,11 +109,11 @@ public class AutoConfiguration {
         else if(currentGamepad.dpad_right && !previousGamepad.dpad_right) {
             switch (currentVariable) {
                 case START_POSITION:
-                    if(startPosition == StartPosition.BOARD){
-                        startPosition = StartPosition.AWAY;
+                    if(startPosition == StartPosition.LEFT){
+                        startPosition = StartPosition.RIGHT;
                     }
                     else{
-                        startPosition = StartPosition.BOARD;
+                        startPosition = StartPosition.LEFT;
                     }
                     break;
                 case DELAY:
@@ -121,23 +121,28 @@ public class AutoConfiguration {
                         delay ++;
                     }
                     break;
-                case PURPLEE_PIXEL_ONLY:
-                    purplePixelOnly = !purplePixelOnly;
+                case bucketOnly:
+                    if (bucketOnly){
+                        bucketOnly = false;
+                    }
+                    else{
+                        bucketOnly = true;
+                    }
                     break;
-                case WHITE_PIXELS:
-                    whitePixels = !whitePixels;
+                case SUBMERSIBLE_INTAKE:
+                    submersibleIntake = !submersibleIntake;
                     break;
                 case CYCLE_COUNT:
-                    if(cycleCount < 5){
-                        cycleCount ++;
+                    if(maxCycleCount < 5){
+                        maxCycleCount++;
                     }
                     break;
                 case PARK_SIDE:
-                    if(parkSide == ParkSide.SIDE){
-                        parkSide = ParkSide.MIDDLE;
+                    if(parkSide == ParkSide.FAR){
+                        parkSide = ParkSide.CLOSE;
                     }
                     else{
-                        parkSide = ParkSide.SIDE;
+                        parkSide = ParkSide.FAR;
                     }
                     break;
                 case ALLIANCE_YELLOW:
@@ -148,11 +153,11 @@ public class AutoConfiguration {
         else if(currentGamepad.dpad_left && !previousGamepad.dpad_left) {
             switch (currentVariable) {
                 case START_POSITION:
-                    if(startPosition == StartPosition.BOARD){
-                        startPosition = StartPosition.AWAY;
+                    if(startPosition == StartPosition.LEFT){
+                        startPosition = StartPosition.RIGHT;
                     }
                     else{
-                        startPosition = StartPosition.BOARD;
+                        startPosition = StartPosition.LEFT;
                     }
                     break;
                 case DELAY:
@@ -160,22 +165,27 @@ public class AutoConfiguration {
                         delay --;
                     }
                     break;
-                case PURPLEE_PIXEL_ONLY:
-                    purplePixelOnly = !purplePixelOnly;
+                case bucketOnly:
+                    if(bucketOnly){
+                        bucketOnly = false;
+                    }
+                    else {
+                        bucketOnly = true;
+                    }
                     break;
-                case WHITE_PIXELS:
-                    whitePixels = !whitePixels;
+                case SUBMERSIBLE_INTAKE:
+                    submersibleIntake = !submersibleIntake;
                     break;
                 case CYCLE_COUNT:
-                    if(cycleCount > 0) {
-                        cycleCount --;
+                    if(maxCycleCount > 0) {
+                        maxCycleCount--;
                     }
                 case PARK_SIDE:
-                    if(parkSide == ParkSide.SIDE){
-                        parkSide = ParkSide.MIDDLE;
+                    if(parkSide == ParkSide.FAR){
+                        parkSide = ParkSide.CLOSE;
                     }
                     else{
-                        parkSide = ParkSide.SIDE;
+                        parkSide = ParkSide.FAR;
                     }
                     break;
                 case ALLIANCE_YELLOW:
@@ -187,9 +197,9 @@ public class AutoConfiguration {
         telemetry.addData("Current Color", allianceColor);
         telemetry.addData(((currentVariable == AdjVariables.START_POSITION ? indicatorMarker : "") + "Start Position"), startPosition);
         telemetry.addData(((currentVariable == AdjVariables.DELAY ? indicatorMarker : "") + "Delay"), delay);
-        telemetry.addData(((currentVariable == AdjVariables.PURPLEE_PIXEL_ONLY ? indicatorMarker : "") + "Purple Pixel Only"), purplePixelOnly);
-        telemetry.addData(((currentVariable == AdjVariables.WHITE_PIXELS ? indicatorMarker : "") + "White Pixel"), whitePixels);
-        telemetry.addData(((currentVariable == AdjVariables.CYCLE_COUNT ? indicatorMarker : "") + "Max Cycle Count"), cycleCount);
+        telemetry.addData(((currentVariable == AdjVariables.bucketOnly ? indicatorMarker : "") + "Bucket Bucket Only"), bucketOnly);
+        telemetry.addData(((currentVariable == AdjVariables.SUBMERSIBLE_INTAKE ? indicatorMarker : "") + "Submersible Intake"), submersibleIntake);
+        telemetry.addData(((currentVariable == AdjVariables.CYCLE_COUNT ? indicatorMarker : "") + "Max Cycle Count"), maxCycleCount);
         telemetry.addData(((currentVariable == AdjVariables.PARK_SIDE ? indicatorMarker : "") + "Park Side"), parkSide);
         telemetry.addData(((currentVariable == AdjVariables.ALLIANCE_YELLOW ? indicatorMarker : "") + "ALLIANCE_YELLOW"), allianceYellow);
         telemetry.update();

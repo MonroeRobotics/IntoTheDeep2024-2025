@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.archive.oldDrives;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -10,14 +10,18 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.driveClasses.MecanumDrive;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
-@TeleOp(name="TractionControl", group="main")
-public class TractionControl extends OpMode{
+@TeleOp
+public class uglyDrive extends OpMode {
 
 
 
-
+//region init
     Gamepad currentGamepad1 = new Gamepad();
     Gamepad previousGamepad1 = new Gamepad();
     DcMotor fLeft;
@@ -32,6 +36,10 @@ public class TractionControl extends OpMode{
     double xPower;
     double yPower;
     double headingPower;
+    int cameraMonitorViewId;
+    WebcamName webcamName;
+    OpenCvCamera camera;
+//endregion
     org.firstinspires.ftc.teamcode.vision.cameraThing cameraThing;
     @Override
     public void init() {
@@ -41,14 +49,26 @@ public class TractionControl extends OpMode{
         currentGamepad1 = gamepad1;
         previousGamepad1 = gamepad1;
 
-        /*fLeft = hardwareMap.get(DcMotorEx.class, "leftFront");
-        fRight = hardwareMap.get(DcMotorEx.class, "rightFront");
-        bLeft = hardwareMap.get(DcMotorEx.class, "leftBack");
-        bRight = hardwareMap.get(DcMotorEx.class, "leftRight");*/
-
-        //Copied from Ugly drive, still need to fix this
-        /*cameraThing = new cameraThing(hardwareMap);
-        cameraThing.initCam();*/
+        cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        webcamName = hardwareMap.get(WebcamName.class, "webcam");
+        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                // Usually this is where you'll want to start streaming from the camera (see section 4)
+                camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                FtcDashboard.getInstance().startCameraStream(camera, 24);
+            }
+            @Override
+            public void onError(int errorCode)
+            {
+                /*
+                 * This will be called if the camera could not be opened
+                 */
+            }
+        });
     }
 
     @Override
@@ -60,7 +80,6 @@ public class TractionControl extends OpMode{
         xPower *= drivePower;
         yPower *= drivePower;
         headingPower *= drivePower;
-
 
 
         if (currentGamepad1.dpad_up) {
