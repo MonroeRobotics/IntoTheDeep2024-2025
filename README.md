@@ -1,59 +1,88 @@
-## NOTICE
+# SparkFun OTOS Quickstart for Roadrunner 1.0
 
-This repository contains the public FTC SDK for the INTO THE DEEP (2024-2025) competition season.
+The SparkFun OTOS or Optical Tracking Odometry Sensor is an optical-based odometry sensor with an integrated IMU.
+This repository allows teams to integrate it into Roadrunner as a drop-in replacement.
 
-## Welcome!
-This GitHub repository contains the source code that is used to build an Android app to control a *FIRST* Tech Challenge competition robot.  To use this SDK, download/clone the entire project to your local computer.
+## Notes and Warnings
+Ensure that your sensor is properly mounted 10mm above the ground using the directions on the product page.
 
 ## Requirements
 To use this Android Studio project, you will need Android Studio Ladybug (2024.2) or later.
 
-To program your robot in Blocks or OnBot Java, you do not need Android Studio.
+The OTOS sensor is designed to ONLY work on official field tiles.
+Ensure that all tuning is performed on them. 
+(If you have nothing else to test on, it seems to also be able to track a hardwood floor as well.
+However, tuning numbers will likely be different between them.)
 
-## Getting Started
-If you are new to robotics or new to the *FIRST* Tech Challenge, then you should consider reviewing the [FTC Blocks Tutorial](https://ftc-docs.firstinspires.org/programming_resources/blocks/Blocks-Tutorial.html) to get familiar with how to use the control system:
+The custom localization is implemented using the SparkFunOTOSDrive class, which *extends* MecanumDrive.
+This means that all of RoadRunner's standard tuning should remain in MecanumDrive, but you should use SparkFunOTOSDrive
+in your OpModes.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[FTC Blocks Online Tutorial](https://ftc-docs.firstinspires.org/programming_resources/blocks/Blocks-Tutorial.html)
+~~I eventually plan to PR this in some form once it's been more extensively tested.~~ 
+11/13/24 edit: I have opened PRs for the underlying library changes required for my integration, but they have not been merged; it seems like rbrott would prefer an official integration to rethink the tuning process entirely (which is reasonable but not something I personally have the time/knowledge for). See https://github.com/acmerobotics/road-runner-ftc/issues/8 and the linked PR's for further discussion.
 
-Even if you are an advanced Java programmer, it is helpful to start with the [FTC Blocks tutorial](https://ftc-docs.firstinspires.org/programming_resources/blocks/Blocks-Tutorial.html), and then migrate to the [OnBot Java Tool](https://ftc-docs.firstinspires.org/programming_resources/onbot_java/OnBot-Java-Tutorial.html) or to [Android Studio](https://ftc-docs.firstinspires.org/programming_resources/android_studio_java/Android-Studio-Tutorial.html) afterwards.
+## When things go wrong…
+This quickstart has not been extensively tested, and you are likely to encounter bugs and issues. 
+If this happens, or if there's anything you're confused about or don't understand, the best way to get help is
+making a post in roadrunner-help on the FTC Discord with your MecanumDrive and SparkFunOTOSDrive attached and pinging me
+(@j5155).
+If you're certain that you've found a bug,
+or you have a feature request, you may also make an issue in the Issues tab above. 
 
-## Downloading the Project
-If you are an Android Studio programmer, there are several ways to download this repo.  Note that if you use the Blocks or OnBot Java Tool to program your robot, then you do not need to download this repository.
+Do NOT make an issue on the official Roadrunner quickstart while you are using this one.
 
-* If you are a git user, you can clone the most current version of the repository:
+## Tuning
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;git clone https://github.com/FIRST-Tech-Challenge/FtcRobotController.git</p>
+### Configure Hardware
 
-* Or, if you prefer, you can use the "Download Zip" button available through the main repository page.  Downloading the project as a .ZIP file will keep the size of the download manageable.
+Configure your drive motors in MecanumDrive
+   as explained [here](https://rr.brott.dev/docs/v1-0/tuning/#drive-classes). 
+Make sure to properly reverse them using MecanumDirectionDebugger by following the official docs.
 
-* You can also download the project folder (as a .zip or .tar.gz archive file) from the Downloads subsection of the [Releases](https://github.com/FIRST-Tech-Challenge/FtcRobotController/releases) page for this repository.
+Tuning currently also requires a properly configured Control Hub or Expansion Hub IMU in MecanumDrive. 
+This will be fixed in the future, but for now make sure your hub orientation is properly defined.
 
-* The Releases page also contains prebuilt APKs.
+Also, make sure to configure the OTOS in your hardware config. 
+By default, SparkFunOTOSDrive will look for a sensor named sensor_otos,
+but you can change this in SparkFunOTOSDrive line 70.
 
-Once you have downloaded and uncompressed (if needed) your folder, you can use Android Studio to import the folder  ("Import project (Eclipse ADT, Gradle, etc.)").
+Note that, to mitigate an issue with the OTOS driver in SDK version 9.2,
+you must currently configure the OTOS as "SparkFunOTOS Corrected" in your hardware config.
+### Tune Scalars and Offsets
+First, tune the Angular Scalar by running the OTOSAngularScalar OpMode and following the instructions. 
+This will allow you to get the maximum accuracy from the OTOS IMU.
 
-## Getting Help
-### User Documentation and Tutorials
-*FIRST* maintains online documentation with information and tutorials on how to use the *FIRST* Tech Challenge software and robot control system.  You can access this documentation using the following link:
+After you have tuned the angular scalar, the IMU will be accurate enough to tune the heading offset.
+Run OTOSHeadingOffsetTuner and follow the instructions.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[FIRST Tech Challenge Documentation](https://ftc-docs.firstinspires.org/index.html)
+Next, tune the Linear Scalar using the LocalizationTest OpMode.
+Again, ensure that you perform this tuning on field tiles so that the OTOS gives accurate data.
+SparkFun's official instructions to do are as follows:
+> To calibrate the linear scalar, move the
+robot a known distance and measure the error; do this multiple times at
+multiple speeds to get an average, then set the linear scalar to the
+inverse of the error.
+> For example, if you move the robot 100 inches and
+the sensor reports 103 inches, set the linear scalar to 100/103 = 0.971
 
-Note that the online documentation is an "evergreen" document that is constantly being updated and edited.  It contains the most current information about the *FIRST* Tech Challenge software and control system.
+Set the Linear Scalar at line 56 of SparkFunOTOSDrive.
 
-### Javadoc Reference Material
-The Javadoc reference documentation for the FTC SDK is now available online.  Click on the following link to view the FTC SDK Javadoc documentation as a live website:
+Next, tune the Position Offset using OTOSPositionOffsetTuner by following the instructions. 
+This should ensure that the OTOS is properly aware of its location on the robot.
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[FTC Javadoc Documentation](https://javadoc.io/doc/org.firstinspires.ftc)
+As a final step to ensure everything is working properly,
+run LocalizationTest again and try driving around, spinning in place, etc. 
+to make sure everything is working properly.
 
-### Online User Forum
-For technical questions regarding the Control System or the FTC SDK, please visit the FIRST Tech Challenge Community site:
+### Begin Roadrunner Tuning
+Follow the [official RoadRunner docs](https://rr.brott.dev/docs/v1-0/tuning/#forwardramplogger-dead-wheels-only) for the remaining tuning steps.
+However, make sure to start at ForwardRampLogger and follow the steps labeled "dead wheels."
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[FIRST Tech Challenge Community](https://ftc-community.firstinspires.org/)
+Additionally, when you run AngularRampLogger,
+you can ignore the odometry position graphs and only use the trackWidthTicks one.
 
-### Sample OpModes
-This project contains a large selection of Sample OpModes (robot code examples) which can be cut and pasted into your /teamcode folder to be used as-is, or modified to suit your team's needs.
+Once you have completed the official docs for tuning, you should be good to go to use Roadrunner as normal!
 
-Samples Folder: &nbsp;&nbsp; [/FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples](FtcRobotController/src/main/java/org/firstinspires/ftc/robotcontroller/external/samples)
 
 The readme.md file located in the [/TeamCode/src/main/java/org/firstinspires/ftc/teamcode](TeamCode/src/main/java/org/firstinspires/ftc/teamcode) folder contains an explanation of the sample naming convention, and instructions on how to copy them to your own project space.
 
