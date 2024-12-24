@@ -55,7 +55,7 @@ public class drive extends OpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         drive = new MecanumDrive(hardwareMap,pose);
 
-        distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
+        //distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
 
         currentGamepad1 = new Gamepad();
         previousGamepad1 = new Gamepad();
