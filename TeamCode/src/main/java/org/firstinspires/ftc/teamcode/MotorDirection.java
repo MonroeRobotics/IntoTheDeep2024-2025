@@ -30,12 +30,12 @@ public class MotorDirection extends OpMode {
 
     @Override
     public void loop() {
-        if (currentgamepad.start && !previousGamepad.start && !running){
+        if (currentgamepad.options && !previousGamepad.options && !running){
             extraLeftSlide.setPower(.5);
             extraRightSlide.setPower(.5);
             running = true;
         }
-        else if (currentgamepad.start && !previousGamepad.start && running){
+        else if (currentgamepad.options && !previousGamepad.options && running){
             extraLeftSlide.setPower(0);
             extraRightSlide.setPower(0);
             running = false;
