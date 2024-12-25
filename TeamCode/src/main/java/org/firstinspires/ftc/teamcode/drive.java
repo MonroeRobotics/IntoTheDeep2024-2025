@@ -71,7 +71,7 @@ public class drive extends OpMode {
     public void loop() {
         //region drive
         //Stick controls
-        distance = distanceSensor.getDistance(DistanceUnit.MM);
+        //distance = distanceSensor.getDistance(DistanceUnit.MM);
         if(currentGamepad1.left_stick_y >= .05 || currentGamepad1.left_stick_y <= -.05){
             xPower = -currentGamepad1.left_stick_y;
         }
