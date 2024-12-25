@@ -67,5 +67,8 @@ public class MotorDirection extends OpMode {
         telemetry.addData("Motor power", extraLeftSlide.getPower());
         telemetry.addData("left motor direction", extraLeftSlide.getDirection());
         telemetry.addData("right motor direction", extraRightSlide.getDirection());
+
+        previousGamepad.copy(currentgamepad);
+        currentgamepad.copy(gamepad2);
     }
 }
