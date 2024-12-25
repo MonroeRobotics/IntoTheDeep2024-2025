@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -22,6 +24,8 @@ public class MotorDirection extends OpMode {
     public void init() {
         extraLeftSlide = hardwareMap.get(DcMotorEx.class, "extraLeftSlide");
         extraRightSlide = hardwareMap.get(DcMotorEx.class, "extraRightSlide");
+
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         currentgamepad = new Gamepad();
         previousGamepad = new Gamepad();
@@ -61,5 +65,8 @@ public class MotorDirection extends OpMode {
 
         currentgamepad.copy(gamepad2);
         previousGamepad.copy(gamepad2);
+
+        telemetry.addData("right motor direction: ", extraRightSlide.getDirection());
+        telemetry.addData("left motor direction: ", extraLeftSlide.getDirection());
     }
 }
