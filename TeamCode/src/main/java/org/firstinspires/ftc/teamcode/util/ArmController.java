@@ -129,6 +129,8 @@ public class ArmController {
 
     DcMotorEx rightSlide;
     DcMotorEx leftSlide;
+    DcMotorEx extraLeftSlide;
+    DcMotorEx extraRightSlide;
     //endregion
 
     boolean eject;
@@ -158,6 +160,8 @@ public class ArmController {
 
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
+        extraLeftSlide = hardwareMap.get(DcMotorEx.class, "extraLeftSlide");
+        extraRightSlide = hardwareMap.get(DcMotorEx.class, "extraRightSlide");
 
         //endregion
 
@@ -165,13 +169,19 @@ public class ArmController {
         if(!AutoConfiguration.hasInitAuto) {
             leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            extraLeftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            extraRightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
 
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extraLeftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extraRightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extraLeftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extraRightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //endregion
 
         //region Initialization values
@@ -191,20 +201,30 @@ public class ArmController {
         //region Slide Constraints
         leftSlide.setTargetPosition(SLIDE_HEIGHT);
         rightSlide.setTargetPosition(SLIDE_HEIGHT);
+        extraLeftSlide.setTargetPosition(SLIDE_HEIGHT);
+        extraRightSlide.setTargetPosition(SLIDE_HEIGHT);
 
         leftSlide.setPower(SLIDE_POWER);
         rightSlide.setPower(SLIDE_POWER);
+        extraLeftSlide.setPower(SLIDE_POWER);
+        extraRightSlide.setPower(SLIDE_POWER);
 
         leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extraLeftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extraRightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         leftSlide.setVelocity(SLIDE_MAX_VELO);
         rightSlide.setVelocity(SLIDE_MAX_VELO);
+        extraLeftSlide.setVelocity(SLIDE_MAX_VELO);
+        extraRightSlide.setVelocity(SLIDE_MAX_VELO);
         //endregion
 
         //region Reversing things
         leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        extraLeftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        extraRightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         intakeR.setDirection(CRServo.Direction.REVERSE);
         intakeAngleR.setDirection(Servo.Direction.REVERSE);
@@ -305,6 +325,8 @@ public class ArmController {
         //region Position Updates
         leftSlide.setTargetPosition(SLIDE_HEIGHT);
         rightSlide.setTargetPosition(SLIDE_HEIGHT);
+        extraLeftSlide.setTargetPosition(SLIDE_HEIGHT);
+        extraRightSlide.setTargetPosition(SLIDE_HEIGHT);
 
         intakeL.setPower(INTAKE_SERVO_POWER);
         intakeR.setPower(INTAKE_SERVO_POWER);
@@ -396,6 +418,8 @@ public class ArmController {
         //This section has been moved into updateArmState and is now unnecessary after testing
         leftSlide.setTargetPosition(SLIDE_HEIGHT);
         rightSlide.setTargetPosition(SLIDE_HEIGHT);
+        extraLeftSlide.setTargetPosition(SLIDE_HEIGHT);
+        extraRightSlide.setTargetPosition(SLIDE_HEIGHT);
 
         intakeL.setPower(INTAKE_SERVO_POWER);
         intakeR.setPower(INTAKE_SERVO_POWER);
@@ -417,9 +441,13 @@ public class ArmController {
 
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extraLeftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extraRightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extraLeftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extraRightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         setSlideHeight(0);
     }
