@@ -224,7 +224,7 @@ public class ArmController {
         leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         extraLeftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
-        extraRightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        //extraRightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         intakeR.setDirection(CRServo.Direction.REVERSE);
         intakeAngleR.setDirection(Servo.Direction.REVERSE);
