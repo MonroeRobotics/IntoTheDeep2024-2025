@@ -18,7 +18,8 @@ public class MotorDirection extends OpMode {
 
     boolean leftReversed;
     boolean rightReversed;
-    boolean running;
+    boolean leftRunning;
+    boolean rightRunning;
 
     @Override
     public void init() {
@@ -29,20 +30,28 @@ public class MotorDirection extends OpMode {
 
         currentgamepad = new Gamepad();
         previousGamepad = new Gamepad();
-        running = false;
+        leftRunning = false;
+        rightRunning = false;
     }
 
     @Override
     public void loop() {
-        if (currentgamepad.y && !previousGamepad.y && !running){
+        if (currentgamepad.dpad_up && !previousGamepad.dpad_up && !leftRunning){
             extraLeftSlide.setPower(.5);
-            extraRightSlide.setPower(.5);
-            running = true;
+            leftRunning = true;
         }
-        if (currentgamepad.y && !previousGamepad.y && running){
+        if (currentgamepad.dpad_up && !previousGamepad.dpad_up && leftRunning){
             extraLeftSlide.setPower(0);
+            leftRunning = false;
+        }
+
+        if (currentgamepad.y && !previousGamepad.y && !rightRunning){
+            extraRightSlide.setPower(.5);
+            rightRunning = true;
+        }
+        if (currentgamepad.y && !previousGamepad.y && rightRunning){
             extraRightSlide.setPower(0);
-            running = false;
+            rightRunning = false;
         }
 
         if (currentgamepad.a && !previousGamepad.a && !rightReversed){
@@ -63,10 +72,11 @@ public class MotorDirection extends OpMode {
             leftReversed = false;
         }
 
-        telemetry.addData("Status: ", running);
+        telemetry.addData("Status: ", leftRunning);
         telemetry.addData("Motor power", extraLeftSlide.getPower());
         telemetry.addData("left motor direction", extraLeftSlide.getDirection());
         telemetry.addData("right motor direction", extraRightSlide.getDirection());
+        telemetry.update();
 
         previousGamepad.copy(currentgamepad);
         currentgamepad.copy(gamepad2);
