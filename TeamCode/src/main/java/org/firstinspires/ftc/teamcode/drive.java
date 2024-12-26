@@ -51,8 +51,9 @@ public class drive extends OpMode {
 
     DistanceSensor distanceSensor;
     Servo swiper;
-    public double swipe;
-    public double resetSwiper;
+    public double swipe = 0;
+    public double resetSwiper = .45;
+    int counter;
 
     @Override
     public void init() {
@@ -123,21 +124,21 @@ public class drive extends OpMode {
         //endregion
 
         if (currentGamepad1.right_trigger >= .1){
-            if (currentGamepad1.right_bumper && !previousGamepad1.right_bumper){
+            /*if (currentGamepad1.right_bumper && !previousGamepad1.right_bumper){
                 swipe += .05;
             }
             else if (currentGamepad1.left_bumper && !previousGamepad1.left_bumper){
                 swipe -= .05;
-            }
+            }*/
             swiper.setPosition(swipe);
         }
         else {
-            if (currentGamepad1.right_bumper && !previousGamepad1.right_bumper){
+            /*if (currentGamepad1.right_bumper && !previousGamepad1.right_bumper){
                 resetSwiper += .05;
             }
             else if (currentGamepad1.left_bumper && !previousGamepad1.left_bumper){
                 resetSwiper -= .05;
-            }
+            }*/
             swiper.setPosition(resetSwiper);
         }
 
@@ -270,7 +271,17 @@ public class drive extends OpMode {
 
         //Weird buttons/Specific one time actions
         if (currentGamepad2.options && !previousGamepad2.options){
-            armController.currentArmState = ArmController.ArmState.ASCENT;
+            if (counter == 0){
+                armController.currentArmState = ArmController.ArmState.ASCENT;
+            }
+            else if (counter == 1){
+                armController.currentArmState = ArmController.ArmState.HANG;
+            }
+            else if (counter == 2){
+                armController.currentArmState = ArmController.ArmState.LOWER;
+            }
+            else counter = -1;
+            counter += 1;
         }
         //endregion
 
@@ -287,7 +298,7 @@ public class drive extends OpMode {
 
         armController.checkIntakeServoPower();
         armController.checkIntakeAngle();
-        //armController.checkSlidePower();
+        armController.checkSlidePower();
 
         previousGamepad1.copy(currentGamepad1);
         previousGamepad2.copy(currentGamepad2);
@@ -297,7 +308,11 @@ public class drive extends OpMode {
 
         telemetry.addData("intakeAngle", String.valueOf(armController.getIntakeAngle()));
         telemetry.addData("currentArmState", armController.getCurrentArmState());
-        telemetry.addData("slide height", armController.getSlideHeight());
+        telemetry.addData("slide target", armController.getSlideHeight());
+        telemetry.addData("left slide height", armController.leftSlide.getCurrentPosition());
+        telemetry.addData("extra left slide height", armController.extraLeftSlide.getCurrentPosition());
+        telemetry.addData("extra right slide height", armController.extraRightSlide.getCurrentPosition());
+        telemetry.addData("right slide height", armController.rightSlide.getCurrentPosition());
         //telemetry.addData("distanceSensor", distance);
         telemetry.addData("swiper position", swiper.getPosition());
         telemetry.update();

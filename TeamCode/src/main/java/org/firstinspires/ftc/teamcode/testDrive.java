@@ -57,6 +57,8 @@ public class testDrive extends OpMode{
     //region Arm Slides
     DcMotor leftSlide;
     DcMotor rightSlide;
+    DcMotor extraLeftSlide;
+    DcMotor extraRightSlide;
     //endregion
 
 
@@ -110,6 +112,9 @@ public class testDrive extends OpMode{
 
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
+        extraLeftSlide = hardwareMap.get(DcMotorEx.class, "extraLeftSlide");
+        extraRightSlide = hardwareMap.get(DcMotorEx.class, "extraRightSlide");
+
 
         armAngleL = hardwareMap.get(Servo.class, "armAngleL");
         armAngleR = hardwareMap.get(Servo.class, "armAngleR");
@@ -120,16 +125,23 @@ public class testDrive extends OpMode{
 
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extraLeftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extraRightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftSlide.setPower(drivePower);
         rightSlide.setPower(drivePower);
+        extraLeftSlide.setPower(drivePower);
+        extraRightSlide.setPower(drivePower);
 
         slideTarget = 0;
         leftSlide.setTargetPosition(slideTarget);
         rightSlide.setTargetPosition(slideTarget);
+        extraLeftSlide.setTargetPosition(slideTarget);
+        extraRightSlide.setTargetPosition(slideTarget);
 
         leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        extraLeftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         extendoR.setDirection(Servo.Direction.REVERSE);
         intakeAngleR.setDirection(Servo.Direction.REVERSE);
@@ -144,7 +156,7 @@ public class testDrive extends OpMode{
         intakeAngleL.setPosition(intakeAngleTarget);
         intakeAngleR.setPosition(intakeAngleTarget);
 
-        armAngleTarget = 0.11;
+        armAngleTarget = 0.4;
         armAngleL.setPosition(armAngleTarget);
         armAngleR.setPosition(armAngleTarget);
 
@@ -208,8 +220,12 @@ public class testDrive extends OpMode{
         }*/
         leftSlide.setTargetPosition(slideTarget);
         rightSlide.setTargetPosition(slideTarget);
+        extraLeftSlide.setTargetPosition(slideTarget);
+        extraRightSlide.setTargetPosition(slideTarget);
         leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extraLeftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extraRightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
             slideTarget +=10;
             if (slideTarget > 1840){
