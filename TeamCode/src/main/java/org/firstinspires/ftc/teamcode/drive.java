@@ -123,9 +123,21 @@ public class drive extends OpMode {
         //endregion
 
         if (currentGamepad1.right_trigger >= .1){
+            if (currentGamepad1.right_bumper && !previousGamepad1.right_bumper){
+                swipe += .05;
+            }
+            else if (currentGamepad1.left_bumper && !previousGamepad1.left_bumper){
+                swipe -= .05;
+            }
             swiper.setPosition(swipe);
         }
         else {
+            if (currentGamepad1.right_bumper && !previousGamepad1.right_bumper){
+                resetSwiper += .05;
+            }
+            else if (currentGamepad1.left_bumper && !previousGamepad1.left_bumper){
+                resetSwiper -= .05;
+            }
             swiper.setPosition(resetSwiper);
         }
 
@@ -286,6 +298,8 @@ public class drive extends OpMode {
         telemetry.addData("intakeAngle", String.valueOf(armController.getIntakeAngle()));
         telemetry.addData("currentArmState", armController.getCurrentArmState());
         telemetry.addData("slide height", armController.getSlideHeight());
-        telemetry.addData("distanceSensor", distance);
+        //telemetry.addData("distanceSensor", distance);
+        telemetry.addData("swiper position", swiper.getPosition());
+        telemetry.update();
     }
 }
