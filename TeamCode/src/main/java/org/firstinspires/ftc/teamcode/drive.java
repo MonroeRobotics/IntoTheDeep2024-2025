@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.driveClasses.MecanumDrive;
@@ -49,6 +50,9 @@ public class drive extends OpMode {
     int stage;
 
     DistanceSensor distanceSensor;
+    Servo swiper;
+    public double swipe;
+    public double resetSwiper;
 
     @Override
     public void init() {
@@ -65,6 +69,8 @@ public class drive extends OpMode {
         armController = new ArmController(hardwareMap);
         armController.initArm(true);
         stage = 0;
+
+        swiper = hardwareMap.get(Servo.class, "swiper");
     }
 
     @Override
@@ -115,6 +121,13 @@ public class drive extends OpMode {
             drivePower = .8;
         }
         //endregion
+
+        if (currentGamepad1.right_trigger >= .1){
+            swiper.setPosition(swipe);
+        }
+        else {
+            swiper.setPosition(resetSwiper);
+        }
 
         //region gamepad2
 
