@@ -5,23 +5,21 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.driveClasses.MecanumDrive;
 import org.firstinspires.ftc.teamcode.util.ArmController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@TeleOp(name = "drive", group = "main")
-public class drive extends OpMode {
+@TeleOp(name = "soloDrive", group = "main")
+public class soloDrive extends OpMode {
 
-    private static final Logger log = LoggerFactory.getLogger(drive.class);
+    private static final Logger log = LoggerFactory.getLogger(soloDrive.class);
     //region Gamepads
     Gamepad currentGamepad1;
     Gamepad previousGamepad1;
@@ -79,14 +77,14 @@ public class drive extends OpMode {
         //region drive
         //Stick controls
         //distance = distanceSensor.getDistance(DistanceUnit.MM);
-        if(currentGamepad1.left_stick_y >= .05 || currentGamepad1.left_stick_y <= -.05){
-            xPower = -currentGamepad1.left_stick_y;
+        if(currentGamepad2.left_stick_y >= .05 || currentGamepad2.left_stick_y <= -.05){
+            xPower = -currentGamepad2.left_stick_y;
         }
-        if(currentGamepad1.left_stick_x >= .05 || currentGamepad1.left_stick_x <= -.05){
-            yPower = -currentGamepad1.left_stick_x;
+        if(currentGamepad2.left_stick_x >= .05 || currentGamepad2.left_stick_x <= -.05){
+            yPower = -currentGamepad2.left_stick_x;
         }
-        if (currentGamepad1.right_stick_x >= .05 || currentGamepad1.right_stick_x <= -.05){
-            headingPower = -currentGamepad1.right_stick_x * 0.75;
+        if (currentGamepad2.right_stick_x >= .05 || currentGamepad2.right_stick_x <= -.05){
+            headingPower = -currentGamepad2.right_stick_x * 0.75;
         }
 
         //Multiplier
