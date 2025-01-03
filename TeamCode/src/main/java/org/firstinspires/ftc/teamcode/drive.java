@@ -269,7 +269,7 @@ public class drive extends OpMode {
             }
         }
 
-        //Weird buttons/Specific one time actions
+         //Weird buttons/Specific one time actions
         if (currentGamepad2.options && !previousGamepad2.options){
             if (counter == 0){
                 armController.currentArmState = ArmController.ArmState.ASCENT;

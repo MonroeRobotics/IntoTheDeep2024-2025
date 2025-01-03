@@ -46,8 +46,8 @@ public class ArmController {
     public ArmState currentArmState = ArmState.RETRACT; //Creates a variables to store current Arm State
 
     //region Arm Angle
-    double ARM_ANGLE_POSITION = .4; //Live Updating Arm Angle Position (0 is intake position) should normally be .15
-    public static double ARM_ANGLE_INTAKE = .4;//Stores Value of Arm intake Position should normally be .15
+    double ARM_ANGLE_POSITION = .39; //Live Updating Arm Angle Position (0 is intake position) should normally be .15
+    public static double ARM_ANGLE_INTAKE = .39;//Stores Value of Arm intake Position should normally be .15
     public static double ARM_ANGLE_SPECIMEN_PICK_UP = .93; //get value, likely opposite of normal outtake
     public static double ARM_ANGLE_SPECIMEN_DROP = .42;//Stores value of arm outtake position for specimen
     public static double ARM_ANGLE_BUCKET_OUTTAKE = .79;//Stores Value of Arm outtake Position
@@ -57,7 +57,7 @@ public class ArmController {
 
     //region Claw
     double CLAW_POSITION = .5; //Live Updating Arm Position (.5 is open)
-    public static double CLAW_CLOSED = .3; //Stores Value of Claw closed Position
+    public static double CLAW_CLOSED = .28; //Stores Value of Claw closed Position
     //public static double CLAW_SERVO_TRANSITION = 0.6; //Stores value of Claw Outtake position
     public static double CLAW_OPEN = 0.5; //Stores value of Claw open position
     //endregion
@@ -87,7 +87,7 @@ public class ArmController {
 
     //region Extendo
     public static double EXTENDO_ANGLE = .95; //stores value for current extendo
-    public static double EXTENDO_EXTEND = .75; //stores value of extendo extending
+    public static double EXTENDO_EXTEND = .65; //stores value of extendo extending
     public static double EXTENDO_RETRACT = .95; //stores value of extendo retracting
     //endregion
 
