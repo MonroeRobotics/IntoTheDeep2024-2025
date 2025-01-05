@@ -43,6 +43,7 @@ public class soloDrive extends OpMode {
     public boolean sampleMode = true;
     public boolean clawOpen = true;
     public boolean specSequenceRan;
+    public boolean triggerPressed;
 
     ArmController armController;
     int stage;
@@ -171,7 +172,7 @@ public class soloDrive extends OpMode {
         //region dpad/slide height
 
         //up
-        if(currentGamepad2.dpad_up && !previousGamepad2.dpad_up){
+        if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
             stage += 1;
             if (stage > 1){
                 stage = 1;
@@ -197,7 +198,8 @@ public class soloDrive extends OpMode {
         }
 
         //down
-        if(currentGamepad2.dpad_down & !previousGamepad2.dpad_down){
+        if(currentGamepad2.right_trigger >= .05 && !triggerPressed){
+            triggerPressed = true;
             stage -= 1;
             if (stage <0 ){
                 stage = 0;
@@ -219,6 +221,9 @@ public class soloDrive extends OpMode {
                     armController.currentArmState = ArmController.ArmState.RETRACT;
                 }
             }
+        }
+        if (currentGamepad2.right_trigger <= .05){
+            triggerPressed = false;
         }
         //endregion
 
