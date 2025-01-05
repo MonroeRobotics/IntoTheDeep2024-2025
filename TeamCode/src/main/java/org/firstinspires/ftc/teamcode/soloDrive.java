@@ -198,7 +198,7 @@ public class soloDrive extends OpMode {
         }
 
         //down
-        if(currentGamepad2.right_trigger >= .05 && !triggerPressed){
+        if(currentGamepad2.left_trigger >= .05 && !triggerPressed){
             triggerPressed = true;
             stage -= 1;
             if (stage <0 ){
@@ -222,7 +222,7 @@ public class soloDrive extends OpMode {
                 }
             }
         }
-        if (currentGamepad2.right_trigger <= .05){
+        if (currentGamepad2.left_trigger <= .05){
             triggerPressed = false;
         }
         //endregion
