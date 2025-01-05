@@ -85,7 +85,7 @@ public class soloDrive extends OpMode {
             yPower = -currentGamepad2.left_stick_x;
         }
         if (currentGamepad2.right_stick_x >= .05 || currentGamepad2.right_stick_x <= -.05){
-            headingPower = -currentGamepad2.right_stick_x * 0.75;
+            headingPower = -currentGamepad2.right_stick_x * 0.7;
         }
 
         //Multiplier
@@ -156,7 +156,7 @@ public class soloDrive extends OpMode {
             }
         }
 
-        if(currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
+        if(currentGamepad2.back && !previousGamepad2.back){
             sampleMode = false;
             if(!intakeExtended){
                 armController.currentArmState = ArmController.ArmState.SPECIMEN_PICK_UP;
@@ -172,7 +172,7 @@ public class soloDrive extends OpMode {
         //region dpad/slide height
 
         //up
-        if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
+        if(currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
             stage += 1;
             if (stage > 1){
                 stage = 1;
@@ -198,7 +198,7 @@ public class soloDrive extends OpMode {
         }
 
         //down
-        if(currentGamepad2.right_trigger >= .05 && !triggerPressed){
+        if(currentGamepad2.left_trigger >= .05 && !triggerPressed){
             triggerPressed = true;
             stage -= 1;
             if (stage <0 ){
@@ -222,7 +222,7 @@ public class soloDrive extends OpMode {
                 }
             }
         }
-        if (currentGamepad2.right_trigger <= .05){
+        if (currentGamepad2.left_trigger <= .05){
             triggerPressed = false;
         }
         //endregion
@@ -309,7 +309,7 @@ public class soloDrive extends OpMode {
         currentGamepad1.copy(gamepad1);
         currentGamepad2.copy(gamepad2);
 
-        telemetry.addData("intakeAngle", String.valueOf(armController.getIntakeAngle()));
+        //telemetry.addData("intakeAngle", String.valueOf(armController.getIntakeAngle()));
         telemetry.addData("currentArmState", armController.getCurrentArmState());
         telemetry.addData("slide target", armController.getSlideHeight());
         telemetry.addData("left slide height", armController.leftSlide.getCurrentPosition());
@@ -317,7 +317,7 @@ public class soloDrive extends OpMode {
         telemetry.addData("extra right slide height", armController.extraRightSlide.getCurrentPosition());
         telemetry.addData("right slide height", armController.rightSlide.getCurrentPosition());
         //telemetry.addData("distanceSensor", distance);
-        telemetry.addData("swiper position", swiper.getPosition());
+        //telemetry.addData("swiper position", swiper.getPosition());
         telemetry.update();
     }
 }

@@ -57,14 +57,14 @@ public class ArmController {
 
     //region Claw
     double CLAW_POSITION = .5; //Live Updating Arm Position (.5 is open)
-    public static double CLAW_CLOSED = .28; //Stores Value of Claw closed Position
+    public static double CLAW_CLOSED = .26; //Stores Value of Claw closed Position
     //public static double CLAW_SERVO_TRANSITION = 0.6; //Stores value of Claw Outtake position
     public static double CLAW_OPEN = 0.5; //Stores value of Claw open position
     //endregion
 
     //region Claw Angle
-    public static double CLAW_ANGLE_POSITION = .2; //stores value of claw angle
-    public static double CLAW_ANGLE_INTAKE = .2; //stores value of claw angle for intake
+    public static double CLAW_ANGLE_POSITION = .19; //stores value of claw angle
+    public static double CLAW_ANGLE_INTAKE = .19; //stores value of claw angle for intake
     public static double CLAW_ANGLE_SPECIMEN_PICK_UP = .54; //
     public static double CLAW_ANGLE_OUTTAKE = .66; //stores value of the claw angle when dropping stuff
     public static double CLAW_ANGLE_SPECIMEN_OUTTAKE = 1;//stuff
@@ -98,7 +98,7 @@ public class ArmController {
     public static int SLIDE_HEIGHT_LOW_SPECIMEN_PLACE; //get value
     public static int SLIDE_HEIGHT_HIGH_SPECIMEN_PLACE = 825; //get value
     public static int SLIDE_HEIGHT_LOW_BUCKET_DROP; //get value
-    public static int SLIDE_HEIGHT_HIGH_BUCKET_DROP = 1835;
+    public static int SLIDE_HEIGHT_HIGH_BUCKET_DROP = 1860;
     public static int SLIDE_HEIGHT_HIGH_SPECIMEN_DROP = 305;
     public static int SLIDE_HEIGHT_LOW_SPECIMEN_DROP; //get value, Low specimen place -100
     public static int SLIDE_HEIGHT_ASCENT = 1660;
@@ -181,10 +181,10 @@ public class ArmController {
         extraLeftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         extraRightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        extraLeftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        extraRightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        extraLeftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extraRightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //endregion
 
         //region Initialization values
@@ -417,20 +417,34 @@ public class ArmController {
     }
 
     public void checkSlidePower(){
-        if (rightSlide.getCurrentPosition() <= (SLIDE_HEIGHT + 2) && rightSlide.getCurrentPosition() >= (SLIDE_HEIGHT - 2)){
+        if (extraRightSlide.getCurrentPosition() <= (SLIDE_HEIGHT + 5) && extraRightSlide.getCurrentPosition() >= (SLIDE_HEIGHT - 5)){
+            rightSlide.setPower(SLIDE_POWER_OFF);
+        }
+        else{
+            rightSlide.setPower(SLIDE_POWER_ON);
+        }
+
+        if (extraLeftSlide.getCurrentPosition() <= (SLIDE_HEIGHT + 5) && extraLeftSlide.getCurrentPosition() >= (SLIDE_HEIGHT - 5)){
+            leftSlide.setPower(SLIDE_POWER_OFF);
+        }
+        else{
+            leftSlide.setPower(SLIDE_POWER_ON);
+        }
+
+        if (extraRightSlide.getCurrentPosition() <= (SLIDE_HEIGHT + 1) && extraRightSlide.getCurrentPosition() >= (SLIDE_HEIGHT - 1)){
             extraRightSlide.setPower(SLIDE_POWER_OFF);
         }
         else{
             extraRightSlide.setPower(SLIDE_POWER_ON);
         }
 
-        if (leftSlide.getCurrentPosition() <= (SLIDE_HEIGHT + 2) && leftSlide.getCurrentPosition() >= (SLIDE_HEIGHT - 2)){
+        if (extraLeftSlide.getCurrentPosition() <= (SLIDE_HEIGHT + 1) && extraLeftSlide.getCurrentPosition() >= (SLIDE_HEIGHT - 1)){
             extraLeftSlide.setPower(SLIDE_POWER_OFF);
         }
         else{
             extraLeftSlide.setPower(SLIDE_POWER_ON);
         }
-    }
+        }
     //endregion
 
 
