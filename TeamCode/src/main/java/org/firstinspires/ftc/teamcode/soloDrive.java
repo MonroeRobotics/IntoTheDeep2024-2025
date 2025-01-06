@@ -292,10 +292,10 @@ public class soloDrive extends OpMode {
 
         //endregion
         distance = intakeSensor.getDistance(DistanceUnit.MM);
-        if (distance >= 10){
+        if (distance <= 10){
             armController.currentArmState = ArmController.ArmState.RETRACT;
         }
-        
+
         Vector2d gamepadInput = new Vector2d(xPower, yPower);
         PoseVelocity2d poseVelocity2d = new PoseVelocity2d(gamepadInput, headingPower);
         drive.setDrivePowers(poseVelocity2d);
