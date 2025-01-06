@@ -5,12 +5,14 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.driveClasses.MecanumDrive;
 import org.firstinspires.ftc.teamcode.util.ArmController;
 import org.slf4j.Logger;
@@ -48,7 +50,7 @@ public class soloDrive extends OpMode {
     ArmController armController;
     int stage;
 
-    DistanceSensor distanceSensor;
+    RevColorSensorV3 intakeSensor;
     Servo swiper;
     public double swipe = 0;
     public double resetSwiper = .45;
@@ -59,7 +61,7 @@ public class soloDrive extends OpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         drive = new MecanumDrive(hardwareMap,pose);
 
-        //distanceSensor = hardwareMap.get(DistanceSensor.class, "distanceSensor");
+        intakeSensor = hardwareMap.get(RevColorSensorV3.class, "intakeSensor");
 
         currentGamepad1 = new Gamepad();
         previousGamepad1 = new Gamepad();
@@ -77,7 +79,7 @@ public class soloDrive extends OpMode {
     public void loop() {
         //region drive
         //Stick controls
-        //distance = distanceSensor.getDistance(DistanceUnit.MM);
+
         if(currentGamepad2.left_stick_y >= .05 || currentGamepad2.left_stick_y <= -.05){
             xPower = -currentGamepad2.left_stick_y;
         }
@@ -289,9 +291,11 @@ public class soloDrive extends OpMode {
         //endregion
 
         //endregion
+        distance = intakeSensor.getDistance(DistanceUnit.MM);
         if (distance >= 10){
             armController.currentArmState = ArmController.ArmState.RETRACT;
         }
+        
         Vector2d gamepadInput = new Vector2d(xPower, yPower);
         PoseVelocity2d poseVelocity2d = new PoseVelocity2d(gamepadInput, headingPower);
         drive.setDrivePowers(poseVelocity2d);
