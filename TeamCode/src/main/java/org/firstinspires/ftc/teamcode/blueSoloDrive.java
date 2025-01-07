@@ -334,12 +334,14 @@ public class blueSoloDrive extends OpMode {
         currentGamepad2.copy(gamepad2);
 
         //telemetry.addData("intakeAngle", String.valueOf(armController.getIntakeAngle()));
+        telemetry.addData("Auto Intake", autoRetractOn);
         telemetry.addData("currentArmState", armController.getCurrentArmState());
         telemetry.addData("slide target", armController.getSlideHeight());
-        telemetry.addData("left slide height", armController.leftSlide.getCurrentPosition());
-        telemetry.addData("extra left slide height", armController.extraLeftSlide.getCurrentPosition());
-        telemetry.addData("extra right slide height", armController.extraRightSlide.getCurrentPosition());
-        telemetry.addData("right slide height", armController.rightSlide.getCurrentPosition());
+        telemetry.addData("average slide height", ((armController.extraLeftSlide.getCurrentPosition() + armController.extraRightSlide.getCurrentPosition())/2));
+        //telemetry.addData("left slide height", armController.leftSlide.getCurrentPosition());
+        //telemetry.addData("extra left slide height", armController.extraLeftSlide.getCurrentPosition());
+        //telemetry.addData("extra right slide height", armController.extraRightSlide.getCurrentPosition());
+        //telemetry.addData("right slide height", armController.rightSlide.getCurrentPosition());
         //telemetry.addData("distanceSensor", distance);
         //telemetry.addData("swiper position", swiper.getPosition());
         telemetry.update();
