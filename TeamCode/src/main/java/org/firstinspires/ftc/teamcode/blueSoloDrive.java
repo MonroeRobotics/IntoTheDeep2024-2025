@@ -40,6 +40,7 @@ public class blueSoloDrive extends OpMode {
 
     double distance;
     char sampleColor;
+    boolean newSample;
 
     public boolean intakeExtended = false;
     public boolean sampleMode = true;
@@ -301,8 +302,12 @@ public class blueSoloDrive extends OpMode {
             sampleColor = 'b';
         }
 
-        if (distance <= 40 && sampleColor == 'b'){
+        if (distance <= 40 && sampleColor == 'b' && !newSample){
             armController.currentArmState = ArmController.ArmState.RETRACT;
+            newSample = true;
+        }
+        else{
+            newSample = false;
         }
 
         Vector2d gamepadInput = new Vector2d(xPower, yPower);
