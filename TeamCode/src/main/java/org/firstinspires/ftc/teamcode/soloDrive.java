@@ -40,6 +40,7 @@ public class soloDrive extends OpMode {
     double headingPower;
 
     double distance;
+    char sampleColor;
 
     public boolean intakeExtended = false;
     public boolean sampleMode = true;
@@ -292,7 +293,8 @@ public class soloDrive extends OpMode {
 
         //endregion
         distance = intakeSensor.getDistance(DistanceUnit.MM);
-        if (distance <= 10){
+
+        if (distance <= 40){
             armController.currentArmState = ArmController.ArmState.RETRACT;
         }
 
