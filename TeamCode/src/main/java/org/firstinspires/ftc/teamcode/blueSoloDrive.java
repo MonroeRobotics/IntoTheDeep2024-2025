@@ -8,7 +8,6 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -19,9 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @TeleOp(name = "soloDrive", group = "main")
-public class soloDrive extends OpMode {
+public class blueSoloDrive extends OpMode {
 
-    private static final Logger log = LoggerFactory.getLogger(soloDrive.class);
+    private static final Logger log = LoggerFactory.getLogger(blueSoloDrive.class);
     //region Gamepads
     Gamepad currentGamepad1;
     Gamepad previousGamepad1;
@@ -294,7 +293,15 @@ public class soloDrive extends OpMode {
         //endregion
         distance = intakeSensor.getDistance(DistanceUnit.MM);
 
-        if (distance <= 40){
+        //add autoconfig stuffs
+        if (intakeSensor.red() > intakeSensor.blue()){
+            sampleColor = 'r';
+        }
+        else if (intakeSensor.blue() > intakeSensor.red()){
+            sampleColor = 'b';
+        }
+
+        if (distance <= 40 && sampleColor == 'b'){
             armController.currentArmState = ArmController.ArmState.RETRACT;
         }
 
