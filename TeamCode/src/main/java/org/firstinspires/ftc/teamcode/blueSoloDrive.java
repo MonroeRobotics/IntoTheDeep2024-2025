@@ -302,7 +302,7 @@ public class blueSoloDrive extends OpMode {
             sampleColor = 'b';
         }
 
-        if (distance <= 40 && sampleColor == 'b' && !newSample){
+        if (distance <= 40 && sampleColor == 'b' && !newSample && armController.currentArmState == ArmController.ArmState.EXTEND){
             armController.currentArmState = ArmController.ArmState.RETRACT;
             newSample = true;
         }
