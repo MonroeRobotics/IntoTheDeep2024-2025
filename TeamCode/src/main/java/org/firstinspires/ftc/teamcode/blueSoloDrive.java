@@ -40,7 +40,7 @@ public class blueSoloDrive extends OpMode {
 
     double distance;
     char sampleColor;
-    boolean autoRetractOn;
+    boolean autoRetractOn = true;
     boolean newSample;
     char wrongAllianceColor = 'b';
 
