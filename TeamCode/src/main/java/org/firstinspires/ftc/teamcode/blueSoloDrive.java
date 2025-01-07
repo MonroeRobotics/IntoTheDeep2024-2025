@@ -42,6 +42,7 @@ public class blueSoloDrive extends OpMode {
     char sampleColor;
     boolean autoRetractOn;
     boolean newSample;
+    char wrongAllianceColor = 'b';
 
     public boolean intakeExtended = false;
     public boolean sampleMode = true;
@@ -296,22 +297,32 @@ public class blueSoloDrive extends OpMode {
         distance = intakeSensor.getDistance(DistanceUnit.MM);
 
         //add autoconfig stuffs
-        if (intakeSensor.red() > intakeSensor.blue()){
+        if (intakeSensor.red() > intakeSensor.blue()) {
             sampleColor = 'r';
-        }
-        else if (intakeSensor.blue() > intakeSensor.red()){
+        } else if (intakeSensor.blue() > intakeSensor.red()) {
             sampleColor = 'b';
         }
 
-        if (currentGamepad2.dpad_left && !previousGamepad2.dpad_left){
+        if (currentGamepad2.dpad_left && !previousGamepad2.dpad_left) {
             autoRetractOn = !autoRetractOn;
         }
 
+        if (currentGamepad2.dpad_right && !previousGamepad2.dpad_right){
+            if (wrongAllianceColor == 'r'){
+                wrongAllianceColor = 'b';
+            }
+            else wrongAllianceColor = 'r';
+        }
+
         if (autoRetractOn) {
-            if (distance <= 40 && sampleColor == 'b' && !newSample && armController.currentArmState == ArmController.ArmState.EXTEND) {
+            if (distance <= 40 && sampleColor != wrongAllianceColor && !newSample && armController.currentArmState == ArmController.ArmState.EXTEND) {
                 armController.currentArmState = ArmController.ArmState.RETRACT;
                 newSample = true;
-            } else {
+            }
+            else if (distance <= 40 && sampleColor == wrongAllianceColor && !newSample && armController.currentArmState == ArmController.ArmState.EXTEND){
+                armController.startEject();
+            }
+            else {
                 newSample = false;
             }
         }
@@ -335,6 +346,7 @@ public class blueSoloDrive extends OpMode {
 
         //telemetry.addData("intakeAngle", String.valueOf(armController.getIntakeAngle()));
         telemetry.addData("Auto Intake", autoRetractOn);
+        telemetry.addData("Current Color", wrongAllianceColor);
         telemetry.addData("currentArmState", armController.getCurrentArmState());
         telemetry.addData("slide target", armController.getSlideHeight());
         telemetry.addData("average slide height", ((armController.extraLeftSlide.getCurrentPosition() + armController.extraRightSlide.getCurrentPosition())/2));
