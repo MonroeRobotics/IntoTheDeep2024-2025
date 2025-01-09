@@ -352,6 +352,7 @@ public class blueSoloDrive extends OpMode {
         telemetry.addData("currentArmState", armController.getCurrentArmState());
         telemetry.addData("slide target", armController.getSlideHeight());
         telemetry.addData("average slide height", ((armController.extraLeftSlide.getCurrentPosition() + armController.extraRightSlide.getCurrentPosition())/2));
+        telemetry.addData("arm angle", armController.getArmAngle());
         //telemetry.addData("left slide height", armController.leftSlide.getCurrentPosition());
         //telemetry.addData("extra left slide height", armController.extraLeftSlide.getCurrentPosition());
         //telemetry.addData("extra right slide height", armController.extraRightSlide.getCurrentPosition());

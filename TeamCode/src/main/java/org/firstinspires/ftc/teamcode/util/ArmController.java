@@ -364,6 +364,7 @@ public class ArmController {
         return SLIDE_HEIGHT;
     }
     public double getIntakeAngle(){return INTAKE_ANGLE;}
+    public double getArmAngle(){return armAngleL.getPosition();}
 
 
     public void setSlideHeight(int slideHeight){
