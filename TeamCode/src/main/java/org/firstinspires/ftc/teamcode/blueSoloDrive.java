@@ -150,27 +150,29 @@ public class blueSoloDrive extends OpMode {
 
         //region bumpers/Intake actions
         if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
-            sampleMode = true;
-            if(!intakeExtended){
-                armController.currentArmState = ArmController.ArmState.EXTEND;
-                intakeExtended = true;
+            if (sampleMode) {
+                if (!intakeExtended) {
+                    armController.currentArmState = ArmController.ArmState.EXTEND;
+                    intakeExtended = true;
+                } else {
+                    armController.currentArmState = ArmController.ArmState.RETRACT;
+                    intakeExtended = false;
+                }
             }
-            else {
-                armController.currentArmState = ArmController.ArmState.RETRACT;
-                intakeExtended = false;
+            else{
+                if(!intakeExtended){
+                    armController.currentArmState = ArmController.ArmState.SPECIMEN_PICK_UP;
+                    intakeExtended = true;
+                }
+                else {
+                    intakeExtended = false;
+                    //todo add something to retract if this happens
+                }
             }
         }
 
-        if(currentGamepad2.back && !previousGamepad2.back){
-            sampleMode = false;
-            if(!intakeExtended){
-                armController.currentArmState = ArmController.ArmState.SPECIMEN_PICK_UP;
-                intakeExtended = true;
-            }
-            else {
-                intakeExtended = false;
-                //todo add something to retract if this happens
-            }
+        if(currentGamepad2.dpad_up && !previousGamepad2.dpad_up){
+            sampleMode = !sampleMode;
         }
         //endregion
 
