@@ -57,7 +57,7 @@ public class ArmController {
 
     //region Claw
     double CLAW_POSITION = .5; //Live Updating Arm Position (.5 is open)
-    public static double CLAW_CLOSED = .26; //Stores Value of Claw closed Position
+    public static double CLAW_CLOSED = .27; //Stores Value of Claw closed Position
     //public static double CLAW_SERVO_TRANSITION = 0.6; //Stores value of Claw Outtake position
     public static double CLAW_OPEN = 0.5; //Stores value of Claw open position
     //endregion
