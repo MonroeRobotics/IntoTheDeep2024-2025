@@ -16,13 +16,15 @@ public class ArmController {
     //region Arm Variables
     
     //region Slide constraint values
-    public static int SLIDE_HEIGHT = 5; //Live Updating Slide height
+    public static int SLIDE_HEIGHT = 0; //Live Updating Slide height
     int SLIDE_STAGE = 0; //Used for incremental Slide Height
     public static double SLIDE_POWER_ON = 0.8; //Max Linear Slide Power
     public  static double SLIDE_POWER = .8; //adjustable thingy
     public static double SLIDE_POWER_OFF = 0.0; //for saving power when slides are lowered
     public static double SLIDE_MAX_VELO = 2000; //Max Linear Slide Velocity
     //endregion
+
+    public boolean lowerIntake;
 
     public enum ArmState { //Creates States that arm could be in for logic use
         EXTEND,
@@ -35,34 +37,36 @@ public class ArmController {
         TALL_BUCKET_READY,
         OPEN_CLAW, //open claw
         SPECIMEN_PLACE_SEQUENCE,
-        ASCENT
+        ASCENT,
+        HANG,
+        LOWER
     }
 
     //region Position value section
     public ArmState currentArmState = ArmState.RETRACT; //Creates a variables to store current Arm State
 
     //region Arm Angle
-    double ARM_ANGLE_POSITION = .13; //Live Updating Arm Angle Position (0 is intake position) should normally be .15
-    public static double ARM_ANGLE_INTAKE = .13;//Stores Value of Arm intake Position should normally be .15
-    public static double ARM_ANGLE_SPECIMEN_PICK_UP = .67; //get value, likely opposite of normal outtake
+    double ARM_ANGLE_POSITION = .39; //Live Updating Arm Angle Position (0 is intake position) should normally be .15
+    public static double ARM_ANGLE_INTAKE = .39;//Stores Value of Arm intake Position should normally be .15
+    public static double ARM_ANGLE_SPECIMEN_PICK_UP = .93; //get value, likely opposite of normal outtake
     public static double ARM_ANGLE_SPECIMEN_DROP = .42;//Stores value of arm outtake position for specimen
-    public static double ARM_ANGLE_BUCKET_OUTTAKE = .56;//Stores Value of Arm outtake Position
+    public static double ARM_ANGLE_BUCKET_OUTTAKE = .79;//Stores Value of Arm outtake Position
     public static double ARM_ANGLE_SPECIMEN_START = .18;
     public static double ARM_ANGLE_ASCENT = .51;
     //endregion
 
     //region Claw
     double CLAW_POSITION = .5; //Live Updating Arm Position (.5 is open)
-    public static double CLAW_CLOSED = .3; //Stores Value of Claw closed Position
+    public static double CLAW_CLOSED = .26; //Stores Value of Claw closed Position
     //public static double CLAW_SERVO_TRANSITION = 0.6; //Stores value of Claw Outtake position
     public static double CLAW_OPEN = 0.5; //Stores value of Claw open position
     //endregion
 
     //region Claw Angle
-    public static double CLAW_ANGLE_POSITION = .2; //stores value of claw angle
-    public static double CLAW_ANGLE_INTAKE = .2; //stores value of claw angle for intake
-    public static double CLAW_ANGLE_SPECIMEN_PICK_UP = .55; //
-    public static double CLAW_ANGLE_OUTTAKE = .55; //stores value of the claw angle when dropping stuff
+    public static double CLAW_ANGLE_POSITION = .19; //stores value of claw angle
+    public static double CLAW_ANGLE_INTAKE = .19; //stores value of claw angle for intake
+    public static double CLAW_ANGLE_SPECIMEN_PICK_UP = .54; //
+    public static double CLAW_ANGLE_OUTTAKE = .66; //stores value of the claw angle when dropping stuff
     public static double CLAW_ANGLE_SPECIMEN_OUTTAKE = 1;//stuff
     public static double CLAW_ANGLE_SPECIMEN_START = .24;
     public static double CLAW_ANGLE_ASCENT = .92;
@@ -78,12 +82,12 @@ public class ArmController {
     //region Intake Angle
     public static double INTAKE_ANGLE = .20; //stores value of intake angle
     public static double INTAKE_ANGLE_INTAKE = .43; //stores value of intakeAngle intake position
-    public static double INTAKE_ANGLE_RETRACT = .20; //stores value of intakeAngle when retracted
+    public static double INTAKE_ANGLE_RETRACT = .19; //stores value of intakeAngle when retracted
     //endregion
 
     //region Extendo
     public static double EXTENDO_ANGLE = .95; //stores value for current extendo
-    public static double EXTENDO_EXTEND = .75; //stores value of extendo extending
+    public static double EXTENDO_EXTEND = .65; //stores value of extendo extending
     public static double EXTENDO_RETRACT = .95; //stores value of extendo retracting
     //endregion
 
@@ -94,10 +98,11 @@ public class ArmController {
     public static int SLIDE_HEIGHT_LOW_SPECIMEN_PLACE; //get value
     public static int SLIDE_HEIGHT_HIGH_SPECIMEN_PLACE = 825; //get value
     public static int SLIDE_HEIGHT_LOW_BUCKET_DROP; //get value
-    public static int SLIDE_HEIGHT_HIGH_BUCKET_DROP = 1835;
+    public static int SLIDE_HEIGHT_HIGH_BUCKET_DROP = 1860;
     public static int SLIDE_HEIGHT_HIGH_SPECIMEN_DROP = 305;
     public static int SLIDE_HEIGHT_LOW_SPECIMEN_DROP; //get value, Low specimen place -100
-    public static int SLIDE_HEIGHT_ASCENT = 395;
+    public static int SLIDE_HEIGHT_ASCENT = 1660;
+    public static int SLIDE_HEIGHT_HANG = 1170;
     //endregion
 
     //region Timers
@@ -125,8 +130,10 @@ public class ArmController {
     Servo claw;
     Servo clawAngle;
 
-    DcMotorEx rightSlide;
-    DcMotorEx leftSlide;
+    public DcMotorEx rightSlide;
+    public DcMotorEx leftSlide;
+    public DcMotorEx extraLeftSlide;
+    public DcMotorEx extraRightSlide;
     //endregion
 
     boolean eject;
@@ -156,6 +163,8 @@ public class ArmController {
 
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
+        extraLeftSlide = hardwareMap.get(DcMotorEx.class, "extraLeftSlide");
+        extraRightSlide = hardwareMap.get(DcMotorEx.class, "extraRightSlide");
 
         //endregion
 
@@ -163,13 +172,19 @@ public class ArmController {
         if(!AutoConfiguration.hasInitAuto) {
             leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            extraLeftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            extraRightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
 
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extraLeftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extraRightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        extraLeftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        extraRightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //endregion
 
         //region Initialization values
@@ -189,20 +204,30 @@ public class ArmController {
         //region Slide Constraints
         leftSlide.setTargetPosition(SLIDE_HEIGHT);
         rightSlide.setTargetPosition(SLIDE_HEIGHT);
+        extraLeftSlide.setTargetPosition(SLIDE_HEIGHT);
+        extraRightSlide.setTargetPosition(SLIDE_HEIGHT);
 
         leftSlide.setPower(SLIDE_POWER);
         rightSlide.setPower(SLIDE_POWER);
+        extraLeftSlide.setPower(SLIDE_POWER);
+        extraRightSlide.setPower(SLIDE_POWER);
 
         leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extraLeftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extraRightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         leftSlide.setVelocity(SLIDE_MAX_VELO);
         rightSlide.setVelocity(SLIDE_MAX_VELO);
+        extraLeftSlide.setVelocity(SLIDE_MAX_VELO);
+        extraRightSlide.setVelocity(SLIDE_MAX_VELO);
         //endregion
 
         //region Reversing things
         leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        extraLeftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
+        //extraRightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
 
         intakeR.setDirection(CRServo.Direction.REVERSE);
         intakeAngleR.setDirection(Servo.Direction.REVERSE);
@@ -244,6 +269,7 @@ public class ArmController {
                 //retracts intake and prepares arm for grabbing samples
                 EXTENDO_ANGLE = EXTENDO_RETRACT;
                 INTAKE_ANGLE = INTAKE_ANGLE_RETRACT;
+                lowerIntake = false;
                 ARM_ANGLE_POSITION = ARM_ANGLE_INTAKE;
                 CLAW_ANGLE_POSITION = CLAW_ANGLE_INTAKE;
                 SLIDE_HEIGHT = SLIDE_HEIGHT_LOWERED;
@@ -298,10 +324,23 @@ public class ArmController {
                 ARM_ANGLE_POSITION = ARM_ANGLE_ASCENT;
                 SLIDE_HEIGHT = SLIDE_HEIGHT_ASCENT;
                 break;
+            case HANG:
+                SLIDE_POWER = .2;
+                leftSlide.setPower(SLIDE_POWER);
+                rightSlide.setPower(SLIDE_POWER);
+                extraLeftSlide.setPower(SLIDE_POWER);
+                extraRightSlide.setPower(SLIDE_POWER);
+
+                SLIDE_HEIGHT = SLIDE_HEIGHT_HANG;
+                break;
+            case LOWER:
+                SLIDE_HEIGHT = SLIDE_HEIGHT_ASCENT;
         }
         //region Position Updates
         leftSlide.setTargetPosition(SLIDE_HEIGHT);
         rightSlide.setTargetPosition(SLIDE_HEIGHT);
+        extraLeftSlide.setTargetPosition(SLIDE_HEIGHT);
+        extraRightSlide.setTargetPosition(SLIDE_HEIGHT);
 
         intakeL.setPower(INTAKE_SERVO_POWER);
         intakeR.setPower(INTAKE_SERVO_POWER);
@@ -325,6 +364,7 @@ public class ArmController {
         return SLIDE_HEIGHT;
     }
     public double getIntakeAngle(){return INTAKE_ANGLE;}
+    public double getArmAngle(){return armAngleL.getPosition();}
 
 
     public void setSlideHeight(int slideHeight){
@@ -369,19 +409,43 @@ public class ArmController {
         intakeTimer = System.currentTimeMillis() + INTAKE_TIMER;
     }
     public void checkIntakeAngle(){
-        if (currentArmState == ArmState.EXTEND && intakeTimer <= System.currentTimeMillis()){
+        if (currentArmState == ArmState.EXTEND && lowerIntake){
             INTAKE_ANGLE = INTAKE_ANGLE_INTAKE;
+        }
+        else if (currentArmState == ArmState.EXTEND){
+            INTAKE_ANGLE = INTAKE_ANGLE_RETRACT;
         }
     }
 
     public void checkSlidePower(){
-        if (leftSlide.getCurrentPosition() == 0 && rightSlide.getCurrentPosition() == 0 && currentArmState == ArmState.RETRACT){
-            SLIDE_POWER = SLIDE_POWER_OFF;
+        if (extraRightSlide.getCurrentPosition() <= (SLIDE_HEIGHT + 5) && extraRightSlide.getCurrentPosition() >= (SLIDE_HEIGHT - 5)){
+            rightSlide.setPower(SLIDE_POWER_OFF);
         }
         else{
-            SLIDE_POWER = SLIDE_POWER_ON;
+            rightSlide.setPower(SLIDE_POWER_ON);
         }
-    }
+
+        if (extraLeftSlide.getCurrentPosition() <= (SLIDE_HEIGHT + 5) && extraLeftSlide.getCurrentPosition() >= (SLIDE_HEIGHT - 5)){
+            leftSlide.setPower(SLIDE_POWER_OFF);
+        }
+        else{
+            leftSlide.setPower(SLIDE_POWER_ON);
+        }
+
+        if (extraRightSlide.getCurrentPosition() <= (SLIDE_HEIGHT + 1) && extraRightSlide.getCurrentPosition() >= (SLIDE_HEIGHT - 1)){
+            extraRightSlide.setPower(SLIDE_POWER_OFF);
+        }
+        else{
+            extraRightSlide.setPower(SLIDE_POWER_ON);
+        }
+
+        if (extraLeftSlide.getCurrentPosition() <= (SLIDE_HEIGHT + 1) && extraLeftSlide.getCurrentPosition() >= (SLIDE_HEIGHT - 1)){
+            extraLeftSlide.setPower(SLIDE_POWER_OFF);
+        }
+        else{
+            extraLeftSlide.setPower(SLIDE_POWER_ON);
+        }
+        }
     //endregion
 
 
@@ -390,6 +454,8 @@ public class ArmController {
         //This section has been moved into updateArmState and is now unnecessary after testing
         leftSlide.setTargetPosition(SLIDE_HEIGHT);
         rightSlide.setTargetPosition(SLIDE_HEIGHT);
+        extraLeftSlide.setTargetPosition(SLIDE_HEIGHT);
+        extraRightSlide.setTargetPosition(SLIDE_HEIGHT);
 
         intakeL.setPower(INTAKE_SERVO_POWER);
         intakeR.setPower(INTAKE_SERVO_POWER);
@@ -411,9 +477,13 @@ public class ArmController {
 
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extraLeftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extraRightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         rightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extraLeftSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        extraRightSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         setSlideHeight(0);
     }
