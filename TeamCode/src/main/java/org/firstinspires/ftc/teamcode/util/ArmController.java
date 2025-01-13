@@ -57,7 +57,7 @@ public class ArmController {
 
     //region Claw
     double CLAW_POSITION = .5; //Live Updating Arm Position (.5 is open)
-    public static double CLAW_CLOSED = .26; //Stores Value of Claw closed Position
+    public static double CLAW_CLOSED = .25; //Stores Value of Claw closed Position
     //public static double CLAW_SERVO_TRANSITION = 0.6; //Stores value of Claw Outtake position
     public static double CLAW_OPEN = 0.5; //Stores value of Claw open position
     //endregion
@@ -417,6 +417,17 @@ public class ArmController {
         }
     }
 
+    public void startClawTimer(){
+        clawTimer = System.currentTimeMillis() + 750;
+        AutoCloseRan = false;
+    }
+    public void checkClaw(){
+        if (currentArmState == ArmState.RETRACT && System.currentTimeMillis() >= clawTimer && !AutoCloseRan){
+            currentArmState == ArmState.CLOSE_CLAW;
+            AutoCloseRan = true;
+        }
+    }
+
     public void checkSlidePower(){
         if (extraRightSlide.getCurrentPosition() <= (SLIDE_HEIGHT + 5) && extraRightSlide.getCurrentPosition() >= (SLIDE_HEIGHT - 5)){
             rightSlide.setPower(SLIDE_POWER_OFF);
@@ -445,7 +456,7 @@ public class ArmController {
         else{
             extraLeftSlide.setPower(SLIDE_POWER_ON);
         }
-        }
+    }
     //endregion
 
 
