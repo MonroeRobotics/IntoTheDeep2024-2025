@@ -138,6 +138,9 @@ public class ArmController {
 
     boolean eject;
 
+    double clawTimer;
+    boolean AutoCloseRan = false;
+
     public ArmController (HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
     }
