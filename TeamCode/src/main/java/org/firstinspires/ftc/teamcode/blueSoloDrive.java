@@ -157,6 +157,7 @@ public class blueSoloDrive extends OpMode {
                 } else {
                     armController.currentArmState = ArmController.ArmState.RETRACT;
                     intakeExtended = false;
+                    armController.startClawtimer();
                 }
             }
             else{
@@ -301,6 +302,8 @@ public class blueSoloDrive extends OpMode {
         //add autoconfig stuffs
         if (intakeSensor.red() > intakeSensor.blue()) {
             sampleColor = 'r';
+        } else if (intakeSensor.green() > intakeSensor.blue()){
+            sampleColor = 'y';
         } else if (intakeSensor.blue() > intakeSensor.red()) {
             sampleColor = 'b';
         }
@@ -339,6 +342,7 @@ public class blueSoloDrive extends OpMode {
         armController.checkIntakeServoPower();
         armController.checkIntakeAngle();
         armController.checkSlidePower();
+        armController.checkClaw();
 
         previousGamepad1.copy(currentGamepad1);
         previousGamepad2.copy(currentGamepad2);
@@ -349,6 +353,9 @@ public class blueSoloDrive extends OpMode {
         //telemetry.addData("intakeAngle", String.valueOf(armController.getIntakeAngle()));
         telemetry.addData("Auto Intake", autoRetractOn);
         telemetry.addData("Wrong Color", wrongAllianceColor);
+        telemetry.addData("red", intakeSensor.red());
+        telemetry.addData("green", intakeSensor.green());
+        telemetry.addData("blue", intakeSensor.blue());
         telemetry.addData("currentArmState", armController.getCurrentArmState());
         telemetry.addData("slide target", armController.getSlideHeight());
         telemetry.addData("average slide height", ((armController.extraLeftSlide.getCurrentPosition() + armController.extraRightSlide.getCurrentPosition())/2));
