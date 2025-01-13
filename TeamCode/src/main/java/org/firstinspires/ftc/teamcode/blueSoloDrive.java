@@ -334,6 +334,7 @@ public class blueSoloDrive extends OpMode {
         Vector2d gamepadInput = new Vector2d(xPower, yPower);
         PoseVelocity2d poseVelocity2d = new PoseVelocity2d(gamepadInput, headingPower);
         drive.setDrivePowers(poseVelocity2d);
+        drive.updatePoseEstimate();
 
         armController.updateArmState();
         armController.updateArmABS();
@@ -358,6 +359,7 @@ public class blueSoloDrive extends OpMode {
         telemetry.addData("slide target", armController.getSlideHeight());
         telemetry.addData("average slide height", ((armController.extraLeftSlide.getCurrentPosition() + armController.extraRightSlide.getCurrentPosition())/2));
         telemetry.addData("arm angle", armController.getArmAngle());
+        telemetry.addData("pose", drive.pose);
         //telemetry.addData("left slide height", armController.leftSlide.getCurrentPosition());
         //telemetry.addData("extra left slide height", armController.extraLeftSlide.getCurrentPosition());
         //telemetry.addData("extra right slide height", armController.extraRightSlide.getCurrentPosition());
