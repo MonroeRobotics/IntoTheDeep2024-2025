@@ -157,6 +157,7 @@ public class blueSoloDrive extends OpMode {
                 } else {
                     armController.currentArmState = ArmController.ArmState.RETRACT;
                     intakeExtended = false;
+                    armController.startClawtimer();
                 }
             }
             else{
@@ -341,6 +342,7 @@ public class blueSoloDrive extends OpMode {
         armController.checkIntakeServoPower();
         armController.checkIntakeAngle();
         armController.checkSlidePower();
+        armController.checkClaw();
 
         previousGamepad1.copy(currentGamepad1);
         previousGamepad2.copy(currentGamepad2);
