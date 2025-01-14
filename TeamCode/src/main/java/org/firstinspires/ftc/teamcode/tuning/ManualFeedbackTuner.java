@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.tuning;
 
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -11,7 +12,7 @@ import org.firstinspires.ftc.teamcode.ThreeDeadWheelLocalizer;
 import org.firstinspires.ftc.teamcode.TwoDeadWheelLocalizer;
 
 public final class ManualFeedbackTuner extends LinearOpMode {
-    public static double DISTANCE = 64;
+    public static double DISTANCE = 72;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -26,6 +27,9 @@ public final class ManualFeedbackTuner extends LinearOpMode {
                                 .lineToX(DISTANCE)
                                 .lineToX(0)
                                 .build());
+                drive.updatePoseEstimate();
+                telemetry.addData("pose", drive.pose);
+                telemetry.update();
             }
         } else if (TuningOpModes.DRIVE_CLASS.equals(SparkFunOTOSDrive.class)) {
             SparkFunOTOSDrive drive = new SparkFunOTOSDrive(hardwareMap, new Pose2d(0, 0, 0));
@@ -38,6 +42,8 @@ public final class ManualFeedbackTuner extends LinearOpMode {
                                 .lineToX(DISTANCE)
                                 .lineToX(0)
                                 .build());
+                telemetry.addData("pose", drive.pose);
+                telemetry.update();
             }
         } else if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
             MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
@@ -59,6 +65,8 @@ public final class ManualFeedbackTuner extends LinearOpMode {
                                 .lineToX(DISTANCE)
                                 .lineToX(0)
                                 .build());
+                telemetry.addData("pose", drive.pose);
+                telemetry.update();
             }
         } else if (TuningOpModes.DRIVE_CLASS.equals(TankDrive.class)) {
             TankDrive drive = new TankDrive(hardwareMap, new Pose2d(0, 0, 0));
@@ -80,6 +88,8 @@ public final class ManualFeedbackTuner extends LinearOpMode {
                                 .lineToX(DISTANCE)
                                 .lineToX(0)
                                 .build());
+                telemetry.addData("pose", drive.pose);
+                telemetry.update();
             }
         } else {
             throw new RuntimeException();
