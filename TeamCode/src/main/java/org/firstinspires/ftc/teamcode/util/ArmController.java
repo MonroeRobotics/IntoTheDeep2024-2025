@@ -138,6 +138,9 @@ public class ArmController {
 
     boolean eject;
 
+    boolean clawTimerRan;
+    double clawTimer;
+
     public ArmController (HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
     }
@@ -414,6 +417,17 @@ public class ArmController {
         }
         else if (currentArmState == ArmState.EXTEND){
             INTAKE_ANGLE = INTAKE_ANGLE_RETRACT;
+        }
+    }
+
+    public void startClawTimer(){
+        clawTimer = System.currentTimeMillis() + 750;
+        clawTimerRan = false;
+    }
+    public void checkClaw(){
+        if (System.currentTimeMillis() >= clawTimer && !clawTimerRan){
+            clawTimerRan = true;
+            currentArmState = ArmState.CLOSE_CLAW;
         }
     }
 

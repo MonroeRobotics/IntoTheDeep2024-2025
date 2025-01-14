@@ -154,6 +154,7 @@ public class drive extends OpMode {
             else {
                 armController.currentArmState = ArmController.ArmState.RETRACT;
                 intakeExtended = false;
+                armController.startClawTimer();
             }
         }
 
@@ -299,6 +300,7 @@ public class drive extends OpMode {
         armController.checkIntakeServoPower();
         armController.checkIntakeAngle();
         armController.checkSlidePower();
+        armController.checkClaw();
 
         previousGamepad1.copy(currentGamepad1);
         previousGamepad2.copy(currentGamepad2);

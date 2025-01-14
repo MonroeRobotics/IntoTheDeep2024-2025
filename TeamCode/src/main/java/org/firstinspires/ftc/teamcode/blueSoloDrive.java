@@ -157,7 +157,7 @@ public class blueSoloDrive extends OpMode {
                 } else {
                     armController.currentArmState = ArmController.ArmState.RETRACT;
                     intakeExtended = false;
-                    armController.startClawtimer();
+                    armController.startClawTimer();
                 }
             }
             else{
@@ -323,6 +323,7 @@ public class blueSoloDrive extends OpMode {
             if (distance <= 40 && sampleColor != wrongAllianceColor && !newSample && armController.currentArmState == ArmController.ArmState.EXTEND) {
                 armController.currentArmState = ArmController.ArmState.RETRACT;
                 newSample = true;
+                armController.startClawTimer();
             }
             else if (distance <= 40 && sampleColor == wrongAllianceColor && !newSample && armController.currentArmState == ArmController.ArmState.EXTEND){
                 armController.startEject();
