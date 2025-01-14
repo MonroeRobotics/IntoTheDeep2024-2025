@@ -46,7 +46,7 @@ public class BucketAuto extends LinearOpMode {
     //endregion
 
     Pose2d startingDrivePose;
-    Pose2d startingDrivePoseLeft = new Pose2d(16.58, 62.45, Math.toRadians(-90));
+    Pose2d startingDrivePoseLeft = new Pose2d(16.58+24, 62.45-1, Math.toRadians(-90));
     Vector2d startingDrivePoseLeftAway = new Vector2d(16.58, 52.45);// -90
     Pose2d startingDrivePoseRight = new Pose2d(-16.58,62.45, Math.toRadians(-90));
     Vector2d neutralTarget;
