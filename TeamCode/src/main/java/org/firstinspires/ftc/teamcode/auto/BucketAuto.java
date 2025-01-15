@@ -47,8 +47,8 @@ public class BucketAuto extends LinearOpMode {
     //endregion
 
     Pose2d startingDrivePose;
-    Pose2d startingDrivePoseLeft = new Pose2d(16.58, 62.45, Math.toRadians(-90));
-    Vector2d startingDrivePoseLeftAway = new Vector2d(16.58, 52.45);// -90
+    Pose2d startingDrivePoseLeft = new Pose2d(40.57, 64.45-1, Math.toRadians(-90));
+    Vector2d startingDrivePoseLeftAway = new Vector2d(40.57, 52.45);// -90
     Pose2d startingDrivePoseRight = new Pose2d(-16.58,62.45, Math.toRadians(-90));
     Vector2d neutralTarget;
     Vector2d approachTarget;
@@ -168,18 +168,18 @@ public class BucketAuto extends LinearOpMode {
                     //build trajectory for correct sample based off cycle number
                     if (cycleNumber == 1){
                         toNeutral1 = drive.actionBuilder(neutralStart)
-                                .strafeToLinearHeading(new Vector2d(51, 48), Math.toRadians(-100))
-                                .strafeToLinearHeading(blueNeutralSample1, Math.toRadians(-100));
+                                .strafeToLinearHeading(new Vector2d(51, 52), Math.toRadians(-90))
+                                .strafeToLinearHeading(new Vector2d(51,40), Math.toRadians(-90));
                     }
                     else if (cycleNumber == 2) {
                         toNeutral2 = drive.actionBuilder(neutralStart)
-                                .strafeToLinearHeading(blueNeutralSample2Approach, Math.toRadians(-100))
-                                .strafeToLinearHeading(blueNeutralSample2, Math.toRadians(-100));
+                                .strafeToLinearHeading(new Vector2d(60, 48), Math.toRadians(-90))
+                                .strafeToLinearHeading(new Vector2d(60, 40), Math.toRadians(-90));
                     }
                     else if (cycleNumber == 3){
                         toNeutral3 = drive.actionBuilder(neutralStart)
-                                .strafeToLinearHeading(new Vector2d( 59, 54), Math.toRadians(-90))
-                                .strafeToLinearHeading(new Vector2d( 63, 40), Math.toRadians(-90));
+                                .strafeToLinearHeading(new Vector2d( 62, 54), Math.toRadians(-80))
+                                .strafeToLinearHeading(new Vector2d( 68, 40), Math.toRadians(-80));
                     }
 
                     //Extend intake and move to sample position
@@ -187,6 +187,7 @@ public class BucketAuto extends LinearOpMode {
                         waitTimer = 2000 + System.currentTimeMillis();
                         intakeTimerStarted = true;
                         armController.currentArmState = ArmController.ArmState.EXTEND;
+                        armController.lowerIntake = true;
                         armController.checkIntakeAngle();
                         armController.checkIntakeServoPower();
                         armController.updateArmState();
@@ -202,9 +203,7 @@ public class BucketAuto extends LinearOpMode {
                             Action toNeutral3Action = toNeutral3.build();
                             Actions.runBlocking(new SequentialAction(toNeutral3Action));
                         }
-                        else {
-                            queuedState = autoState.PARK;
-                        }
+                        /*else{go to submersible}*/
                     }
 
                     //Timed sequence for retracting, closing claw, and raising bucket
@@ -240,11 +239,11 @@ public class BucketAuto extends LinearOpMode {
                         bucketStart = startingDrivePose;
                         TrajectoryActionBuilder toBucketStart = drive.actionBuilder(bucketStart)
                                 .strafeToLinearHeading(startingDrivePoseLeftAway, Math.toRadians(-90))
-                                .strafeToLinearHeading(blueBasket, Math.toRadians(225));
+                                .strafeToLinearHeading(new Vector2d(68,54), Math.toRadians(225));
                         Action toBucketStartAction = toBucketStart.build();
                         Actions.runBlocking(new SequentialAction( toBucketStartAction));
                     }
-                    else if (cycleNumber == 1){
+                    else if (cycleNumber ==1){
                         bucketStart = drive.pose;
                         TrajectoryActionBuilder toBucket = drive.actionBuilder(bucketStart)
                                 .strafeToLinearHeading(new Vector2d(56, 48), Math.toRadians(225))
@@ -255,23 +254,22 @@ public class BucketAuto extends LinearOpMode {
                     else if (cycleNumber == 2){
                         bucketStart = drive.pose;
                         TrajectoryActionBuilder toBucket = drive.actionBuilder(bucketStart)
-                                .strafeToLinearHeading(new Vector2d(61, 48), Math.toRadians(225-10))
-                                .strafeToLinearHeading(new Vector2d(61, 56), Math.toRadians(225-10));
+                            .strafeToLinearHeading(new Vector2d(61, 48), Math.toRadians(225))
+                            .strafeToLinearHeading(new Vector2d(56, 56), Math.toRadians(225));
                         Action toBucketAction = toBucket.build();
                         Actions.runBlocking(new SequentialAction(toBucketAction));
                     }
                     else if (cycleNumber == 3){
                         bucketStart = drive.pose;
                         TrajectoryActionBuilder toBucket = drive.actionBuilder(bucketStart)
-                                .strafeToLinearHeading(new Vector2d(56, 48), Math.toRadians(225-10))
-                                .strafeToLinearHeading(new Vector2d(62, 56), Math.toRadians(225-10));
+                            .strafeToLinearHeading(new Vector2d(56, 48), Math.toRadians(225))
+                            .strafeToLinearHeading(new Vector2d(54, 60), Math.toRadians(225));
                         Action toBucketAction = toBucket.build();
                         Actions.runBlocking(new SequentialAction(toBucketAction));
                     }
                     cycleNumber += 1; //increase cycle number every time something is dropped, should be moved to drop section potentially
-
                     //drops sample when slide height reaches the correct position
-                    if (armController.getSlideHeight() >= 1830 && armController.getSlideHeight() <= 1840) {
+                    if (armController.getSlideHeight() >= 1830 /*&& armController.getSlideHeight() <= 1840*/) {
                         lowerArmTimerStarted = false;
                         queuedState = autoState.DROP;
                     }
