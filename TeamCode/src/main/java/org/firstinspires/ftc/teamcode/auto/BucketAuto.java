@@ -168,18 +168,18 @@ public class BucketAuto extends LinearOpMode {
                     //build trajectory for correct sample based off cycle number
                     if (cycleNumber == 1){
                         toNeutral1 = drive.actionBuilder(neutralStart)
-                                .strafeToLinearHeading(new Vector2d(51, 52), Math.toRadians(-90))
-                                .strafeToLinearHeading(new Vector2d(51,40), Math.toRadians(-90));
+                                .strafeToLinearHeading(new Vector2d(47, 54), Math.toRadians(-90))
+                                .strafeToLinearHeading(new Vector2d(47,40), Math.toRadians(-90));
                     }
                     else if (cycleNumber == 2) {
                         toNeutral2 = drive.actionBuilder(neutralStart)
-                                .strafeToLinearHeading(new Vector2d(60, 48), Math.toRadians(-90))
-                                .strafeToLinearHeading(new Vector2d(60, 40), Math.toRadians(-90));
+                                .strafeToLinearHeading(new Vector2d(54, 54), Math.toRadians(-90))
+                                .strafeToLinearHeading(new Vector2d(54, 40), Math.toRadians(-90));
                     }
                     else if (cycleNumber == 3){
                         toNeutral3 = drive.actionBuilder(neutralStart)
-                                .strafeToLinearHeading(new Vector2d( 62, 54), Math.toRadians(-80))
-                                .strafeToLinearHeading(new Vector2d( 68, 40), Math.toRadians(-80));
+                                .strafeToLinearHeading(new Vector2d( 60, 54), Math.toRadians(-75))
+                                .strafeToLinearHeading(new Vector2d( 64, 40), Math.toRadians(-75));
                     }
 
                     //Extend intake and move to sample position
@@ -239,7 +239,7 @@ public class BucketAuto extends LinearOpMode {
                         bucketStart = startingDrivePose;
                         TrajectoryActionBuilder toBucketStart = drive.actionBuilder(bucketStart)
                                 .strafeToLinearHeading(startingDrivePoseLeftAway, Math.toRadians(-90))
-                                .strafeToLinearHeading(new Vector2d(68,54), Math.toRadians(225));
+                                .strafeToLinearHeading(new Vector2d(70,50), Math.toRadians(225));
                         Action toBucketStartAction = toBucketStart.build();
                         Actions.runBlocking(new SequentialAction( toBucketStartAction));
                     }
@@ -255,7 +255,7 @@ public class BucketAuto extends LinearOpMode {
                         bucketStart = drive.pose;
                         TrajectoryActionBuilder toBucket = drive.actionBuilder(bucketStart)
                             .strafeToLinearHeading(new Vector2d(61, 48), Math.toRadians(225))
-                            .strafeToLinearHeading(new Vector2d(56, 56), Math.toRadians(225));
+                            .strafeToLinearHeading(new Vector2d(58, 58), Math.toRadians(225));
                         Action toBucketAction = toBucket.build();
                         Actions.runBlocking(new SequentialAction(toBucketAction));
                     }

@@ -101,7 +101,7 @@ public class ArmController {
     public static int SLIDE_HEIGHT_HIGH_BUCKET_DROP = 1860;
     public static int SLIDE_HEIGHT_HIGH_SPECIMEN_DROP = 305;
     public static int SLIDE_HEIGHT_LOW_SPECIMEN_DROP; //get value, Low specimen place -100
-    public static int SLIDE_HEIGHT_ASCENT = 1660;
+    public static int SLIDE_HEIGHT_ASCENT = 1800;
     public static int SLIDE_HEIGHT_HANG = 1170;
     //endregion
 

@@ -83,48 +83,25 @@ public class blueSoloDrive extends OpMode {
         //region drive
         //Stick controls
 
-        if(currentGamepad2.left_stick_y >= .05 || currentGamepad2.left_stick_y <= -.05){
+        if(currentGamepad2.left_stick_y >= .1 || currentGamepad2.left_stick_y <= -.1){
             xPower = -currentGamepad2.left_stick_y;
         }
-        if(currentGamepad2.left_stick_x >= .05 || currentGamepad2.left_stick_x <= -.05){
+        else xPower = 0;
+        if(currentGamepad2.left_stick_x >= .1 || currentGamepad2.left_stick_x <= -.1){
             yPower = -currentGamepad2.left_stick_x;
         }
-        if (currentGamepad2.right_stick_x >= .05 || currentGamepad2.right_stick_x <= -.05){
+        else yPower = 0;
+        if (currentGamepad2.right_stick_x >= .1 || currentGamepad2.right_stick_x <= -.1){
             headingPower = -currentGamepad2.right_stick_x * 0.7;
         }
+        else headingPower = 0;
 
         //Multiplier
         xPower *= drivePower;
         yPower *= drivePower;
         headingPower *= drivePower;
 
-        //Cardinal dpad movements
-        if (currentGamepad1.dpad_up) {
-            xPower = drivePower;
-            yPower = 0;
-            headingPower = 0;
-        } else if (currentGamepad1.dpad_down) {
-            xPower = -drivePower;
-            yPower = 0;
-            headingPower = 0;
-        } else if (currentGamepad1.dpad_left) {
-            xPower = 0;
-            yPower = drivePower;
-            headingPower = 0;
-        } else if (currentGamepad1.dpad_right) {
-            xPower = 0;
-            yPower = -drivePower;
-            headingPower = 0;
-        }
-
         //Speed controls
-        if (currentGamepad1.right_bumper){
-            drivePower = 1;
-        } else if(currentGamepad1.left_bumper){
-            drivePower = .4;
-        } else{
-            drivePower = .8;
-        }
         //endregion
 
         if (currentGamepad1.right_trigger >= .1){
@@ -321,6 +298,7 @@ public class blueSoloDrive extends OpMode {
         if (autoRetractOn) {
             if (distance <= 40 && sampleColor != wrongAllianceColor && !newSample && armController.currentArmState == ArmController.ArmState.EXTEND) {
                 armController.currentArmState = ArmController.ArmState.RETRACT;
+                armController.startClawTimer();
                 newSample = true;
             }
             else if (distance <= 40 && sampleColor == wrongAllianceColor && !newSample && armController.currentArmState == ArmController.ArmState.EXTEND){
@@ -330,7 +308,8 @@ public class blueSoloDrive extends OpMode {
                 newSample = false;
             }
         }
-
+        //if (xPower <= .05 && xPower >= -.05) xPower = 0;
+        //if (yPower <= .05 && xPower >= -.05) yPower = 0;
         Vector2d gamepadInput = new Vector2d(xPower, yPower);
         PoseVelocity2d poseVelocity2d = new PoseVelocity2d(gamepadInput, headingPower);
         drive.setDrivePowers(poseVelocity2d);
@@ -342,6 +321,7 @@ public class blueSoloDrive extends OpMode {
         armController.checkIntakeServoPower();
         armController.checkIntakeAngle();
         armController.checkSlidePower();
+        armController.checkClaw();
 
         previousGamepad1.copy(currentGamepad1);
         previousGamepad2.copy(currentGamepad2);
@@ -352,14 +332,17 @@ public class blueSoloDrive extends OpMode {
         //telemetry.addData("intakeAngle", String.valueOf(armController.getIntakeAngle()));
         telemetry.addData("Auto Intake", autoRetractOn);
         telemetry.addData("Wrong Color", wrongAllianceColor);
+        telemetry.addData("Stick x", -currentGamepad2.left_stick_y);
+        telemetry.addData("x drive power", xPower);
+        //telemetry.addData("y drive power", yPower);
         telemetry.addData("red", intakeSensor.red());
         telemetry.addData("green", intakeSensor.green());
         telemetry.addData("blue", intakeSensor.blue());
         telemetry.addData("currentArmState", armController.getCurrentArmState());
         telemetry.addData("slide target", armController.getSlideHeight());
         telemetry.addData("average slide height", ((armController.extraLeftSlide.getCurrentPosition() + armController.extraRightSlide.getCurrentPosition())/2));
-        telemetry.addData("arm angle", armController.getArmAngle());
-        telemetry.addData("pose", drive.pose);
+        //telemetry.addData("arm angle", armController.getArmAngle());
+        telemetry.addData("pose vel", poseVelocity2d);
         //telemetry.addData("left slide height", armController.leftSlide.getCurrentPosition());
         //telemetry.addData("extra left slide height", armController.extraLeftSlide.getCurrentPosition());
         //telemetry.addData("extra right slide height", armController.extraRightSlide.getCurrentPosition());
