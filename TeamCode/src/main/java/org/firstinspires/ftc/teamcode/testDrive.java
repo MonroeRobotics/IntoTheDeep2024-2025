@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.util.ArmController;
 
 import org.firstinspires.ftc.teamcode.driveClasses.MecanumDrive;
 
@@ -57,6 +58,8 @@ public class testDrive extends OpMode{
     //region Arm Slides
     DcMotor leftSlide;
     DcMotor rightSlide;
+    DcMotor extraLeftSlide;
+    DcMotor extraRightSlide;
     //endregion
 
 
@@ -70,11 +73,11 @@ public class testDrive extends OpMode{
     double headingPower;
 
     int slideTarget;
-    double extendoTarget;
-    double closeExtenoPos = 0.95;
-    double intakeAngleTarget;
-    double armAngleTarget;
-    double clawAngleTarget;
+    public double extendoTarget;
+    //public double closeExtenoPos = 0.95;
+    public double intakeAngleTarget;
+    public double armAngleTarget;
+    public double clawAngleTarget;
 
     double highBucketHeight;
     //cameraThing cameraThing;
@@ -109,6 +112,8 @@ public class testDrive extends OpMode{
         intakeAngleR = hardwareMap.get(Servo.class, "intakeAngleR");
 
         leftSlide = hardwareMap.get(DcMotorEx.class, "leftSlide");
+        extraLeftSlide = hardwareMap.get(DcMotorEx.class, "extraLeftSlide");
+        extraRightSlide = hardwareMap.get(DcMotorEx.class, "extraRightSlide");
         rightSlide = hardwareMap.get(DcMotorEx.class, "rightSlide");
 
         armAngleL = hardwareMap.get(Servo.class, "armAngleL");
@@ -119,14 +124,14 @@ public class testDrive extends OpMode{
 
 
         leftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extraLeftSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        extraRightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        leftSlide.setPower(drivePower);
-        rightSlide.setPower(drivePower);
-
-        slideTarget = 0;
-        leftSlide.setTargetPosition(slideTarget);
-        rightSlide.setTargetPosition(slideTarget);
+        leftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        extraLeftSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        extraRightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         leftSlide.setDirection(DcMotorSimple.Direction.REVERSE);
         rightSlide.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -136,20 +141,21 @@ public class testDrive extends OpMode{
         intakeR.setDirection(CRServo.Direction.REVERSE);
         armAngleR.setDirection(Servo.Direction.REVERSE);
 
-        extendoTarget=.95;
+        extendoTarget= ArmController.EXTENDO_RETRACT;
         extendoL.setPosition(extendoTarget);
         extendoR.setPosition(extendoTarget);
 
-        intakeAngleTarget = intakeRaisedAngle;
+        intakeAngleTarget = ArmController.INTAKE_ANGLE_RETRACT;
         intakeAngleL.setPosition(intakeAngleTarget);
         intakeAngleR.setPosition(intakeAngleTarget);
 
-        armAngleTarget = 0.11;
+        armAngleTarget = ArmController.ARM_ANGLE_INTAKE;
         armAngleL.setPosition(armAngleTarget);
         armAngleR.setPosition(armAngleTarget);
 
-        claw.setPosition(.5);
-        clawAngle.setPosition(.2);
+        clawAngleTarget = ArmController.CLAW_ANGLE_INTAKE;
+        claw.setPosition(ArmController.CLAW_OPEN);
+        clawAngle.setPosition(ArmController.CLAW_ANGLE_INTAKE);
     }
 
     @Override
@@ -378,17 +384,17 @@ public class testDrive extends OpMode{
         telemetry.addData("leftStick x", currentGamepad1.left_stick_x);
         telemetry.addData("lefStick y", currentGamepad1.left_stick_y);
         telemetry.addData("rightStick x", currentGamepad1.right_stick_x);*/
-        telemetry.addData("extendo target", extendoTarget);
+        /*telemetry.addData("extendo target", extendoTarget);
         telemetry.addData("extendoL servo pos", extendoL.getPosition());
         telemetry.addData("extendoR servo pos", extendoR.getPosition());
 
         telemetry.addData("intakeAngleTarget", intakeAngleTarget);
         telemetry.addData("intakeAngleL", intakeAngleL.getPosition());
-        telemetry.addData("intakeAngleR", intakeAngleR.getPosition());
+        telemetry.addData("intakeAngleR", intakeAngleR.getPosition());*/
 
-        telemetry.addData("leftSlide Target", leftSlide.getTargetPosition());
         telemetry.addData("leftSlide", leftSlide.getCurrentPosition());
-        telemetry.addData("rightSLide Target", rightSlide.getTargetPosition());
+        telemetry.addData("extraLeftSlide", extraLeftSlide.getCurrentPosition());
+        telemetry.addData("extraRightSlide", extraRightSlide.getCurrentPosition());
         telemetry.addData("rightSlide", rightSlide.getCurrentPosition());
 
         telemetry.addData("armAngelTarget", armAngleTarget);
@@ -399,6 +405,8 @@ public class testDrive extends OpMode{
         telemetry.addData("clawAngle", clawAngle.getPosition());
 
         telemetry.addData("claw", claw.getPosition());
+
+        telemetry.update();
 
         previousGamepad1.copy(currentGamepad1);
         previousGamepad2.copy(currentGamepad2);

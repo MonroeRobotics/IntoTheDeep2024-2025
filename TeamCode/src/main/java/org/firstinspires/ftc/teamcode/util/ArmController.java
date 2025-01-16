@@ -48,16 +48,16 @@ public class ArmController {
     //region Arm Angle
     double ARM_ANGLE_POSITION = .39; //Live Updating Arm Angle Position (0 is intake position) should normally be .15
     public static double ARM_ANGLE_INTAKE = .39;//Stores Value of Arm intake Position should normally be .15
-    public static double ARM_ANGLE_SPECIMEN_PICK_UP = .93; //get value, likely opposite of normal outtake
-    public static double ARM_ANGLE_SPECIMEN_DROP = .42;//Stores value of arm outtake position for specimen
+    public static double ARM_ANGLE_SPECIMEN_PICK_UP = .89; //get value, likely opposite of normal outtake
+    public static double ARM_ANGLE_SPECIMEN_DROP = .38;//Stores value of arm outtake position for specimen
     public static double ARM_ANGLE_BUCKET_OUTTAKE = .79;//Stores Value of Arm outtake Position
-    public static double ARM_ANGLE_SPECIMEN_START = .18;
+    public static double ARM_ANGLE_SPECIMEN_START = .44;
     public static double ARM_ANGLE_ASCENT = .51;
     //endregion
 
     //region Claw
     double CLAW_POSITION = .5; //Live Updating Arm Position (.5 is open)
-    public static double CLAW_CLOSED = .27; //Stores Value of Claw closed Position
+    public static double CLAW_CLOSED = .25; //Stores Value of Claw closed Position
     //public static double CLAW_SERVO_TRANSITION = 0.6; //Stores value of Claw Outtake position
     public static double CLAW_OPEN = 0.5; //Stores value of Claw open position
     //endregion
@@ -65,10 +65,10 @@ public class ArmController {
     //region Claw Angle
     public static double CLAW_ANGLE_POSITION = .19; //stores value of claw angle
     public static double CLAW_ANGLE_INTAKE = .19; //stores value of claw angle for intake
-    public static double CLAW_ANGLE_SPECIMEN_PICK_UP = .54; //
+    public static double CLAW_ANGLE_SPECIMEN_PICK_UP = .56; //
     public static double CLAW_ANGLE_OUTTAKE = .66; //stores value of the claw angle when dropping stuff
-    public static double CLAW_ANGLE_SPECIMEN_OUTTAKE = 1;//stuff
-    public static double CLAW_ANGLE_SPECIMEN_START = .24;
+    public static double CLAW_ANGLE_SPECIMEN_OUTTAKE = .58;//stuff
+    public static double CLAW_ANGLE_SPECIMEN_START = .25;
     public static double CLAW_ANGLE_ASCENT = .92;
     //endregion
 
@@ -80,7 +80,7 @@ public class ArmController {
     //endregion
 
     //region Intake Angle
-    public static double INTAKE_ANGLE = .20; //stores value of intake angle
+    public static double INTAKE_ANGLE = .19; //stores value of intake angle
     public static double INTAKE_ANGLE_INTAKE = .43; //stores value of intakeAngle intake position
     public static double INTAKE_ANGLE_RETRACT = .19; //stores value of intakeAngle when retracted
     //endregion
@@ -96,10 +96,10 @@ public class ArmController {
     public static int SLIDE_HEIGHT_SERVO_TRANSITION = 100;
     public static int SLIDE_HEIGHT_SPECIMEN_PICK_UP = 0; //get value
     public static int SLIDE_HEIGHT_LOW_SPECIMEN_PLACE; //get value
-    public static int SLIDE_HEIGHT_HIGH_SPECIMEN_PLACE = 825; //get value
+    public static int SLIDE_HEIGHT_HIGH_SPECIMEN_PLACE = 865; //get value
     public static int SLIDE_HEIGHT_LOW_BUCKET_DROP; //get value
     public static int SLIDE_HEIGHT_HIGH_BUCKET_DROP = 1860;
-    public static int SLIDE_HEIGHT_HIGH_SPECIMEN_DROP = 305;
+    public static int SLIDE_HEIGHT_HIGH_SPECIMEN_DROP = 1350;
     public static int SLIDE_HEIGHT_LOW_SPECIMEN_DROP; //get value, Low specimen place -100
     public static int SLIDE_HEIGHT_ASCENT = 1800;
     public static int SLIDE_HEIGHT_HANG = 1170;
@@ -381,6 +381,9 @@ public class ArmController {
 
     public void setArmPos(double armPos){
         ARM_ANGLE_POSITION = armPos;
+    }
+    public void setIntakePos(double intakePos){
+        INTAKE_ANGLE = intakePos;
     }
 
     public void setClawAnglePos(double clawAnglePos){

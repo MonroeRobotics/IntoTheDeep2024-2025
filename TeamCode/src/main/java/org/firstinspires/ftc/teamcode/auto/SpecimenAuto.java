@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.driveClasses.MecanumDrive;
 import org.firstinspires.ftc.teamcode.util.ArmController;
 import org.firstinspires.ftc.teamcode.util.AutoConfiguration;
@@ -23,15 +24,15 @@ import org.firstinspires.ftc.teamcode.util.AutoConfiguration;
 public class SpecimenAuto extends LinearOpMode {
 
     Pose2d startingDrivePose;
-    Pose2d startingDrivePoseLeft = new Pose2d(16.58, 62.45, Math.toRadians(90));
+    Pose2d startingDrivePoseLeft = new Pose2d(16.58, 62.45, Math.toRadians(-90));
     Vector2d startingDrivePoseLeftAway = new Vector2d(16.58, 52.45);// -90
-    Pose2d startingDrivePoseRight = new Pose2d(-16.58,62.45, Math.toRadians(90));
+    Pose2d startingDrivePoseRight = new Pose2d(-16.58,62.45, Math.toRadians(-90));
 
     Vector2d blueSubmersible = new Vector2d(0,(24+9.5)); //90
     Vector2d wallApproach = new Vector2d(-48,50);
     Vector2d wallGrab = new Vector2d(-48, 57); //-90
 
-    MecanumDrive drive;
+    PinpointDrive drive;
     ArmController armController;
     AutoConfiguration autoConfiguration;
 
@@ -91,7 +92,7 @@ public class SpecimenAuto extends LinearOpMode {
             else{
                 startingDrivePose = startingDrivePoseRight;
             }
-            drive = new MecanumDrive(hardwareMap,startingDrivePoseRight);
+            drive = new PinpointDrive(hardwareMap,startingDrivePoseRight);
             maxCycleCount = autoConfiguration.getCycleCount();
         }
 
@@ -105,6 +106,7 @@ public class SpecimenAuto extends LinearOpMode {
                     armController.currentArmState = ArmController.ArmState.CLOSE_CLAW;
                     if (waitTimer <= System.currentTimeMillis() && autoConfiguration.isBucketOnly()){
                         armController.currentArmState = ArmController.ArmState.HIGH_SPECIMEN_PLACE;
+                        armController.setIntakePos(.3);
                         queuedState = autoState.SUBMERSIBLE;
                     }
                     else {
@@ -116,11 +118,11 @@ public class SpecimenAuto extends LinearOpMode {
                     armController.updateArmState();
                     Pose2d submersibleStart = drive.pose;
                     TrajectoryActionBuilder toSubmersible = drive.actionBuilder(submersibleStart)
-                            .strafeToLinearHeading(new Vector2d(0, 48), Math.toRadians(90))
-                            .strafeToLinearHeading(blueSubmersible, Math.toRadians(90));
+                            .strafeToLinearHeading(new Vector2d(0, 50), Math.toRadians(-90))
+                            .strafeToLinearHeading(blueSubmersible, Math.toRadians(-90));
                     Action toSubmersibleAction = toSubmersible.build();
                     Actions.runBlocking(new SequentialAction(toSubmersibleAction));
-                    drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0,0), 0));
+                    //drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0,0), 0));
                     placeTimerStarted = false;
                     queuedState = autoState.PLACE;
                     break;
@@ -133,7 +135,7 @@ public class SpecimenAuto extends LinearOpMode {
                         placeTimerStarted = true;
                     }
 
-                    if ((armController.getSlideHeight() >= 360) && (armController.getSlideHeight() <= 370) && waitTimer <= System.currentTimeMillis()){
+                    if ((armController.getSlideHeight() >= 1300) && waitTimer <= System.currentTimeMillis()){
                         armController.currentArmState = ArmController.ArmState.OPEN_CLAW;
                         armController.updateArmState();
                         cycleCount +=1;
