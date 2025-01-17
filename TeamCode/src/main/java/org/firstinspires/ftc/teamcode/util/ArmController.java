@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 
 @Config
@@ -51,7 +54,7 @@ public class ArmController {
     public static double ARM_ANGLE_SPECIMEN_PICK_UP = .89; //get value, likely opposite of normal outtake
     public static double ARM_ANGLE_SPECIMEN_DROP = .38;//Stores value of arm outtake position for specimen
     public static double ARM_ANGLE_BUCKET_OUTTAKE = .79;//Stores Value of Arm outtake Position
-    public static double ARM_ANGLE_SPECIMEN_START = .44;
+    public static double ARM_ANGLE_SPECIMEN_START = .43;
     public static double ARM_ANGLE_ASCENT = .51;
     //endregion
 
@@ -67,8 +70,8 @@ public class ArmController {
     public static double CLAW_ANGLE_INTAKE = .19; //stores value of claw angle for intake
     public static double CLAW_ANGLE_SPECIMEN_PICK_UP = .56; //
     public static double CLAW_ANGLE_OUTTAKE = .66; //stores value of the claw angle when dropping stuff
-    public static double CLAW_ANGLE_SPECIMEN_OUTTAKE = .58;//stuff
-    public static double CLAW_ANGLE_SPECIMEN_START = .25;
+    public static double CLAW_ANGLE_SPECIMEN_OUTTAKE = .47;//stuff
+    public static double CLAW_ANGLE_SPECIMEN_START = .16;
     public static double CLAW_ANGLE_ASCENT = .92;
     //endregion
 
@@ -83,6 +86,7 @@ public class ArmController {
     public static double INTAKE_ANGLE = .19; //stores value of intake angle
     public static double INTAKE_ANGLE_INTAKE = .43; //stores value of intakeAngle intake position
     public static double INTAKE_ANGLE_RETRACT = .19; //stores value of intakeAngle when retracted
+    public static double INTAKE_ANGLE_SPECIMEN_START = .2;
     //endregion
 
     //region Extendo
@@ -96,10 +100,10 @@ public class ArmController {
     public static int SLIDE_HEIGHT_SERVO_TRANSITION = 100;
     public static int SLIDE_HEIGHT_SPECIMEN_PICK_UP = 0; //get value
     public static int SLIDE_HEIGHT_LOW_SPECIMEN_PLACE; //get value
-    public static int SLIDE_HEIGHT_HIGH_SPECIMEN_PLACE = 865; //get value
+    public static int SLIDE_HEIGHT_HIGH_SPECIMEN_PLACE = 1245; //get value
     public static int SLIDE_HEIGHT_LOW_BUCKET_DROP; //get value
-    public static int SLIDE_HEIGHT_HIGH_BUCKET_DROP = 1860;
-    public static int SLIDE_HEIGHT_HIGH_SPECIMEN_DROP = 1350;
+    public static int SLIDE_HEIGHT_HIGH_BUCKET_DROP = 1865;
+    public static int SLIDE_HEIGHT_HIGH_SPECIMEN_DROP = 700;
     public static int SLIDE_HEIGHT_LOW_SPECIMEN_DROP; //get value, Low specimen place -100
     public static int SLIDE_HEIGHT_ASCENT = 1800;
     public static int SLIDE_HEIGHT_HANG = 1170;
@@ -141,6 +145,11 @@ public class ArmController {
     boolean clawTimerRan;
     double clawTimer;
 
+    RevColorSensorV3 intakeSensor;
+    public char sampleColor;
+    public char wrongAllianceColor;
+    public boolean newSample;
+
     public ArmController (HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
     }
@@ -169,6 +178,8 @@ public class ArmController {
         extraLeftSlide = hardwareMap.get(DcMotorEx.class, "extraLeftSlide");
         extraRightSlide = hardwareMap.get(DcMotorEx.class, "extraRightSlide");
 
+        intakeSensor = hardwareMap.get(RevColorSensorV3.class, "intakeSensor");
+
         //endregion
 
         //region slide stuff
@@ -192,7 +203,7 @@ public class ArmController {
 
         //region Initialization values
         SLIDE_HEIGHT = SLIDE_HEIGHT_LOWERED;
-        INTAKE_ANGLE = INTAKE_ANGLE_RETRACT;
+        //INTAKE_ANGLE = INTAKE_ANGLE_RETRACT;
         EXTENDO_ANGLE = EXTENDO_RETRACT;
         if (bucketOnly){
             CLAW_ANGLE_POSITION = CLAW_ANGLE_INTAKE;
@@ -201,6 +212,7 @@ public class ArmController {
         else{
             CLAW_ANGLE_POSITION = CLAW_ANGLE_SPECIMEN_START;
             ARM_ANGLE_POSITION = ARM_ANGLE_SPECIMEN_START;
+            INTAKE_ANGLE = INTAKE_ANGLE_SPECIMEN_START;
         }
         //endregion
 
@@ -424,13 +436,38 @@ public class ArmController {
     }
 
     public void startClawTimer(){
-        clawTimer = System.currentTimeMillis() + 750;
+        clawTimer = System.currentTimeMillis() + 500;
         clawTimerRan = false;
     }
     public void checkClaw(){
         if (System.currentTimeMillis() >= clawTimer && !clawTimerRan){
             clawTimerRan = true;
             currentArmState = ArmState.CLOSE_CLAW;
+        }
+    }
+
+    public void updateIntake(){
+        if (intakeSensor.red() > intakeSensor.blue()) {
+            sampleColor = 'r';
+        } else if (intakeSensor.green() > intakeSensor.blue()){
+            sampleColor = 'y';
+        } else if (intakeSensor.blue() > intakeSensor.red()) {
+            sampleColor = 'b';
+        }
+
+        if (intakeSensor.getDistance(DistanceUnit.MM) <= 40 && sampleColor != wrongAllianceColor && !newSample && currentArmState == ArmController.ArmState.EXTEND) {
+            currentArmState = ArmController.ArmState.RETRACT;
+            startClawTimer();
+            newSample = true;
+        }
+        else if (intakeSensor.getDistance(DistanceUnit.MM) <= 40 && sampleColor == wrongAllianceColor && !newSample && currentArmState == ArmController.ArmState.EXTEND){
+            startEject();
+        }
+        else {
+            newSample = false;
+        }
+        if (intakeSensor.getDistance(DistanceUnit.MM) <= 40 && clawTimer <= System.currentTimeMillis() && newSample){
+            startEject();
         }
     }
 

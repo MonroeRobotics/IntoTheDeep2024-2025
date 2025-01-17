@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.driveClasses.MecanumDrive;
 import org.firstinspires.ftc.teamcode.util.ArmController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,8 +51,6 @@ public class blueSoloDrive extends OpMode {
 
     ArmController armController;
     int stage;
-
-    RevColorSensorV3 intakeSensor;
     Servo swiper;
     public double swipe = 0;
     public double resetSwiper = .45;
@@ -63,8 +60,6 @@ public class blueSoloDrive extends OpMode {
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         drive = new PinpointDrive(hardwareMap,pose);
-
-        intakeSensor = hardwareMap.get(RevColorSensorV3.class, "intakeSensor");
 
         currentGamepad1 = new Gamepad();
         previousGamepad1 = new Gamepad();
@@ -273,40 +268,20 @@ public class blueSoloDrive extends OpMode {
         //endregion
 
         //endregion
-        distance = intakeSensor.getDistance(DistanceUnit.MM);
-
-        //add autoconfig stuffs
-        if (intakeSensor.red() > intakeSensor.blue()) {
-            sampleColor = 'r';
-        } else if (intakeSensor.green() > intakeSensor.blue()){
-            sampleColor = 'y';
-        } else if (intakeSensor.blue() > intakeSensor.red()) {
-            sampleColor = 'b';
-        }
 
         if (currentGamepad2.dpad_left && !previousGamepad2.dpad_left) {
             autoRetractOn = !autoRetractOn;
         }
 
         if (currentGamepad2.dpad_right && !previousGamepad2.dpad_right){
-            if (wrongAllianceColor == 'r'){
-                wrongAllianceColor = 'b';
+            if (armController.wrongAllianceColor == 'r'){
+                armController.wrongAllianceColor = 'b';
             }
-            else wrongAllianceColor = 'r';
+            else armController.wrongAllianceColor = 'r';
         }
 
         if (autoRetractOn) {
-            if (distance <= 40 && sampleColor != wrongAllianceColor && !newSample && armController.currentArmState == ArmController.ArmState.EXTEND) {
-                armController.currentArmState = ArmController.ArmState.RETRACT;
-                armController.startClawTimer();
-                newSample = true;
-            }
-            else if (distance <= 40 && sampleColor == wrongAllianceColor && !newSample && armController.currentArmState == ArmController.ArmState.EXTEND){
-                armController.startEject();
-            }
-            else {
-                newSample = false;
-            }
+            armController.updateIntake();
         }
         //if (xPower <= .05 && xPower >= -.05) xPower = 0;
         //if (yPower <= .05 && xPower >= -.05) yPower = 0;
@@ -335,9 +310,9 @@ public class blueSoloDrive extends OpMode {
         telemetry.addData("Stick x", -currentGamepad2.left_stick_y);
         telemetry.addData("x drive power", xPower);
         //telemetry.addData("y drive power", yPower);
-        telemetry.addData("red", intakeSensor.red());
-        telemetry.addData("green", intakeSensor.green());
-        telemetry.addData("blue", intakeSensor.blue());
+        //telemetry.addData("red", armController.getRed());
+        //telemetry.addData("green", intakeSensor.green());
+        //telemetry.addData("blue", intakeSensor.blue());
         telemetry.addData("currentArmState", armController.getCurrentArmState());
         telemetry.addData("slide target", armController.getSlideHeight());
         telemetry.addData("average slide height", ((armController.extraLeftSlide.getCurrentPosition() + armController.extraRightSlide.getCurrentPosition())/2));
