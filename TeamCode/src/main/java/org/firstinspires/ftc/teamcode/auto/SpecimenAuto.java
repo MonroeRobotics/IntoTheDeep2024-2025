@@ -131,8 +131,8 @@ public class SpecimenAuto extends LinearOpMode {
                     armController.updateArmState();
                     Pose2d submersibleStart = drive.pose;
                     TrajectoryActionBuilder toSubmersible = drive.actionBuilder(submersibleStart)
-                            .strafeToLinearHeading(new Vector2d(12, 50), Math.toRadians(-90))
-                            .strafeToLinearHeading(new Vector2d(12, (24+8.5)), Math.toRadians(-90));
+                            .strafeToLinearHeading(new Vector2d(6, 40), Math.toRadians(90));
+                            //.strafeToLinearHeading(new Vector2d(6, 50), Math.toRadians(90));
                     Action toSubmersibleAction = toSubmersible.build();
                     Actions.runBlocking(new SequentialAction(toSubmersibleAction));
                     //drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0,0), 0));
@@ -144,11 +144,11 @@ public class SpecimenAuto extends LinearOpMode {
                     armController.updateArmState();
 
                     if(!placeTimerStarted) {
-                        waitTimer = 750 + System.currentTimeMillis();
+                        waitTimer = 1250 + System.currentTimeMillis();
                         placeTimerStarted = true;
                     }
 
-                    if ((armController.getSlideHeight() <= 710) && waitTimer <= System.currentTimeMillis()){
+                    if ((armController.getSlideHeight() <= ArmController.SLIDE_HEIGHT_HIGH_SPECIMEN_PLACE +10) && waitTimer <= System.currentTimeMillis()){
                         armController.currentArmState = ArmController.ArmState.OPEN_CLAW;
                         armController.updateArmState();
                         cycleNumber +=1;
@@ -160,10 +160,10 @@ public class SpecimenAuto extends LinearOpMode {
                     }
                     break;
                 case TO_WALL:
-                    if (cycleNumber < maxCycleCount) {
+                    if (cycleNumber == 3) {
                         Pose2d toWallStart = drive.pose;
                         TrajectoryActionBuilder toWall = drive.actionBuilder(toWallStart)
-                                .strafeToLinearHeading(wallApproach, Math.toRadians(-90));
+                                .strafeToLinearHeading(wallApproach, Math.toRadians(90));
                         Action toWallAction = toWall.build();
                         Actions.runBlocking(new SequentialAction(toWallAction));
                         armController.currentArmState = ArmController.ArmState.SPECIMEN_PICK_UP;
@@ -171,10 +171,17 @@ public class SpecimenAuto extends LinearOpMode {
                         grabTimerStarted = false;
                         queuedState = autoState.GRAB;
                     }
-                    else if (cycleNumber < 5){
-                        queuedState = autoState.TO_NEUTRAL;
-                    }
+                    /*else if (cycleNumber < 5){
+                        //queuedState = autoState.TO_NEUTRAL;
+                    }*/
                     else{
+                        Pose2d toWallStart = drive.pose;
+                        TrajectoryActionBuilder toWall = drive.actionBuilder(toWallStart)
+                                .strafeToLinearHeading(wallApproach, Math.toRadians(90));
+                        Action toWallAction = toWall.build();
+                        Actions.runBlocking(new SequentialAction(toWallAction));
+                        armController.currentArmState = ArmController.ArmState.RETRACT;
+                        armController.updateArmState();
                         queuedState = autoState.PARK;
                     }
                     break;
@@ -182,15 +189,14 @@ public class SpecimenAuto extends LinearOpMode {
                     Pose2d neutralStart = drive.pose;
                     //Extend intake and move to sample position
                     if (!intakeTimerStarted){
-                        waitTimer = 2000 + System.currentTimeMillis();
                         extendoTimer = 500 + System.currentTimeMillis();
                         intakeTimerStarted = true;
 
                         //build trajectory for correct sample based off cycle number
                         if (cycleNumber == 1){
                             toNeutral1 = drive.actionBuilder(neutralStart)
-                                    .strafeToLinearHeading(new Vector2d(-38, 58), Math.toRadians(-90))
-                                    .strafeToLinearHeading(new Vector2d(-38,40), Math.toRadians(-90));
+                                    .strafeToLinearHeading(new Vector2d(-46, 48), Math.toRadians(-90))
+                                    .strafeToLinearHeading(new Vector2d(-46,40), Math.toRadians(-90));
                         }
                         else if (cycleNumber == 2) {
                             toNeutral2 = drive.actionBuilder(neutralStart)
@@ -224,6 +230,7 @@ public class SpecimenAuto extends LinearOpMode {
                         armController.checkIntakeAngle();
                         armController.checkIntakeServoPower();
                         armController.updateArmState();
+                        waitTimer = 2000 + System.currentTimeMillis();
                         extended = true;
                     }
 
@@ -273,7 +280,7 @@ public class SpecimenAuto extends LinearOpMode {
                                 .strafeToLinearHeading(wallGrab, Math.toRadians(-90));
                         Action grabWallAction = grabWall.build();
                         Actions.runBlocking(new SequentialAction(grabWallAction));
-                        waitTimer = 50 + System.currentTimeMillis();
+                        waitTimer = 250 + System.currentTimeMillis();
                         grabTimerStarted = true;
                         anotherTimerStarted = false;
                     }

@@ -190,7 +190,7 @@ public class BucketAuto extends LinearOpMode {
                         else if (cycleNumber == 3){
                             toNeutral3 = drive.actionBuilder(neutralStart)
                                     .strafeToLinearHeading(new Vector2d( 50, 58), Math.toRadians(-70))
-                                    .strafeToLinearHeading(new Vector2d( 52, 40), Math.toRadians(-70));
+                                    .strafeToLinearHeading(new Vector2d( 54, 40), Math.toRadians(-70));
                         }
 
                         if(cycleNumber == 1){
@@ -242,7 +242,7 @@ public class BucketAuto extends LinearOpMode {
                         bucketStart = startingDrivePose;
                         TrajectoryActionBuilder toBucketStart = drive.actionBuilder(bucketStart)
                                 .strafeToLinearHeading(startingDrivePoseLeftAway, Math.toRadians(-90))
-                                .strafeToLinearHeading(new Vector2d(67,45), Math.toRadians(225));
+                                .strafeToLinearHeading(new Vector2d(68,48), Math.toRadians(225));
                         Action toBucketStartAction = toBucketStart.build();
                         Actions.runBlocking(new SequentialAction( toBucketStartAction));
                     }
@@ -250,7 +250,7 @@ public class BucketAuto extends LinearOpMode {
                         bucketStart = drive.pose;
                         TrajectoryActionBuilder toBucket = drive.actionBuilder(bucketStart)
                                 .strafeToLinearHeading(new Vector2d(56, 48), Math.toRadians(225))
-                                .strafeToLinearHeading(new Vector2d(58, 52), Math.toRadians(225));
+                                .strafeToLinearHeading(new Vector2d(58, 54), Math.toRadians(225));
                         Action toBucketAction = toBucket.build();
                         Actions.runBlocking(new SequentialAction(toBucketAction));
                     }
@@ -266,7 +266,7 @@ public class BucketAuto extends LinearOpMode {
                         bucketStart = drive.pose;
                         TrajectoryActionBuilder toBucket = drive.actionBuilder(bucketStart)
                             .strafeToLinearHeading(new Vector2d(56, 48), Math.toRadians(225))
-                            .strafeToLinearHeading(new Vector2d(52, 60), Math.toRadians(225));
+                            .strafeToLinearHeading(new Vector2d(52, 62), Math.toRadians(225));
                         Action toBucketAction = toBucket.build();
                         Actions.runBlocking(new SequentialAction(toBucketAction));
                     }

@@ -348,7 +348,7 @@ public class testDrive extends OpMode{
         //region claw for testing
 
         if(currentGamepad2.x){
-            claw.setPosition(.3);
+            claw.setPosition(.26);
             intakeL.setPower(0);
             intakeR.setPower(0);
         }

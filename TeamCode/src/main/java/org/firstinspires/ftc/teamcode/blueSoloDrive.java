@@ -41,7 +41,7 @@ public class blueSoloDrive extends OpMode {
     char sampleColor;
     boolean autoRetractOn = true;
     boolean newSample;
-    char wrongAllianceColor = 'b';
+    char wrongAllianceColor /*= 'b'*/;
 
     public boolean intakeExtended = false;
     public boolean sampleMode = true;
@@ -87,7 +87,7 @@ public class blueSoloDrive extends OpMode {
         }
         else yPower = 0;
         if (currentGamepad2.right_stick_x >= .1 || currentGamepad2.right_stick_x <= -.1){
-            headingPower = -currentGamepad2.right_stick_x * 0.7;
+            headingPower = -currentGamepad2.right_stick_x * 0.6;
         }
         else headingPower = 0;
 
