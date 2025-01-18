@@ -346,6 +346,11 @@ public class ArmController {
                 extraLeftSlide.setPower(SLIDE_POWER);
                 extraRightSlide.setPower(SLIDE_POWER);
 
+                SLIDE_MAX_VELO = 600;
+                leftSlide.setVelocity(SLIDE_MAX_VELO);
+                rightSlide.setVelocity(SLIDE_MAX_VELO);
+                extraLeftSlide.setVelocity(SLIDE_MAX_VELO);
+                extraRightSlide.setVelocity(SLIDE_MAX_VELO);
                 SLIDE_HEIGHT = SLIDE_HEIGHT_HANG;
                 break;
             case LOWER:
