@@ -42,6 +42,7 @@ public class BucketAuto extends LinearOpMode {
     double bucketTransitionTimer;
     double clawTimer;
     boolean clawTimerStarted = false;
+    boolean parkTimerStarted;
 
     int cycleNumber;
 
@@ -82,6 +83,8 @@ public class BucketAuto extends LinearOpMode {
     TrajectoryActionBuilder toNeutral3;
     //endregion
 
+    double retractTimer;
+    boolean retractTimerStarted;
 
     enum autoState {
         START,
@@ -91,6 +94,7 @@ public class BucketAuto extends LinearOpMode {
         TO_NEUTRAL,
         BUCKET,
         DROP,
+        BUCKET_LEAVE,
         PARK,
         STOP
     }
@@ -136,6 +140,8 @@ public class BucketAuto extends LinearOpMode {
                     .splineTo(blueSubmersible, Math.toRadians(90));*/
         }
 
+        AutoConfiguration.maxCycleCount = 4;
+
         while (opModeIsActive()){
             switch (queuedState){
                 case START:
@@ -168,7 +174,7 @@ public class BucketAuto extends LinearOpMode {
 
                     //Extend intake and move to sample position
                     if (!intakeTimerStarted){
-                        waitTimer = 2000 + System.currentTimeMillis();
+                        waitTimer = 1750 + System.currentTimeMillis();
                         intakeTimerStarted = true;
                         armController.currentArmState = ArmController.ArmState.EXTEND;
                         armController.lowerIntake = true;
@@ -179,18 +185,18 @@ public class BucketAuto extends LinearOpMode {
                         //build trajectory for correct sample based off cycle number
                         if (cycleNumber == 1){
                             toNeutral1 = drive.actionBuilder(neutralStart)
-                                    .strafeToLinearHeading(new Vector2d(40, 58), Math.toRadians(-90))
-                                    .strafeToLinearHeading(new Vector2d(40,40), Math.toRadians(-90));
+                                    .strafeToLinearHeading(new Vector2d(38, 58), Math.toRadians(-90))
+                                    .strafeToLinearHeading(new Vector2d(38,40), Math.toRadians(-90));
                         }
                         else if (cycleNumber == 2) {
                             toNeutral2 = drive.actionBuilder(neutralStart)
-                                    .strafeToLinearHeading(new Vector2d(54, 58), Math.toRadians(-90))
-                                    .strafeToLinearHeading(new Vector2d(54, 40), Math.toRadians(-90));
+                                    .strafeToLinearHeading(new Vector2d(64, 58), Math.toRadians(-90))
+                                    .strafeToLinearHeading(new Vector2d(64, 40), Math.toRadians(-90));
                         }
                         else if (cycleNumber == 3){
                             toNeutral3 = drive.actionBuilder(neutralStart)
-                                    .strafeToLinearHeading(new Vector2d( 50, 58), Math.toRadians(-70))
-                                    .strafeToLinearHeading(new Vector2d( 54, 40), Math.toRadians(-70));
+                                    .strafeToLinearHeading(new Vector2d( 64, 62), Math.toRadians(-75))
+                                    .strafeToLinearHeading(new Vector2d( 64, 40), Math.toRadians(-75));
                         }
 
                         if(cycleNumber == 1){
@@ -258,7 +264,7 @@ public class BucketAuto extends LinearOpMode {
                         bucketStart = drive.pose;
                         TrajectoryActionBuilder toBucket = drive.actionBuilder(bucketStart)
                             .strafeToLinearHeading(new Vector2d(56, 48), Math.toRadians(225))
-                            .strafeToLinearHeading(new Vector2d(56, 56), Math.toRadians(225));
+                            .strafeToLinearHeading(new Vector2d(56, 60), Math.toRadians(225));
                         Action toBucketAction = toBucket.build();
                         Actions.runBlocking(new SequentialAction(toBucketAction));
                     }
@@ -292,11 +298,11 @@ public class BucketAuto extends LinearOpMode {
                     }
                     if (waitTimer <= System.currentTimeMillis()){
                         //armController.currentArmState = ArmController.ArmState.RETRACT;
-                        if (cycleNumber == AutoConfiguration.maxCycleCount){
+                        if (cycleNumber == 3/*AutoConfiguration.maxCycleCount*/){
                             queuedState = autoState.PARK;
                         }
                         else if (cycleNumber <= 4){
-                            queuedState = autoState.TO_NEUTRAL;
+                            queuedState = autoState.BUCKET_LEAVE;
                             intakeTimerStarted = false;
                         }
                         else{
@@ -310,8 +316,43 @@ public class BucketAuto extends LinearOpMode {
                     break;
                 case PARK:
                     //Still need park position but this just prepares bot for teleop with the slides lowered
-                    armController.currentArmState = ArmController.ArmState.RETRACT;
-                    armController.updateArmState();
+
+                    TrajectoryActionBuilder awayFromBucket = drive.actionBuilder(drive.pose)
+                            .strafeToLinearHeading(new Vector2d(45, 40), Math.toRadians(-90));
+                    Action awayFromBucketAction = awayFromBucket.build();
+                    Actions.runBlocking(new SequentialAction(awayFromBucketAction));
+                    if(!parkTimerStarted) {
+                        waitTimer = System.currentTimeMillis() + 250;
+                        parkTimerStarted = true;
+                    }
+
+                    if(waitTimer <= System.currentTimeMillis()) {
+                        armController.currentArmState = ArmController.ArmState.RETRACT;
+                        armController.updateArmState();
+                    }
+                    else queuedState = autoState.PARK;
+                    break;
+                case BUCKET_LEAVE:
+                    TrajectoryActionBuilder bucketRetract = drive.actionBuilder(drive.pose)
+                            .strafeToLinearHeading(new Vector2d(50, 56), Math.toRadians(-90));
+                    Action bucketRetractAction = bucketRetract.build();
+                    Actions.runBlocking(new SequentialAction(bucketRetractAction));
+
+                    if (!retractTimerStarted) {
+                        retractTimer = 250 + System.currentTimeMillis();
+                        retractTimerStarted = true;
+                    }
+
+                    if (retractTimer <= System.currentTimeMillis()){
+                        armController.currentArmState = ArmController.ArmState.RETRACT;
+                        armController.updateArmState();
+
+                        if (cycleNumber <= 4){
+                            queuedState = autoState.TO_NEUTRAL;
+                        }
+                        else queuedState = autoState.PARK;
+                    }
+                    else queuedState = autoState.BUCKET_LEAVE;
                     break;
                 case STOP:
                     //Nothing for here yet, might just remove it

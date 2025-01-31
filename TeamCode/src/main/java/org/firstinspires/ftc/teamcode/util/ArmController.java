@@ -60,7 +60,7 @@ public class ArmController {
 
     //region Claw
     double CLAW_POSITION = .5; //Live Updating Arm Position (.5 is open)
-    public static double CLAW_CLOSED = .23; //Stores Value of Claw closed Position
+    public static double CLAW_CLOSED = .25; //Stores Value of Claw closed Position
     //public static double CLAW_SERVO_TRANSITION = 0.6; //Stores value of Claw Outtake position
     public static double CLAW_OPEN = 0.5; //Stores value of Claw open position
     //endregion
@@ -70,7 +70,7 @@ public class ArmController {
     public static double CLAW_ANGLE_INTAKE = .19; //stores value of claw angle for intake
     public static double CLAW_ANGLE_SPECIMEN_PICK_UP = .56; //
     public static double CLAW_ANGLE_OUTTAKE = .66; //stores value of the claw angle when dropping stuff
-    public static double CLAW_ANGLE_SPECIMEN_OUTTAKE = .74;//stuff
+    public static double CLAW_ANGLE_SPECIMEN_OUTTAKE = .73;//stuff
     public static double CLAW_ANGLE_SPECIMEN_START = .16;
     public static double CLAW_ANGLE_ASCENT = .92;
     //endregion
