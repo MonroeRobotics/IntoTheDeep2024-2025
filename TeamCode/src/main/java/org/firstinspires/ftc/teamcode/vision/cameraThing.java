@@ -13,45 +13,38 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 @Config
-public class cameraThing{
+public class cameraThing {
     HardwareMap hardwareMap;
     int cameraMonitorViewId;
     WebcamName webcamName;
     OpenCvCamera camera;
+    public static int width = 640;
+    public static int height = 480;
 
-    public cameraThing (HardwareMap hardwareMap){
+    public cameraThing(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
     }
 
-    public Mat initCam() {
+
+    public void initCam() {
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         webcamName = hardwareMap.get(WebcamName.class, "webcam");
+        //camera.showFpsMeterOnViewport(true);
         camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
+            public void onOpened() {
                 // Usually this is where you'll want to start streaming from the camera (see section 4)
-                camera.startStreaming(640, 480, OpenCvCameraRotation.UPRIGHT);
+                camera.startStreaming(width, height, OpenCvCameraRotation.UPRIGHT);
                 FtcDashboard.getInstance().startCameraStream(camera, 24);
             }
+
             @Override
-            public void onError(int errorCode)
-            {
+            public void onError(int errorCode) {
                 /*
                  * This will be called if the camera could not be opened
                  */
             }
         });
-        // dont' trust this v
-        return null;
     }
-    /*public void pipeline extends Object OpenCvPipeline{
-            final Mat grey = new Mat();
-            public Mat processFrame(Mat input){
-                Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGB2GRAY);
-                return grey;
-                }
-            }*/
 }
