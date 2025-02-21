@@ -57,17 +57,17 @@ public class TSAdrive extends OpMode {
         leftDriveMotor.setPower(leftDrivePower);
         rightDriveMotor.setPower(rightDrivePower);
 
-        if (currentGamepad1.x || !previousGamepad1.x){
+        if (currentGamepad1.x && !previousGamepad1.x){
             armController.currentArmstate = ArmController.ArmState.closeClaw;
         }
-        if (currentGamepad1.a || !previousGamepad1.a){
+        if (currentGamepad1.a && !previousGamepad1.a){
             armController.currentArmstate = ArmController.ArmState.openClaw;
         }
-        if (currentGamepad1.dpad_up || !previousGamepad1.dpad_up){
-            armController.currentArmstate = TSAarmController.ArmState.clawUp;
+        if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up){
+            armController.currentArmstate = ArmController.ArmState.clawUp;
         }
-        if (currentGamepad1.dpad_down || !previousGamepad1.dpad_down){
-            armController.currentArmstate = TSAarmController.ArmState.clawDown;
+        if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down){
+            armController.currentArmstate = ArmController.ArmState.clawDown;
         }
         previousGamepad1.copy(currentGamepad1);
         currentGamepad1.copy(gamepad1);

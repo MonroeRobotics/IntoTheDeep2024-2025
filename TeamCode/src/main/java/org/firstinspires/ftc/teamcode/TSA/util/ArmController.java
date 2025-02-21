@@ -15,28 +15,31 @@ public class ArmController {
     }
     Servo clawServo;
     Servo clawTilt;
-    double clawAngle;
-    public static double CLAW_SERVO_FORWARD = .5; //claw closed angle
-    public static double CLAW_SERVO_BACKWARD = .5; //claw open angle
+
+    double clawAngle = .5;
+    public static double clawClosed = .5; //claw closed angle
+    public static double clawOpen = .75; //claw open angle
+
     double TiltAngle;
     public static double TILT_UP_ANGLE = 0.5;
     public static double TILT_DOWN_ANGLE = 0.5;
-    public ArmState currentArmstate  = ArmState.closeClaw;
+
+    public ArmState currentArmstate = ArmState.closeClaw;
     public ArmController(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
     }
     public void initArm(){
         clawServo = hardwareMap.get(Servo.class, "claw");
-        clawTilt = hardwareMap.get(Servo.class, "Tilt");
-
+        clawTilt = hardwareMap.get(Servo.class, "clawAngle");
+        currentArmstate = ArmState.closeClaw;
     }
     public void updateArmState(){
         switch(currentArmstate){
             case closeClaw:
-                clawAngle = CLAW_SERVO_FORWARD;
+                clawAngle = clawClosed;
                 break;
             case openClaw:
-                clawAngle = CLAW_SERVO_BACKWARD;
+                clawAngle = clawOpen;
                 break;
             case clawUp:
                 TiltAngle = TILT_UP_ANGLE;
@@ -44,13 +47,9 @@ public class ArmController {
             case clawDown:
                 TiltAngle = TILT_DOWN_ANGLE;
                 break;
-
-
         }
         clawServo.setPosition(clawAngle);
         clawTilt.setPosition(TiltAngle);
-
-
     }
 }
 
