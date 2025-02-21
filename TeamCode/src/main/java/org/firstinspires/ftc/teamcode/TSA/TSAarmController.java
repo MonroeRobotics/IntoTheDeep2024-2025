@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.tsa;
+package org.firstinspires.ftc.teamcode.TSA;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -11,8 +11,8 @@ public class TSAarmController {
     }
     Servo clawServo;
     double clawAngle;
-    double clawCloseAngle = 90; //placeholder
-    double clawOpenAngle = 90; //placeholder
+    public static double CLAW_SERVO_FORWARD = .1;
+    public static double CLAW_SERVO_BACKWARD = 0.7;
     public ArmState currentArmstate  = ArmState.closeClaw;
     public TSAarmController(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
@@ -24,10 +24,10 @@ public class TSAarmController {
     public void updateArmState(){
         switch(currentArmstate){
             case closeClaw:
-                clawAngle = clawCloseAngle;
+                clawAngle = CLAW_SERVO_FORWARD;
                 break;
             case openClaw:
-                clawAngle = clawOpenAngle;
+                clawAngle = CLAW_SERVO_BACKWARD;
                 break;
         }
         clawServo.setPosition(clawAngle);
