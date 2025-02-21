@@ -3,14 +3,16 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.vision.cameraThing;
-import org.firstinspires.ftc.teamcode.TSA.TSAarmController;
+import org.firstinspires.ftc.teamcode.TSA.util.ArmController;
 
-@TeleOp
+@TeleOp(name = "drive", group = "main")
 public class TSAdrive extends OpMode {
-    TSAarmController armController;
+
+    ArmController armController;
     double leftDrivePower;
     double rightDrivePower;
     double drivePower = 0.8;
@@ -33,8 +35,10 @@ public class TSAdrive extends OpMode {
         rightDriveMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         leftDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightDriveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        armController = new TSAarmController(hardwareMap);
+        armController = new ArmController(hardwareMap);
         armController.initArm();
 
         /*leftDriveMotor.setPower(drivePower);
@@ -54,10 +58,10 @@ public class TSAdrive extends OpMode {
         rightDriveMotor.setPower(rightDrivePower);
 
         if (currentGamepad1.x || !previousGamepad1.x){
-            armController.currentArmstate = TSAarmController.ArmState.closeClaw;
+            armController.currentArmstate = ArmController.ArmState.closeClaw;
         }
         if (currentGamepad1.a || !previousGamepad1.a){
-            armController.currentArmstate = TSAarmController.ArmState.openClaw;
+            armController.currentArmstate = ArmController.ArmState.openClaw;
         }
 
         previousGamepad1.copy(currentGamepad1);
@@ -65,6 +69,7 @@ public class TSAdrive extends OpMode {
 
         armController.updateArmState();
         telemetry.addData("armState", armController.currentArmstate);
+        telemetry.update();
     }
 }
 

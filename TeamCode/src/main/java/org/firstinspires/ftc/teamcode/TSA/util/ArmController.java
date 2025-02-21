@@ -1,11 +1,11 @@
-package org.firstinspires.ftc.teamcode.TSA;
+package org.firstinspires.ftc.teamcode.TSA.util;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @Config
-public class TSAarmController {
+public class ArmController {
     HardwareMap hardwareMap;
     public enum ArmState{
         closeClaw,
@@ -16,7 +16,7 @@ public class TSAarmController {
     public static double CLAW_SERVO_FORWARD = .5; //claw closed angle
     public static double CLAW_SERVO_BACKWARD = .5; //claw open angle
     public ArmState currentArmstate  = ArmState.closeClaw;
-    public TSAarmController(HardwareMap hardwareMap){
+    public ArmController(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
     }
     public void initArm(){
