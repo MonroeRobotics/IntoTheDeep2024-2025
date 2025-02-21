@@ -27,6 +27,7 @@ public class TSAarmController {
     }
     public void initArm(){
         clawServo = hardwareMap.get(Servo.class, "claw");
+        clawTilt = hardwareMap.get(Servo.class, "Tilt");
 
     }
     public void updateArmState(){
