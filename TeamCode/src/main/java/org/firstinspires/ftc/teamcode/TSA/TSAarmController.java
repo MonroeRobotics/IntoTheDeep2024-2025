@@ -11,8 +11,8 @@ public class TSAarmController {
     }
     Servo clawServo;
     double clawAngle;
-    public static double CLAW_SERVO_FORWARD = .1;
-    public static double CLAW_SERVO_BACKWARD = 0.7;
+    public static double CLAW_SERVO_FORWARD = .1; //claw closed angle
+    public static double CLAW_SERVO_BACKWARD = 0.7; //claw open angle
     public ArmState currentArmstate  = ArmState.closeClaw;
     public TSAarmController(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
