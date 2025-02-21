@@ -72,11 +72,6 @@ public class ArmController {
         //endregion
 
         //region Arm Lift Motor Settings
-        if(!AutoConfiguration.hasInitAuto) {
-            leftLinear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            rightLinear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
-
         leftLinear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightLinear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
