@@ -21,7 +21,10 @@ public class treadDrive extends OpMode {
     DcMotorEx leftDriveMotor;
     DcMotorEx rightDriveMotor;
     DcMotorEx armMotor;
-    Servo servo;
+    Servo clawAngle;
+    public static double clawAngleTarget = .5;
+    Servo claw;
+    public static double clawTarget = .5;
     int armTarget;
     cameraThing camera;
 
@@ -35,7 +38,8 @@ public class treadDrive extends OpMode {
         previousGamepad1 = new Gamepad();
         leftDriveMotor = hardwareMap.get(DcMotorEx.class, "leftDriveMotor");
         rightDriveMotor = hardwareMap.get(DcMotorEx.class, "rightDriveMotor");
-        servo = hardwareMap.get(Servo.class, "servo");
+        clawAngle = hardwareMap.get(Servo.class, "clawAngle");
+        claw = hardwareMap.get(Servo.class, "claw");
 
         armMotor = hardwareMap.get(DcMotorEx.class, "armMotor");
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -79,20 +83,36 @@ public class treadDrive extends OpMode {
         if (timer <= System.currentTimeMillis() && timerStarted){
             timerStarted = false;
         }
+        if(armTarget < 1){armTarget = 10;}
         armMotor.setTargetPosition(armTarget);
 
-        if (currentGamepad1.a){
-            servo.setPosition(0.0);
+        if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up){
+            clawAngleTarget += .1;
+            if (clawAngleTarget > 1) clawAngleTarget =1;
         }
-        if (currentGamepad1.b){
-            servo.setPosition(1.0);
+        if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down){
+            clawAngleTarget -= .1;
+            if (clawAngleTarget < 0) clawAngleTarget =0;
         }
+        clawAngle.setPosition(clawAngleTarget);
+
+        if (currentGamepad1.a && !previousGamepad1.a){
+            clawTarget -= .01;
+            if (clawTarget < .5){clawTarget = 0.5;}
+        }
+        if (currentGamepad1.b && !previousGamepad1.b){
+            clawTarget += .01;
+            if (clawTarget > .75){clawTarget = .75;}
+        }
+        claw.setPosition(clawTarget);
 
         previousGamepad1.copy(currentGamepad1);
         currentGamepad1.copy(gamepad1);
 
         //telemetry.addData("xpower", currentGamepad1.left_stick_x);
         //telemetry.addData("ypower", currentGamepad1.left_stick_y);
+        telemetry.addData("clawAngle", clawAngleTarget);
+        telemetry.addData("claw", clawTarget);
         telemetry.update();
     }
 }
