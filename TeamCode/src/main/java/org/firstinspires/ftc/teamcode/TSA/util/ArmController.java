@@ -24,11 +24,11 @@ public class ArmController {
 
     double clawAngle = .5;
     public static double clawClosed = .5; //claw closed angle
-    public static double clawOpen = .75; //claw open angle
+    public static double clawOpen = .625; //claw open angle
 
     double TiltAngle;
-    public static double TILT_UP_ANGLE = 0.5;
-    public static double TILT_DOWN_ANGLE = 0.5;
+    public static double TILT_UP_ANGLE = 1;
+    public static double TILT_DOWN_ANGLE = 0.6;
 
     public static double timer;
 
