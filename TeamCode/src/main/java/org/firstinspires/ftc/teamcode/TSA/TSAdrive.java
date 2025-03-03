@@ -71,7 +71,7 @@ public class TSAdrive extends OpMode {
         }
         previousGamepad1.copy(currentGamepad1);
         currentGamepad1.copy(gamepad1);
-
+        armController.armMotor(currentGamepad1.right_trigger, currentGamepad1.left_trigger);
         armController.updateArmState();
         telemetry.addData("armState", armController.currentArmstate);
         telemetry.update();
