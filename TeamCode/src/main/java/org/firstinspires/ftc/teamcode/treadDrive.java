@@ -22,7 +22,7 @@ public class treadDrive extends OpMode {
     DcMotorEx rightDriveMotor;
     DcMotorEx armMotor;
     Servo clawAngle;
-    public static double clawAngleTarget = .5;
+    public static double clawAngleTarget = .7;
     Servo claw;
     public static double clawTarget = .5;
     int armTarget;
@@ -73,12 +73,12 @@ public class treadDrive extends OpMode {
         if (currentGamepad1.right_trigger >= .1 && !timerStarted){
             armTarget += 10;
             timerStarted = true;
-            timer = 50 + System.currentTimeMillis();
+            timer = 25 + System.currentTimeMillis();
         }
         if (currentGamepad1.left_trigger >= .1 && !timerStarted){
             armTarget -= 10;
             timerStarted = true;
-            timer = 50 + System.currentTimeMillis();
+            timer = 25 + System.currentTimeMillis();
         }
         if (timer <= System.currentTimeMillis() && timerStarted){
             timerStarted = false;
@@ -92,17 +92,17 @@ public class treadDrive extends OpMode {
         }
         if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down){
             clawAngleTarget -= .1;
-            if (clawAngleTarget < 0) clawAngleTarget =0;
+            if (clawAngleTarget < .0) clawAngleTarget = .0;
         }
         clawAngle.setPosition(clawAngleTarget);
 
         if (currentGamepad1.a && !previousGamepad1.a){
-            clawTarget -= .01;
-            if (clawTarget < .5){clawTarget = 0.5;}
+            clawTarget -= .05;
+            if (clawTarget <= .45) clawTarget = .45;
         }
         if (currentGamepad1.b && !previousGamepad1.b){
-            clawTarget += .01;
-            if (clawTarget > .75){clawTarget = .75;}
+            clawTarget += .05;
+            if (clawTarget >= .7) clawTarget = .7;
         }
         claw.setPosition(clawTarget);
 

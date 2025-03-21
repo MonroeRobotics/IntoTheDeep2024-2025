@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.TSA;
+package org.firstinspires.ftc.teamcode.tsa;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -7,12 +7,12 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.vision.cameraThing;
-import org.firstinspires.ftc.teamcode.TSA.util.ArmController;
+//import org.firstinspires.ftc.teamcode.tsa.util.armController;
 
 @TeleOp(name = "drive", group = "main")
-public class TSAdrive extends OpMode {
+public class tsaDrive extends OpMode {
 
-    ArmController armController;
+    //armController armController;
     double leftDrivePower;
     double rightDrivePower;
     double drivePower = 0.8;
@@ -38,8 +38,8 @@ public class TSAdrive extends OpMode {
         rightDriveMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightDriveMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        armController = new ArmController(hardwareMap);
-        armController.initArm();
+        //armController = new armController(hardwareMap);
+        //armController.initArm();
 
         /*leftDriveMotor.setPower(drivePower);
         rightDriveMotor.setPower(drivePower);*/
@@ -57,23 +57,23 @@ public class TSAdrive extends OpMode {
         leftDriveMotor.setPower(leftDrivePower);
         rightDriveMotor.setPower(rightDrivePower);
 
-        if (currentGamepad1.x && !previousGamepad1.x){
-            armController.currentArmstate = ArmController.ArmState.closeClaw;
+        /*if (currentGamepad1.x && !previousGamepad1.x){
+            armController.currentArmstate = armController.ArmState.closeClaw;
         }
         if (currentGamepad1.a && !previousGamepad1.a){
-            armController.currentArmstate = ArmController.ArmState.openClaw;
+            armController.currentArmstate = armController.ArmState.openClaw;
         }
         if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up){
-            armController.currentArmstate = ArmController.ArmState.clawUp;
+            armController.currentArmstate = armController.ArmState.clawUp;
         }
         if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down){
-            armController.currentArmstate = ArmController.ArmState.clawDown;
-        }
+            armController.currentArmstate = armController.ArmState.clawDown;
+        }*/
         previousGamepad1.copy(currentGamepad1);
         currentGamepad1.copy(gamepad1);
 
-        armController.updateArmState();
-        telemetry.addData("armState", armController.currentArmstate);
+        //armController.updateArmState();
+        //telemetry.addData("armState", armController.currentArmstate);
         telemetry.update();
     }
 }
