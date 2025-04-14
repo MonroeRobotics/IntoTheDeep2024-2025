@@ -55,7 +55,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Config
-public final class MecanumDrive {
+public class MecanumDrive {
     public static class Params {
         // IMU orientation
         // TODO: fill in these values based on
@@ -66,14 +66,14 @@ public final class MecanumDrive {
                 RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
 
         // drive model parameters
-        public double inPerTick = 0.0005223240937;
-        public double lateralInPerTick = 0.00038080590286350413;
-        public double trackWidthTicks = 22242.075406132517;
+        public double inPerTick = 1; //0.0005223240937 normally
+        public double lateralInPerTick = 1; //0.00035339132377318593 normally
+        public double trackWidthTicks = 12.673259843; //22242.075406132517 normally
 
         // feedforward parameters (in tick units)
-        public double kS = 1.0598454637171586;
-        public double kV = 0.0000733971276881226;
-        public double kA = 0.0000185;
+        public double kS = 1.1124737136343055;
+        public double kV = 0.13273895050680626;
+        public double kA = .02;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -86,8 +86,8 @@ public final class MecanumDrive {
 
         // path controller gains
         public double axialGain = 2.3; //around 2.3
-        public double lateralGain = .2; //around .2
-        public double headingGain = .2; // shared with. around .2
+        public double lateralGain = .02; //around .0 for pinpoint
+        public double headingGain = .4; // shared with. around .0 for pinpoint
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
@@ -113,12 +113,12 @@ public final class MecanumDrive {
 
     public final VoltageSensor voltageSensor;
 
-    public final LazyImu lazyImu;
+    public LazyImu lazyImu;
 
     public final Localizer localizer;
     public Pose2d pose;
 
-    private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
+    public final LinkedList<Pose2d> poseHistory = new LinkedList<>();
 
     private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
     private final DownsampledWriter targetPoseWriter = new DownsampledWriter("TARGET_POSE", 50_000_000);

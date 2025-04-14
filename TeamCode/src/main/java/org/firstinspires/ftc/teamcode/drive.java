@@ -40,20 +40,25 @@ public class drive extends OpMode {
     double headingPower;
 
     double distance;
+    char sampleColor;
+    boolean autoRetractOn = true;
+    boolean newSample;
+    char wrongAllianceColor = 'b';
 
     public boolean intakeExtended = false;
     public boolean sampleMode = true;
     public boolean clawOpen = true;
     public boolean specSequenceRan;
+    public boolean triggerPressed;
 
     ArmController armController;
     int stage;
-
-    DistanceSensor distanceSensor;
-    Servo swiper;
-    public double swipe = 0;
-    public double resetSwiper = .45;
     int counter;
+    double clawTimer;
+
+    RevColorSensorV3 intakeSensor;
+
+    //DistanceSensor distanceSensor;
 
     @Override
     public void init() {
@@ -70,8 +75,6 @@ public class drive extends OpMode {
         armController = new ArmController(hardwareMap);
         armController.initArm(true);
         stage = 0;
-
-        swiper = hardwareMap.get(Servo.class, "swiper");
     }
 
     @Override
@@ -86,7 +89,7 @@ public class drive extends OpMode {
             yPower = -currentGamepad1.left_stick_x;
         }
         if (currentGamepad1.right_stick_x >= .05 || currentGamepad1.right_stick_x <= -.05){
-            headingPower = -currentGamepad1.right_stick_x * 0.75;
+            headingPower = -currentGamepad1.right_stick_x;
         }
 
         //Multiplier
@@ -123,52 +126,35 @@ public class drive extends OpMode {
         }
         //endregion
 
-        if (currentGamepad1.right_trigger >= .1){
-            /*if (currentGamepad1.right_bumper && !previousGamepad1.right_bumper){
-                swipe += .05;
-            }
-            else if (currentGamepad1.left_bumper && !previousGamepad1.left_bumper){
-                swipe -= .05;
-            }*/
-            swiper.setPosition(swipe);
-        }
-        else {
-            /*if (currentGamepad1.right_bumper && !previousGamepad1.right_bumper){
-                resetSwiper += .05;
-            }
-            else if (currentGamepad1.left_bumper && !previousGamepad1.left_bumper){
-                resetSwiper -= .05;
-            }*/
-            swiper.setPosition(resetSwiper);
-        }
-
         //region gamepad2
 
         //region bumpers/Intake actions
         if(currentGamepad2.right_bumper && !previousGamepad2.right_bumper){
-            sampleMode = true;
-            if(!intakeExtended){
-                armController.currentArmState = ArmController.ArmState.EXTEND;
-                intakeExtended = true;
+            if (sampleMode) {
+                if (!intakeExtended) {
+                    armController.currentArmState = ArmController.ArmState.EXTEND;
+                    intakeExtended = true;
+                } else {
+                    armController.currentArmState = ArmController.ArmState.RETRACT;
+                    intakeExtended = false;
+                }
             }
-            else {
-                armController.currentArmState = ArmController.ArmState.RETRACT;
-                intakeExtended = false;
-                armController.startClawTimer();
+            else{
+                if(!intakeExtended){
+                    armController.currentArmState = ArmController.ArmState.SPECIMEN_PICK_UP;
+                    intakeExtended = true;
+                }
+                else {
+                    intakeExtended = false;
+                    //todo add something to retract if this happens
+                }
             }
         }
 
-        if(currentGamepad2.left_bumper && !previousGamepad2.left_bumper){
-            sampleMode = false;
-            if(!intakeExtended){
-                armController.currentArmState = ArmController.ArmState.SPECIMEN_PICK_UP;
-                intakeExtended = true;
-            }
-            else {
-                intakeExtended = false;
-                //todo add something to retract if this happens
-            }
+        if(currentGamepad2.dpad_up && !previousGamepad2.dpad_up){
+            sampleMode = !sampleMode;
         }
+
         //endregion
 
         //region dpad/slide height
@@ -270,7 +256,7 @@ public class drive extends OpMode {
             }
         }
 
-         //Weird buttons/Specific one time actions
+        //Weird buttons/Specific one time actions
         if (currentGamepad2.options && !previousGamepad2.options){
             if (counter == 0){
                 armController.currentArmState = ArmController.ArmState.ASCENT;
@@ -287,8 +273,45 @@ public class drive extends OpMode {
         //endregion
 
         //endregion
-        if (distance >= 10){
+        /*if (distance >= 10){
             armController.currentArmState = ArmController.ArmState.RETRACT;
+        }*/
+        if (currentGamepad2.dpad_left && !previousGamepad2.dpad_left) {
+            autoRetractOn = !autoRetractOn;
+        }
+
+        if (currentGamepad2.dpad_right && !previousGamepad2.dpad_right){
+            if (wrongAllianceColor == 'r'){
+                wrongAllianceColor = 'b';
+            }
+            else wrongAllianceColor = 'r';
+        }
+
+        if (intakeSensor.red() > intakeSensor.blue()) {
+            sampleColor = 'r';
+        } else if (intakeSensor.green() > intakeSensor.blue()){
+            sampleColor = 'y';
+        } else if (intakeSensor.blue() > intakeSensor.red()) {
+            sampleColor = 'b';
+        }
+
+        if (intakeSensor.getDistance(DistanceUnit.MM) <= 40 && sampleColor != wrongAllianceColor && !newSample && armController.currentArmState == ArmController.ArmState.EXTEND) {
+            armController.currentArmState = ArmController.ArmState.RETRACT;
+            armController.startClawTimer();
+            newSample = true;
+        }
+        else if (intakeSensor.getDistance(DistanceUnit.MM) <= 40 && sampleColor == wrongAllianceColor && !newSample && armController.currentArmState == ArmController.ArmState.EXTEND){
+            armController.startEject();
+        }
+        else {
+            newSample = false;
+        }
+        /*if (intakeSensor.getDistance(DistanceUnit.MM) <= 40 && clawTimer <= System.currentTimeMillis() && newSample){
+            armController.startEject();
+        }*/
+
+        if (autoRetractOn) {
+            //armController.updateIntake();
         }
         Vector2d gamepadInput = new Vector2d(xPower, yPower);
         PoseVelocity2d poseVelocity2d = new PoseVelocity2d(gamepadInput, headingPower);
@@ -308,15 +331,26 @@ public class drive extends OpMode {
         currentGamepad1.copy(gamepad1);
         currentGamepad2.copy(gamepad2);
 
-        telemetry.addData("intakeAngle", String.valueOf(armController.getIntakeAngle()));
+        telemetry.addData("Auto Intake", autoRetractOn);
+        telemetry.addData("Wrong Color", wrongAllianceColor);
+        telemetry.addData("Stick x", -currentGamepad2.left_stick_y);
+        telemetry.addData("x drive power", xPower);
+        //telemetry.addData("y drive power", yPower);
+        //telemetry.addData("red", armController.getRed());
+        //telemetry.addData("green", intakeSensor.green());
+        //telemetry.addData("blue", intakeSensor.blue());
         telemetry.addData("currentArmState", armController.getCurrentArmState());
         telemetry.addData("slide target", armController.getSlideHeight());
-        telemetry.addData("left slide height", armController.leftSlide.getCurrentPosition());
-        telemetry.addData("extra left slide height", armController.extraLeftSlide.getCurrentPosition());
-        telemetry.addData("extra right slide height", armController.extraRightSlide.getCurrentPosition());
-        telemetry.addData("right slide height", armController.rightSlide.getCurrentPosition());
+        telemetry.addData("average slide height", ((armController.extraLeftSlide.getCurrentPosition() + armController.extraRightSlide.getCurrentPosition())/2));
+        //telemetry.addData("arm angle", armController.getArmAngle());
+        telemetry.addData("pose vel", poseVelocity2d);
+        telemetry.addData("right dpad", currentGamepad2.dpad_right);
+        //telemetry.addData("left slide height", armController.leftSlide.getCurrentPosition());
+        //telemetry.addData("extra left slide height", armController.extraLeftSlide.getCurrentPosition());
+        //telemetry.addData("extra right slide height", armController.extraRightSlide.getCurrentPosition());
+        //telemetry.addData("right slide height", armController.rightSlide.getCurrentPosition());
         //telemetry.addData("distanceSensor", distance);
-        telemetry.addData("swiper position", swiper.getPosition());
+        //telemetry.addData("swiper position", swiper.getPosition());
         telemetry.update();
     }
 }
