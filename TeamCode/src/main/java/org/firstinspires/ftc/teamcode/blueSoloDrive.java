@@ -319,7 +319,7 @@ public class blueSoloDrive extends OpMode {
         Vector2d gamepadInput = new Vector2d(xPower, yPower);
         PoseVelocity2d poseVelocity2d = new PoseVelocity2d(gamepadInput, headingPower);
         drive.setDrivePowers(poseVelocity2d);
-        drive.updatePoseEstimate();
+        //drive.updatePoseEstimate();
 
         armController.updateArmState();
         armController.updateArmABS();
